@@ -1,2 +1,3 @@
 # Persona-Story-Gen
-Personalized Story Generation
+
+Code for the Personalized Story Generation Project
