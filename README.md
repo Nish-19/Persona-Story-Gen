@@ -4,9 +4,6 @@ Code for the Personalized Story Generation Project
 
 ## Datasets
 
-### Reddit
-```
-cd Reddit
-```
+Directories - ```Reddit``` and ```AO3```. 
 
-The ```selected_human``` directory contains the data from r/WritingPrompts corresponding to every user.
+The ```selected_human``` directory contains the selected data
