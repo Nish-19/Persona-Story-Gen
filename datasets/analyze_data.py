@@ -47,14 +47,14 @@ def analyze_story_data(data_dir='Reddit', comment_key = 'comment', prompt_key = 
 
 
     # Assuming unique_prompts, user_wise_avg, and total_avg are already defined
-    data = [{'Metric': 'Total Number of unique prompts', 'Average Length': len(unique_prompts)}]
-    data.append({'Metric': 'Number of Users', 'Average Length': len(user_wise_avg)})
+    data = [{'Metric': 'Total Number of unique prompts', 'Average Length (Words)': len(unique_prompts)}]
+    data.append({'Metric': 'Number of Users', 'Average Length (Words)': len(user_wise_avg)})
 
 
     for user, avg in user_wise_avg.items():
-        data.append({'Metric': user, 'Average Length': round(avg, 2)})
+        data.append({'Metric': user, 'Average Length (Words)': round(avg, 2)})
 
-    data.append({'Metric': 'All users', 'Average Length': round(total_avg, 2)})
+    data.append({'Metric': 'All users', 'Average Length (Words)': round(total_avg, 2)})
 
     df = pd.DataFrame(data)
     df.to_csv(f'{data_dir}/analysis.csv', index=False)
