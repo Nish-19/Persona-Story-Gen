@@ -7,8 +7,11 @@ import pandas as pd
 import json 
 from collections import Counter, defaultdict
 
-def main():
-    reddit_dir = 'Reddit/selected_human' 
+def analyze_story_data(data_dir='Reddit', comment_key = 'comment', prompt_key = 'post_title'):
+    '''
+    analyze stories from reddit dataset
+    '''
+    reddit_dir = f'{data_dir}/selected_human' 
     unique_prompts = set()
     unique_prompt_per_user = defaultdict(list)
     user_wise_length = defaultdict(list)
@@ -23,8 +26,8 @@ def main():
         
         # iterate over all posts
         for post in data:
-            comment_text = post['comment']
-            prompt = post['post_title']
+            comment_text = post[comment_key]
+            prompt = post[prompt_key]
             # length of the comment
             comment_length = len(comment_text.split())
             user_wise_length[user_name].append(comment_length)
@@ -45,6 +48,8 @@ def main():
 
     # Assuming unique_prompts, user_wise_avg, and total_avg are already defined
     data = [{'Metric': 'Total Number of unique prompts', 'Average Length': len(unique_prompts)}]
+    data.append({'Metric': 'Number of Users', 'Average Length': len(user_wise_avg)})
+
 
     for user, avg in user_wise_avg.items():
         data.append({'Metric': user, 'Average Length': round(avg, 2)})
@@ -52,7 +57,18 @@ def main():
     data.append({'Metric': 'All users', 'Average Length': round(total_avg, 2)})
 
     df = pd.DataFrame(data)
-    df.to_csv('Reddit/analysis.csv', index=False)
+    df.to_csv(f'{data_dir}/analysis.csv', index=False)
+
+
+def main():
+    # analyze reddit dataset
+    analyze_story_data(data_dir='Reddit')
+    print('Analyzed Reddit data')
+
+    # analyze AO3 dataset
+    analyze_story_data(data_dir='AO3')
+    print('Analyzed AO3 data')
+
 
 if __name__ == '__main__':
     main()
