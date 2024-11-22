@@ -71,6 +71,10 @@ def main():
     analyze_story_data(data_dir='narrativemagazine')
     print('Analyzed narrativemagazine data')
 
+    # analyze newyorker dataset
+    analyze_story_data(data_dir='newyorker')
+    print('Analyzed newyorker data')
+
 
 if __name__ == '__main__':
     main()
