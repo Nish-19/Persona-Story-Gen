@@ -44,17 +44,15 @@ def analyze_story_data(data_dir='Reddit', comment_key = 'comment', prompt_key = 
     
     total_avg = sum([avg for avg in user_wise_avg.values()])/len(user_wise_avg)
 
+    # calculate average length of prompts
+    avg_prompt_length = sum([len(prompt.split()) for prompt in unique_prompts])/len(unique_prompts)
 
-
-    # Assuming unique_prompts, user_wise_avg, and total_avg are already defined
-    data = [{'Metric': 'Total Number of unique prompts', 'Average Length (Words)': len(unique_prompts)}]
-    data.append({'Metric': 'Number of Users', 'Average Length (Words)': len(user_wise_avg)})
-
+    data = [{'Metric': 'Unique prompts', 'Number': len(unique_prompts), 'Average Length (Words)': avg_prompt_length}]
 
     for user, avg in user_wise_avg.items():
-        data.append({'Metric': user, 'Average Length (Words)': round(avg, 2)})
+        data.append({'Metric': user, 'Number': len(user_wise_length[user]), 'Average Length (Words)': round(avg, 2)})
 
-    data.append({'Metric': 'All users', 'Average Length (Words)': round(total_avg, 2)})
+    data.append({'Metric': 'All users', 'Number': round(sum(len(user_wise_length[user]) for user in user_wise_length)/len(user_wise_length)), 'Average Length (Words)': round(total_avg)})
 
     df = pd.DataFrame(data)
     df.to_csv(f'{data_dir}/analysis.csv', index=False)
