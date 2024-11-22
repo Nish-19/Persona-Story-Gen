@@ -57,6 +57,11 @@ def analyze_story_data(data_dir='Reddit', comment_key = 'comment', prompt_key = 
     df = pd.DataFrame(data)
     df.to_csv(f'{data_dir}/analysis.csv', index=False)
 
+    # save metadata analysis
+    metadata = [{'Unique Prompts': len(unique_prompts), 'Number of Users': len(user_wise_length), 'Avg Number of Stories Per user': round(sum(len(user_wise_length[user]) for user in user_wise_length)/len(user_wise_length)), 'Average Story Length (Words)': round(total_avg)}]
+    metadata_df = pd.DataFrame(metadata)
+    metadata_df.to_csv(f'{data_dir}/metadata.csv', index=False)
+
 
 def main():
     # analyze reddit dataset
