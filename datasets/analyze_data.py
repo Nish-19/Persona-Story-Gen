@@ -14,6 +14,7 @@ def analyze_story_data(data_dir='Reddit', comment_key = 'comment', prompt_key = 
     reddit_dir = f'{data_dir}/selected_human' 
     unique_prompts = set()
     unique_prompt_per_user = defaultdict(list)
+    unique_comment_per_user = defaultdict(list)
     user_wise_length = defaultdict(list)
     user_wise_avg = defaultdict(float)
     # iterate over all files in the directory
@@ -33,11 +34,18 @@ def analyze_story_data(data_dir='Reddit', comment_key = 'comment', prompt_key = 
             user_wise_length[user_name].append(comment_length)
             # add prompt to the set
             unique_prompts.add(prompt)
-            # check if current prompt already exists in the list
-            if prompt not in unique_prompt_per_user[user_name]:
-                unique_prompt_per_user[user_name].append(prompt)
+            # # check if current prompt already exists in the list
+            # if prompt not in unique_prompt_per_user[user_name]:
+            #     unique_prompt_per_user[user_name].append(prompt)
+            # else:
+            #     # print(f'Duplicate prompt found: {file}: {prompt}')
+            #     print(f'Duplicate prompt found: {file}')
+            # check if current comment already exists in the list
+            if comment_text not in unique_comment_per_user[user_name]:
+                unique_comment_per_user[user_name].append(comment_text)
             else:
-                print(f'Duplicate prompt found: {file}: {prompt}')
+                # print(f'Duplicate comment found: {file}: {comment_text}')
+                print(f'Duplicate comment found: {file}')
         
         # calculate average length of comments for each user
         user_wise_avg[user_name] = sum(user_wise_length[user_name])/len(user_wise_length[user_name])
@@ -79,6 +87,10 @@ def main():
     # analyze newyorker dataset
     analyze_story_data(data_dir='newyorker')
     print('Analyzed newyorker data')
+
+    # analyze Storium dataset
+    analyze_story_data(data_dir='Storium')
+    print('Analyzed Storium data')
 
 
 if __name__ == '__main__':
