@@ -26,17 +26,17 @@ def construct_prompt_message(system_prompt, user_prompt, few_shot_prompt=None):
 # AzureOpenAI
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
 def prompt_openai(prompt_messages, max_tokens=2000, temperature=1.0, top_p=0.95):
-    client = AzureOpenAI(
-        # api_key=os.environ("AZURE_OPENAI_API_KEY"),
-        api_version="2024-02-01",
-        azure_endpoint = "https://complicated.openai.azure.com"
-    )
+    # client = AzureOpenAI(
+    #     # api_key=os.environ("AZURE_OPENAI_API_KEY"),
+    #     api_version="2024-02-01",
+    #     azure_endpoint = "https://complicated.openai.azure.com"
+    # )
 
-    # client = OpenAI()
+    client = OpenAI()
 
     completion = client.chat.completions.create(
-            model='4o',
-            # model = 'gpt-4o-2024-11-20',
+            # model='4o',
+            model = 'gpt-4o-2024-11-20',
             messages=prompt_messages,
             temperature=temperature,
             top_p=0.95,

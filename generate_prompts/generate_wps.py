@@ -10,7 +10,7 @@ from prompt_llm_utils import construct_prompt_message, prompt_openai
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data', type=int, default=1, help='Data Category. 1: AO3, 2: NarrativeMagazine, 3: NewYorker, 4: Reddit')
+    parser.add_argument('--data', type=int, default=1, help='Data Category. 1: AO3, 2: NarrativeMagazine, 3: NewYorker, 4: Reddit, 5. Storium')
     return parser.parse_args()
 
 def main():
@@ -33,8 +33,10 @@ def main():
         data_choice = 'newyorker'
     elif args.data == 4:
         data_choice = 'Reddit'
+    elif args.data == 5:
+        data_choice = 'Storium'
     else:
-        raise ValueError("Invalid data category. Chose 1, 2, or 3.")
+        raise ValueError("Invalid data category. Chose 1, 2, 3, 4, or 5")
     
     # load data
     data_dir = f'../datasets/{data_choice}/selected_human'
