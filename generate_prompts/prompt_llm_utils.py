@@ -39,7 +39,7 @@ def prompt_openai(prompt_messages, max_tokens=2000, temperature=1.0, top_p=0.95)
             model = 'gpt-4o-2024-11-20',
             messages=prompt_messages,
             temperature=temperature,
-            top_p=0.95,
+            top_p=top_p,
             max_tokens=max_tokens,
         )
     return completion.choices[0].message.content
