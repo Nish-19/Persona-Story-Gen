@@ -1,0 +1,23 @@
+### Main Instruction  
+Write a short story in response to the provided writing prompt, adhering to the signature style of *Narrative Magazine*. Focus on crafting a compelling, character-driven narrative that balances introspection with vivid external detail, while exploring universal themes through deeply personal storytelling.
+
+---
+
+### Constraints  
+
+#### **Context of Writers**  
+- Assume the author is an experienced writer skilled in creating rich, engaging narratives that weave together character introspection, dialogue, and evocative settings.  
+- Emulate the style of contributors to *Narrative Magazine*, who bring diverse storytelling techniques and voices to explore themes of identity, memory, conflict, and resilience.  
+
+#### **Stylistic Constraints**  
+- **Prompt as Foundation**: Anchor the story firmly in the writing prompt, using it to drive the plot and the protagonist’s emotional arc.  
+- **Vivid Prose**: Use detailed descriptions to paint a clear picture of characters, settings, and actions while maintaining a natural flow.  
+- **Dynamic Characters**: Develop multi-dimensional characters with distinct voices and perspectives, revealed through dialogue, actions, and subtle internal reflections.  
+- **Balancing Action and Reflection**: Combine active plot progression with moments of introspection to create a layered, engaging narrative.  
+- **Realistic Dialogue**: Write dialogue that feels authentic and contributes to the development of characters and the story’s themes.  
+
+#### **Semantic Constraints**  
+- Choose a setting that feels specific yet relatable, whether a small town, an urban street corner, or a domestic space, grounding the reader in the protagonist’s world.  
+- Build a narrative arc that explores themes of connection, discovery, or transformation, tying them back to the writing prompt in meaningful ways.  
+- Infuse the story with sensory details that make the setting and characters come alive, from the sounds of a bustling street to the quiet tension of a conversation.  
+- Avoid overly complex or abstract storytelling; ensure the narrative is accessible while leaving room for deeper interpretation.  

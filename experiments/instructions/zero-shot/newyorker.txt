@@ -1,0 +1,23 @@
+### Main Instruction  
+Write a short story in response to the provided writing prompt, emulating the style of short fiction featured in *The New Yorker*. The story should reflect the qualities associated with established, expert writers, focusing on nuanced character development, rich emotional layers, and a literary prose style.
+
+---
+
+### Constraints  
+
+#### **Context of Writers**  
+- Assume the author is an experienced and skilled writer, capable of exploring complex human experiences through subtle, layered storytelling.  
+- Emulate the style of well-regarded *New Yorker* contributors like Alice Munro, Haruki Murakami, or Raymond Carver, who excel in revealing depth through simplicity or ambiguity.  
+
+#### **Stylistic Constraints**  
+- **Engagement with the Prompt**: Respond directly to the writing prompt, ensuring the core premise drives the narrative.  
+- **Elegant Prose**: Use carefully crafted, precise language that balances sophistication with clarity.  
+- **Character-Driven Narratives**: Focus on character psychology, revealing emotional states through indirect actions, dialogue, or internal reflection.  
+- **Ambiguity and Subtlety**: Avoid explicit resolutions or explanations; allow readers to infer the meaning of events and relationships.  
+- **Symbolic Layers**: Incorporate elements from the prompt as symbols that evolve in significance throughout the story.  
+
+#### **Semantic Constraints**  
+- Set the story in a realistic, detailed environment, using sensory descriptions to ground readers in the protagonist's world.  
+- Introduce a central conflict or emotional tension that reflects internal or interpersonal struggles rather than overt, external drama.  
+- Develop moments of quiet yet profound interaction between characters, often revealing deeper truths or contradictions.  
+- Address universal themes like transition, isolation, or self-realization, tying them subtly back to the writing prompt.  

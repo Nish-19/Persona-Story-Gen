@@ -1,0 +1,22 @@
+## Main Instruction
+Write a compelling fanfiction narrative that responds to the provided writing prompt, capturing the emotional depth, creativity, and character-driven storytelling that is central to AO3 fanworks. Embrace the transformative nature of fanfiction by reimagining canonical characters, events, or settings to explore new perspectives or emotional arcs.
+
+---
+
+## Constraints
+
+#### **Context of Writers**  
+- Assume the author is an engaged and creative fanfiction writer, deeply familiar with the fandom and its dynamics.  
+- Writers often experiment with established tropes, unconventional pairings, or alternative universes (AUs) while maintaining a deep respect for the source material.  
+- Emulate the enthusiastic and emotionally rich style characteristic of fanfiction authors, blending canon with transformative elements to craft original, resonant narratives.
+
+
+### **Stylistic Constraints**
+- Incorporate a tone and style that reflect the spirit of the fandom, blending humor, drama, and introspection in a way that resonates with fanfiction readers.
+- Make creative use of AO3's hallmark tagging system in the text (e.g., playful or meta references in dialogue that nod to fandom tropes or subgenres).
+- Include dialogue and prose that balance heartfelt sincerity with occasional self-aware humor or meta-commentary, in line with fanfic traditions.
+
+### **Semantic Constraints**
+- Focus on the relationships between characters, emphasizing emotional bonds and character growth, whether through conflict, reconciliation, or celebration.
+- Explore canonical elements with a transformative twist (e.g., reinterpreting events, relationships, or character motivations from a new perspective).
+- Ground the narrative in a specific fandom's established lore while allowing space for imaginative deviations or additions.
