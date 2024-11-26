@@ -26,7 +26,6 @@ def write_date_slots(root_dir):
     '''
     update the human slots with date information
     '''
-    root_dir = 'narrativemagazine' 
     date_slots_dir = f"{root_dir}/date_slots"
 
     # iterate over the directories
@@ -70,8 +69,16 @@ def write_date_slots(root_dir):
 
 
 def main():
+    # narrative magazine
+    print('### Narrative Magazine ###')
     root_dir = 'narrativemagazine'
     write_date_slots(root_dir)
+
+    # newyorker
+    print('## New Yorker ###')
+    root_dir = 'newyorker'
+    write_date_slots(root_dir)
+
 
 
 if __name__ == '__main__':
