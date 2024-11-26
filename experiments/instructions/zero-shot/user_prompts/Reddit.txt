@@ -1,0 +1,23 @@
+## Constraints
+
+### **Context of Writers**  
+- Assume the author is an imaginative and enthusiastic storyteller who enjoys engaging directly with an online community of readers.  
+- Writers often experiment with bold, original ideas or explore twists on familiar concepts, showcasing their creativity and ability to captivate a diverse audience.  
+- Emulate the informal yet polished style common in *r/WritingPrompts*, blending accessibility with a strong sense of storytelling craft.  
+
+
+### **Stylistic Constraints**  
+
+- **Conversational and Approachable Tone**: Maintain a conversational and approachable tone typical of Reddit Writing Prompts.  
+- **Balanced Descriptive Passages**: Balance descriptive passages with dialogue or internal monologue to keep the pacing engaging.  
+- **Direct and Vivid Language**: Avoid overly complex language; keep the style direct but vivid.  
+- **Reinforcement of Ideas**: Employ narrative devices like repetition or callbacks to reinforce central ideas or themes.  
+
+
+### **Semantic Constraints**  
+
+- **Alignment with the Prompt**: Ensure the story directly aligns with and explores the central theme or scenario of the writing prompt.  
+- **Cohesive Narrative Development**: Build a clear, cohesive narrative that develops the implications of the prompt's concept.  
+- **Immersive Sensory Details**: Use immersive sensory details to enrich the reader’s understanding of the protagonist's experiences and environment.  
+- **Open-Ended or Reflective Conclusion**: Conclude with an open-ended, reflective, or impactful note, leaving space for interpretation or further thought.  
+

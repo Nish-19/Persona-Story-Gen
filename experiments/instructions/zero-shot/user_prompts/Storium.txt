@@ -1,24 +1,20 @@
-# Main Instruction  
-Create an immersive and engaging opening scene that establishes a vivid context for a collaborative story, as in Storium. The narrative should closely align with the provided writing prompt and serve as the foundation for subsequent contributions. It must balance descriptive detail, emotional resonance, and narrative intrigue, ensuring it invites further development by others.
-
----
-
 ## Constraints  
 
-#### **Context of Writers**  
+### **Context of Writers**  
 - Assume the author is a collaborative storyteller skilled in creating vivid, open-ended scenes designed to inspire and engage other contributors.  
 - Writers often set the tone for the story while leaving space for co-authors to introduce their own ideas, characters, and plot developments.  
 - Emulate the inclusive, immersive style typical of *Storium* story writing platform, where the opening turn encourages creativity and further contributions.  
 
 
-### Stylistic Constraints  
+### **Stylistic Constraints**  
 - **Set the Tone Appropriately**: Match the tone of the narrative to the writing prompt, whether it be adventurous, mysterious, or foreboding, using a consistent and engaging voice throughout.  
 - **Rich Descriptive Detail**: Employ vivid, sensory descriptions to establish the setting, characters, and atmosphere, enabling readers to visualize and immerse themselves in the story world.  
 - **Dynamic Sentence Structure**: Vary sentence lengths to reflect the pace and mood, using longer, flowing sentences for descriptions and shorter, punchy sentences for action or tension.  
 - **Establish Ambiguity or Suspense**: Drop subtle hints or unanswered questions to create intrigue and encourage curiosity about what happens next.
 
-### Semantic Constraints  
+
+### **Semantic Constraints**  
 - **Introduce the Setting**: Provide a clear depiction of the setting, whether it is a small trading post, a desert town, or a spaceship, and ensure its relevance to the writing prompt.  
-- **Outline the Context**: Clearly establish the circumstances that have led to the current scenario, including significant events or motivations (e.g., a runaway daughter, treasure hunters arriving, or passengers boarding a colony ship).  
-- **Define Key Characters**: Introduce at least one or two central characters, highlighting distinctive traits or roles that will be important in the unfolding story (e.g., a worried father, mysterious treasure hunters, or a watchful passenger).  
-- **Foreshadow the Central Conflict**: Allude to the main challenges or stakes introduced by the writing prompt (e.g., the search for a legendary sword, the quest for the Lost City, or the secrets of a colony ship).
+- **Outline the Context**: Clearly establish the circumstances that have led to the current scenario, including significant events or motivations.  
+- **Define Key Characters**: Introduce at least one or two central characters, highlighting distinctive traits or roles that will be important in the unfolding story.  
+- **Foreshadow the Central Conflict**: Allude to the main challenges or stakes introduced by the writing prompt.
