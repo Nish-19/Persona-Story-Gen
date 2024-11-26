@@ -23,18 +23,23 @@ def get_profile_test_data(data, profile_size, source):
     if source == 'AO3':
         date_field = "published"
         date_format = "%d %b %Y"
+        metadata_fields = ['title', 'fandoms', 'rating', 'warnings', 'relationships']
     elif source == 'narrativemagazine':
         date_field = "date"
         date_format = "%d %b %Y"
+        metadata_fields = ['post_title']
     elif source == 'newyorker':
         date_field = "date"
         date_format = "%d %b %Y"
+        metadata_fields = ['post_title']
     elif source == 'Reddit':
         date_field = "date_posted"
         date_format = "%Y-%m-%d %H:%M:%S"
+        metadata_fields = []
     elif source == 'Storium':
         date_field = "created_at"
         date_format = "%Y-%m-%d %H:%M:%S %Z"
+        metadata_fields = ['story_name']
     
     # sort the data based on date 
     sorted_data = sorted(data, key=lambda x: datetime.strptime(x[date_field], date_format))
@@ -46,11 +51,23 @@ def get_profile_test_data(data, profile_size, source):
     # normalize the fields 
     profile_data = list()
     for prof_data in profile_data_raw:
-        profile_data.append({'date': prof_data[date_field], 'writing_prompt': prof_data['writing_prompt'], 'story': prof_data['comment']})
+        # TODO: collect metadata 
+        metadata = dict()
+        for field in metadata_fields:
+            metadata[field] = prof_data[field]
+        # add story length
+        metadata['story_length'] = len(prof_data['comment'].split(' '))
+        profile_data.append({'date': prof_data[date_field], 'metadata': metadata, 'writing_prompt': prof_data['writing_prompt'], 'story': prof_data['comment']})
     
     test_data = list()
     for t_data in test_data_raw:
-        test_data.append({'date': t_data[date_field], 'writing_prompt': t_data['writing_prompt'], 'story': t_data['comment']})
+        # TODO: collect metadata
+        metadata = dict()
+        for field in metadata_fields:
+            metadata[field] = t_data[field]
+        # add story length
+        metadata['story_length'] = len(t_data['comment'].split(' '))
+        test_data.append({'date': t_data[date_field], 'metadata': metadata, 'writing_prompt': t_data['writing_prompt'], 'story': t_data['comment']})
 
     return profile_data, test_data
 
