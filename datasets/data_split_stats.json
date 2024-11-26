@@ -1,0 +1,26 @@
+{
+    "AO3": {
+        "profile": 159,
+        "test": 80
+    },
+    "narrativemagazine": {
+        "profile": 18,
+        "test": 14
+    },
+    "newyorker": {
+        "profile": 22,
+        "test": 16
+    },
+    "Reddit": {
+        "profile": 113,
+        "test": 57
+    },
+    "Storium": {
+        "profile": 71,
+        "test": 40
+    },
+    "total": {
+        "profile": 383,
+        "test": 207
+    }
+}
