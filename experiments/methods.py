@@ -37,12 +37,13 @@ class StoryGenMethods():
         # writing prompt
         writing_prompt = example['writing_prompt']
         # construct the user instruction 
-        user_instruction = f"Write a short story corresponding to the following writing prompt. The story should be {story_length} words long. Directly start with the story, do not say things like 'Here\'s' the story \n\n"
+        user_instruction = f"Write a short story corresponding to the following writing prompt. The story should be {story_length} words long."
+        if source_constraints:
+            user_instruction += "The story must follow the above mentioned constraints (## Story Constraints)."
+        user_instruction += "Directly start with the story, do not say things like 'Here\'s' the story \n\n"
         if source == 'AO3':
             del example['metadata']['story_name']
             user_instruction += f"Here is the metadata (fandom, rating, warnings, and relationships) for the story: {example['metadata']}\n\n"
-        # include source_constraints
-        user_instruction += f"Here are some constrains that you must follow:\n{source_constraints}\n\n"
         # include writing prompt
         user_instruction += f"Writing Prompt: {writing_prompt}\n\nStory:\n"
 
@@ -84,11 +85,14 @@ class StoryGenMethods():
             '''
             Construct the Vanilla prompt
             '''
+            # include user constraints
+            user_constraints = f"## Story Constraints\n{source_constraints}\n\n"
+
             # construct the user instruction
             user_instruction = self.construct_user_instruction(example, source_constraints, source)
 
             # construct OpenAI prompt
-            prompt = construct_prompt_message(system_instructions, user_instruction, few_shot_examples)
+            prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints, few_shot_examples)
             return prompt
     
         print('Method: Vanilla Story Generation')

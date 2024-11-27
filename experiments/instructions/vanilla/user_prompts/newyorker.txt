@@ -1,5 +1,3 @@
-## Constraints  
-
 ### **Context of Writers**  
 - Assume the author is an experienced and skilled writer, capable of exploring complex human experiences through subtle, layered storytelling.  
 - Emulate the style of well-regarded *New Yorker* contributors like Alice Munro, Haruki Murakami, or Raymond Carver, who excel in revealing depth through simplicity or ambiguity.  
