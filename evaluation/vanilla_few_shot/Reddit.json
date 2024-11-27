@@ -1,0 +1,37 @@
+{
+    "reference_based_metrics": {
+        "Rouge": {
+            "rouge1": 0.430217907048604,
+            "rouge2": 0.07131521286615958,
+            "rougeL": 0.14317007885911304
+        },
+        "BLEU": {
+            "bleu": 0.017265169776300687,
+            "backwards_bleu": 0.017335688205821556
+        },
+        "Bertscore": {
+            "precision": 0.8224956194559733,
+            "recall": 0.8170234393655208,
+            "f1": 0.8197376529375712
+        },
+        "Jaccard distance": {
+            "jaccard_distance": 0.8845230070335971
+        }
+    },
+    "diversity_metrics": {
+        "compression_scores": {
+            "compression_ratio_gt": 2.545,
+            "compression_ratio_gen": 2.685
+        },
+        "homogenization_scores_bleu": "None",
+        "homogenization_scores_rougel": "None",
+        "homogenization_scores_bertscore": "None",
+        "ngram_diversity_scores": "None"
+    },
+    "style_metrics": {
+        "length": {
+            "avg_length_gt": 944.9473684210526,
+            "avg_length_gen": 903.859649122807
+        }
+    }
+}

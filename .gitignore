@@ -1,3 +1,4 @@
 .vscode/
 generate_prompts/__pycache__/
 experiments/__pycache__/
+evaluation/__pycache__/
