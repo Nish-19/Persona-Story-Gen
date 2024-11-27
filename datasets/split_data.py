@@ -54,7 +54,10 @@ def get_profile_test_data(data, profile_size, source):
         # TODO: collect metadata 
         metadata = dict()
         for field in metadata_fields:
-            metadata[field] = prof_data[field]
+            if 'title' in field:
+                metadata['story_name'] = prof_data[field]
+            else:
+                metadata[field] = prof_data[field]
         # add story length
         metadata['story_length'] = len(prof_data['comment'].split(' '))
         profile_data.append({'date': prof_data[date_field], 'metadata': metadata, 'writing_prompt': prof_data['writing_prompt'], 'story': prof_data['comment']})
@@ -64,7 +67,10 @@ def get_profile_test_data(data, profile_size, source):
         # TODO: collect metadata
         metadata = dict()
         for field in metadata_fields:
-            metadata[field] = t_data[field]
+            if 'title' in field:
+                metadata['story_name'] = t_data[field]
+            else:
+                metadata[field] = t_data[field]
         # add story length
         metadata['story_length'] = len(t_data['comment'].split(' '))
         test_data.append({'date': t_data[date_field], 'metadata': metadata, 'writing_prompt': t_data['writing_prompt'], 'story': t_data['comment']})

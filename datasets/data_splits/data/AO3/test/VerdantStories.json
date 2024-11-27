@@ -2,7 +2,7 @@
     {
         "date": "18 Jan 2024",
         "metadata": {
-            "title": "Pride",
+            "story_name": "Pride",
             "fandoms": [
                 "Keeper of the Lost Cities Series - Shannon Messenger"
             ],
@@ -17,7 +17,7 @@
     {
         "date": "04 Feb 2024",
         "metadata": {
-            "title": "How do we Make One Night Last Forever?",
+            "story_name": "How do we Make One Night Last Forever?",
             "fandoms": [
                 "Keeper of the Lost Cities Series - Shannon Messenger"
             ],
@@ -32,7 +32,7 @@
     {
         "date": "08 Mar 2024",
         "metadata": {
-            "title": "How Far Will You Go (And How Deep Will You Fall)",
+            "story_name": "How Far Will You Go (And How Deep Will You Fall)",
             "fandoms": [
                 "The Owl House (Cartoon)"
             ],
@@ -47,7 +47,7 @@
     {
         "date": "19 Mar 2024",
         "metadata": {
-            "title": "I Never State The Obvious (But That Doesn't Mean That It's Not There)",
+            "story_name": "I Never State The Obvious (But That Doesn't Mean That It's Not There)",
             "fandoms": [
                 "The Owl House (Cartoon)"
             ],
@@ -62,7 +62,7 @@
     {
         "date": "29 Sep 2024",
         "metadata": {
-            "title": "Flying Too Close To The Sun",
+            "story_name": "Flying Too Close To The Sun",
             "fandoms": [
                 "Percy Jackson and the Olympians - Rick Riordan"
             ],

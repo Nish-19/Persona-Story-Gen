@@ -2,7 +2,7 @@
     {
         "date": "21 Oct 2024",
         "metadata": {
-            "title": "We've Done Worse",
+            "story_name": "We've Done Worse",
             "fandoms": [
                 "White Collar (TV 2009)"
             ],
@@ -17,7 +17,7 @@
     {
         "date": "26 Oct 2024",
         "metadata": {
-            "title": "You Were The First",
+            "story_name": "You Were The First",
             "fandoms": [
                 "Supernatural (TV 2005)"
             ],
@@ -32,7 +32,7 @@
     {
         "date": "27 Oct 2024",
         "metadata": {
-            "title": "Let me Remind You",
+            "story_name": "Let me Remind You",
             "fandoms": [
                 "White Collar (TV 2009)"
             ],
@@ -47,7 +47,7 @@
     {
         "date": "29 Oct 2024",
         "metadata": {
-            "title": "How Did This Happen?",
+            "story_name": "How Did This Happen?",
             "fandoms": [
                 "Star Trek: The Original Series"
             ],
@@ -62,7 +62,7 @@
     {
         "date": "30 Oct 2024",
         "metadata": {
-            "title": "I Won't Let You Down",
+            "story_name": "I Won't Let You Down",
             "fandoms": [
                 "White Collar (TV 2009)"
             ],

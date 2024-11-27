@@ -2,7 +2,7 @@
     {
         "date": "03 Nov 2023",
         "metadata": {
-            "title": "Soulmates",
+            "story_name": "Soulmates",
             "fandoms": [
                 "Keeper of the Lost Cities Series - Shannon Messenger"
             ],
@@ -17,7 +17,7 @@
     {
         "date": "06 Nov 2023",
         "metadata": {
-            "title": "Alone in a New World",
+            "story_name": "Alone in a New World",
             "fandoms": [
                 "Keeper of the Lost Cities Series - Shannon Messenger"
             ],
@@ -32,7 +32,7 @@
     {
         "date": "13 Nov 2023",
         "metadata": {
-            "title": "Returning home",
+            "story_name": "Returning home",
             "fandoms": [
                 "Keeper of the Lost Cities Series - Shannon Messenger"
             ],
@@ -47,7 +47,7 @@
     {
         "date": "21 Nov 2023",
         "metadata": {
-            "title": "When Eyes Meet",
+            "story_name": "When Eyes Meet",
             "fandoms": [
                 "Keeper of the Lost Cities Series - Shannon Messenger"
             ],
@@ -62,7 +62,7 @@
     {
         "date": "23 Nov 2023",
         "metadata": {
-            "title": "The Only Person I Need",
+            "story_name": "The Only Person I Need",
             "fandoms": [
                 "Keeper of the Lost Cities Series - Shannon Messenger"
             ],
@@ -77,7 +77,7 @@
     {
         "date": "27 Nov 2023",
         "metadata": {
-            "title": "Scars To The Beautiful",
+            "story_name": "Scars To The Beautiful",
             "fandoms": [
                 "Keeper of the Lost Cities Series - Shannon Messenger"
             ],
@@ -92,7 +92,7 @@
     {
         "date": "01 Jan 2024",
         "metadata": {
-            "title": "Along The Road We Have Each Other",
+            "story_name": "Along The Road We Have Each Other",
             "fandoms": [
                 "Keeper of the Lost Cities Series - Shannon Messenger"
             ],
@@ -107,7 +107,7 @@
     {
         "date": "09 Jan 2024",
         "metadata": {
-            "title": "Reunion",
+            "story_name": "Reunion",
             "fandoms": [
                 "Keeper of the Lost Cities Series - Shannon Messenger"
             ],
@@ -122,7 +122,7 @@
     {
         "date": "09 Jan 2024",
         "metadata": {
-            "title": "Cobble's Ship Log",
+            "story_name": "Cobble's Ship Log",
             "fandoms": [
                 "Outer Wilds (Video Game)"
             ],

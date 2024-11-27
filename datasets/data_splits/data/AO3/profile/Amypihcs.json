@@ -2,7 +2,7 @@
     {
         "date": "26 Nov 2023",
         "metadata": {
-            "title": "The tenth time is the good one!",
+            "story_name": "The tenth time is the good one!",
             "fandoms": [
                 "Sherlock Holmes - Arthur Conan Doyle",
                 "Sherlock Holmes (1984 TV)"
@@ -18,7 +18,7 @@
     {
         "date": "12 Jan 2024",
         "metadata": {
-            "title": "The latest vegetable alkaloid",
+            "story_name": "The latest vegetable alkaloid",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes - Arthur Conan Doyle"
@@ -34,7 +34,7 @@
     {
         "date": "03 Feb 2024",
         "metadata": {
-            "title": "Words of care",
+            "story_name": "Words of care",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes - Arthur Conan Doyle",
@@ -51,7 +51,7 @@
     {
         "date": "22 May 2024",
         "metadata": {
-            "title": "Chaos",
+            "story_name": "Chaos",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes - Arthur Conan Doyle",
@@ -68,7 +68,7 @@
     {
         "date": "23 May 2024",
         "metadata": {
-            "title": "Apology",
+            "story_name": "Apology",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes - Arthur Conan Doyle",
@@ -85,7 +85,7 @@
     {
         "date": "26 May 2024",
         "metadata": {
-            "title": "Jealousy",
+            "story_name": "Jealousy",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes - Arthur Conan Doyle",
@@ -102,7 +102,7 @@
     {
         "date": "28 May 2024",
         "metadata": {
-            "title": "Empty",
+            "story_name": "Empty",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes - Arthur Conan Doyle",
@@ -119,7 +119,7 @@
     {
         "date": "30 May 2024",
         "metadata": {
-            "title": "Journey",
+            "story_name": "Journey",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes - Arthur Conan Doyle",
@@ -136,7 +136,7 @@
     {
         "date": "30 Jul 2024",
         "metadata": {
-            "title": "Re-furnishing the cottage",
+            "story_name": "Re-furnishing the cottage",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes (1984 TV)"
@@ -152,7 +152,7 @@
     {
         "date": "29 Aug 2024",
         "metadata": {
-            "title": "One whole layer of oysters",
+            "story_name": "One whole layer of oysters",
             "fandoms": [
                 "Sherlock Holmes - Arthur Conan Doyle",
                 "Sherlock Holmes (1984 TV)"

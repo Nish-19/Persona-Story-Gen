@@ -2,7 +2,7 @@
     {
         "date": "01 Jan 2020",
         "metadata": {
-            "post_title": "Nowhere, Australia",
+            "story_name": "Nowhere, Australia",
             "story_length": 598
         },
         "writing_prompt": "On a cold, desolate highway under a fading night sky, you flee a stranger's trailer with nothing but a stolen watch and the weight of a night you can't quite name\u2014what are you running from, and what are you running toward?",
@@ -11,7 +11,7 @@
     {
         "date": "01 Nov 2021",
         "metadata": {
-            "post_title": "Little White Birds",
+            "story_name": "Little White Birds",
             "story_length": 801
         },
         "writing_prompt": "Fifteen years after your father vanished with a woman in a yellow dress, you receive news of his death\u2014and with it, the haunting scent of roses begins to fill your home, no matter how tightly you seal the windows.",

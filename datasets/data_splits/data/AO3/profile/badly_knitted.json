@@ -2,7 +2,7 @@
     {
         "date": "24 Nov 2023",
         "metadata": {
-            "title": "Under The Weather",
+            "story_name": "Under The Weather",
             "fandoms": [
                 "FAKE (Manga)"
             ],
@@ -17,7 +17,7 @@
     {
         "date": "01 Dec 2023",
         "metadata": {
-            "title": "Missing Ryo",
+            "story_name": "Missing Ryo",
             "fandoms": [
                 "FAKE (Manga)"
             ],
@@ -32,7 +32,7 @@
     {
         "date": "08 Dec 2023",
         "metadata": {
-            "title": "Cold Noses",
+            "story_name": "Cold Noses",
             "fandoms": [
                 "FAKE (Manga)"
             ],
@@ -47,7 +47,7 @@
     {
         "date": "29 Dec 2023",
         "metadata": {
-            "title": "Finding Paradise",
+            "story_name": "Finding Paradise",
             "fandoms": [
                 "FAKE (Manga)"
             ],
@@ -62,7 +62,7 @@
     {
         "date": "12 Jan 2024",
         "metadata": {
-            "title": "The Worst Weather",
+            "story_name": "The Worst Weather",
             "fandoms": [
                 "FAKE (Manga)"
             ],
@@ -77,7 +77,7 @@
     {
         "date": "25 Jan 2024",
         "metadata": {
-            "title": "Warm And Furry",
+            "story_name": "Warm And Furry",
             "fandoms": [
                 "Torchwood"
             ],
@@ -92,7 +92,7 @@
     {
         "date": "02 Feb 2024",
         "metadata": {
-            "title": "Freeway Blues",
+            "story_name": "Freeway Blues",
             "fandoms": [
                 "FAKE (Manga)"
             ],
@@ -107,7 +107,7 @@
     {
         "date": "08 Feb 2024",
         "metadata": {
-            "title": "Sisterly Concern",
+            "story_name": "Sisterly Concern",
             "fandoms": [
                 "Torchwood"
             ],
@@ -122,7 +122,7 @@
     {
         "date": "15 Mar 2024",
         "metadata": {
-            "title": "Unreasonable",
+            "story_name": "Unreasonable",
             "fandoms": [
                 "FAKE (Manga)"
             ],
@@ -137,7 +137,7 @@
     {
         "date": "28 Mar 2024",
         "metadata": {
-            "title": "Cold And Wet",
+            "story_name": "Cold And Wet",
             "fandoms": [
                 "FAKE (Manga)"
             ],

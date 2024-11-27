@@ -2,7 +2,7 @@
     {
         "date": "01 Oct 2024",
         "metadata": {
-            "title": "That was good work",
+            "story_name": "That was good work",
             "fandoms": [
                 "Inspector Morse (TV)"
             ],
@@ -17,7 +17,7 @@
     {
         "date": "03 Oct 2024",
         "metadata": {
-            "title": "I know you better",
+            "story_name": "I know you better",
             "fandoms": [
                 "White Collar (TV 2009)"
             ],
@@ -32,7 +32,7 @@
     {
         "date": "05 Oct 2024",
         "metadata": {
-            "title": "It's A New Day Let's Go",
+            "story_name": "It's A New Day Let's Go",
             "fandoms": [
                 "Good Omens (TV)"
             ],
@@ -47,7 +47,7 @@
     {
         "date": "06 Oct 2024",
         "metadata": {
-            "title": "I'm Not Giving Up",
+            "story_name": "I'm Not Giving Up",
             "fandoms": [
                 "Death in Paradise"
             ],
@@ -62,7 +62,7 @@
     {
         "date": "11 Oct 2024",
         "metadata": {
-            "title": "Well, That Worked Out Great",
+            "story_name": "Well, That Worked Out Great",
             "fandoms": [
                 "Supernatural (TV 2005)"
             ],
@@ -77,7 +77,7 @@
     {
         "date": "12 Oct 2024",
         "metadata": {
-            "title": "Did You Hear That?",
+            "story_name": "Did You Hear That?",
             "fandoms": [
                 "Death in Paradise"
             ],
@@ -92,7 +92,7 @@
     {
         "date": "14 Oct 2024",
         "metadata": {
-            "title": "Did You Stick To The Plan?",
+            "story_name": "Did You Stick To The Plan?",
             "fandoms": [
                 "Good Omens (TV)",
                 "Good Omens - Neil Gaiman & Terry Pratchett"
@@ -108,7 +108,7 @@
     {
         "date": "16 Oct 2024",
         "metadata": {
-            "title": "I'm Not Okay",
+            "story_name": "I'm Not Okay",
             "fandoms": [
                 "Endeavour (TV)"
             ],
@@ -123,7 +123,7 @@
     {
         "date": "19 Oct 2024",
         "metadata": {
-            "title": "This Is Getting Ridiculous",
+            "story_name": "This Is Getting Ridiculous",
             "fandoms": [
                 "Father Brown (2013)"
             ],
@@ -138,7 +138,7 @@
     {
         "date": "20 Oct 2024",
         "metadata": {
-            "title": "I Saw Your Eyes Light Up",
+            "story_name": "I Saw Your Eyes Light Up",
             "fandoms": [
                 "Death in Paradise"
             ],

@@ -2,7 +2,7 @@
     {
         "date": "26 Apr 2024",
         "metadata": {
-            "title": "Another Kind Of Memory",
+            "story_name": "Another Kind Of Memory",
             "fandoms": [
                 "Merlin (TV)"
             ],
@@ -17,7 +17,7 @@
     {
         "date": "02 Jun 2024",
         "metadata": {
-            "title": "The Raven Kings",
+            "story_name": "The Raven Kings",
             "fandoms": [
                 "The Hobbit (Jackson Movies)"
             ],
@@ -32,7 +32,7 @@
     {
         "date": "21 Jul 2024",
         "metadata": {
-            "title": "Winter's Bite",
+            "story_name": "Winter's Bite",
             "fandoms": [
                 "Merlin (TV)"
             ],
@@ -47,7 +47,7 @@
     {
         "date": "15 Sep 2024",
         "metadata": {
-            "title": "Foofaraw",
+            "story_name": "Foofaraw",
             "fandoms": [
                 "The Hobbit (Jackson Movies)"
             ],

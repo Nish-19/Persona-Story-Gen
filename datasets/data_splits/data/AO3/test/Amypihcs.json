@@ -2,7 +2,7 @@
     {
         "date": "01 Oct 2024",
         "metadata": {
-            "title": "1. borrowing a sweatshirt or a coat",
+            "story_name": "1. borrowing a sweatshirt or a coat",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes (1984 TV)",
@@ -19,7 +19,7 @@
     {
         "date": "03 Oct 2024",
         "metadata": {
-            "title": "2.Wrapped in a soft fuzzy blanket",
+            "story_name": "2.Wrapped in a soft fuzzy blanket",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes - Arthur Conan Doyle",
@@ -36,7 +36,7 @@
     {
         "date": "06 Oct 2024",
         "metadata": {
-            "title": "6. Cuddles after a bad day",
+            "story_name": "6. Cuddles after a bad day",
             "fandoms": [
                 "Sherlock Holmes & Related Fandoms",
                 "Sherlock Holmes - Arthur Conan Doyle",
@@ -53,7 +53,7 @@
     {
         "date": "12 Oct 2024",
         "metadata": {
-            "title": "11. Unexpected family gathering.",
+            "story_name": "11. Unexpected family gathering.",
             "fandoms": [
                 "Sherlock Holmes - Arthur Conan Doyle",
                 "Sherlock Holmes (1984 TV)",
@@ -70,7 +70,7 @@
     {
         "date": "21 Oct 2024",
         "metadata": {
-            "title": "22. Too freaked out to sleep alone",
+            "story_name": "22. Too freaked out to sleep alone",
             "fandoms": [
                 "Sherlock Holmes - Arthur Conan Doyle",
                 "Sherlock Holmes (1984 TV)",

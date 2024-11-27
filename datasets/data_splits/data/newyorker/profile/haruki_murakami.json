@@ -2,7 +2,7 @@
     {
         "date": "02 Feb 2003",
         "metadata": {
-            "post_title": "Ice Man",
+            "story_name": "Ice Man",
             "story_length": 605
         },
         "writing_prompt": "You fell in love with an ice man, a mysterious being who seemed to know everything about you but nothing about himself. Now, in the endless cold of the South Pole, you wonder if love alone can thaw the growing distance between you.",
@@ -11,7 +11,7 @@
     {
         "date": "13 Nov 2005",
         "metadata": {
-            "post_title": "The Year of Spaghetti",
+            "story_name": "The Year of Spaghetti",
             "story_length": 1611
         },
         "writing_prompt": "In 1971, you cooked spaghetti obsessively, as if each strand held the key to understanding your solitude. One rainy afternoon, the phone rang, and a voice from the past asked for help. What do you do when the comfort of boiling pasta collides with the weight of someone else's troubles?",

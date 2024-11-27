@@ -2,7 +2,7 @@
     {
         "date": "05 Nov 2023",
         "metadata": {
-            "title": "Enough of the slow tunes",
+            "story_name": "Enough of the slow tunes",
             "fandoms": [
                 "The Lord of the Rings - J. R. R. Tolkien",
                 "The Lord of the Rings - All Media Types",
@@ -19,7 +19,7 @@
     {
         "date": "12 Nov 2023",
         "metadata": {
-            "title": "of woodland instincts",
+            "story_name": "of woodland instincts",
             "fandoms": [
                 "The Lord of the Rings - J. R. R. Tolkien",
                 "The Lord of the Rings - All Media Types",
@@ -36,7 +36,7 @@
     {
         "date": "06 Dec 2023",
         "metadata": {
-            "title": "Warmth",
+            "story_name": "Warmth",
             "fandoms": [
                 "The Silmarillion and other histories of Middle-Earth - J. R. R. Tolkien"
             ],
@@ -51,7 +51,7 @@
     {
         "date": "18 Feb 2024",
         "metadata": {
-            "title": "an (unintentional) offer for a pillow",
+            "story_name": "an (unintentional) offer for a pillow",
             "fandoms": [
                 "The Lord of the Rings - J. R. R. Tolkien",
                 "The Lord of the Rings - All Media Types",
@@ -68,7 +68,7 @@
     {
         "date": "03 Apr 2024",
         "metadata": {
-            "title": "a few tricks up the sleeve",
+            "story_name": "a few tricks up the sleeve",
             "fandoms": [
                 "The Silmarillion and other histories of Middle-Earth - J. R. R. Tolkien"
             ],
@@ -83,7 +83,7 @@
     {
         "date": "14 Sep 2024",
         "metadata": {
-            "title": "once upon a time",
+            "story_name": "once upon a time",
             "fandoms": [
                 "The Silmarillion and other histories of Middle-Earth - J. R. R. Tolkien"
             ],
@@ -98,7 +98,7 @@
     {
         "date": "17 Sep 2024",
         "metadata": {
-            "title": "the golden Maia in the mirror",
+            "story_name": "the golden Maia in the mirror",
             "fandoms": [
                 "The Silmarillion and other histories of Middle-Earth - J. R. R. Tolkien"
             ],

@@ -2,7 +2,7 @@
     {
         "date": "01 Nov 2019",
         "metadata": {
-            "post_title": "Asteroid B612",
+            "story_name": "Asteroid B612",
             "story_length": 1017
         },
         "writing_prompt": "You\u2019re driving home at dawn after a sleepless night with old friends, the quiet hum of the road and the soft blue sunrise stirring memories of someone beside you who feels both distant and achingly familiar. What do you say, or leave unsaid?",
@@ -11,7 +11,7 @@
     {
         "date": "01 Nov 2020",
         "metadata": {
-            "post_title": "Long Distance",
+            "story_name": "Long Distance",
             "story_length": 585
         },
         "writing_prompt": "Every time they leave, you tell yourself it\u2019s the last goodbye\u2014but the door stays unlocked, the light stays on, and you keep waiting, caught between hope and the ache of their absence.",
@@ -20,7 +20,7 @@
     {
         "date": "02 Nov 2020",
         "metadata": {
-            "post_title": "Your Ghost",
+            "story_name": "Your Ghost",
             "story_length": 732
         },
         "writing_prompt": "After returning home, you find an old cassette tape of childhood recordings that stirs up memories\u2014some warm, some heavy, and some you\u2019re not sure you\u2019re ready to face. What do you do with the flood of emotions it brings?",

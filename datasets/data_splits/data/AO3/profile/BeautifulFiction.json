@@ -2,7 +2,7 @@
     {
         "date": "30 Nov 2023",
         "metadata": {
-            "title": "The Only Truth",
+            "story_name": "The Only Truth",
             "fandoms": [
                 "The Hobbit (Jackson Movies)"
             ],
@@ -17,7 +17,7 @@
     {
         "date": "22 Dec 2023",
         "metadata": {
-            "title": "Peregrinate",
+            "story_name": "Peregrinate",
             "fandoms": [
                 "Merlin (TV)"
             ],
@@ -32,7 +32,7 @@
     {
         "date": "23 Dec 2023",
         "metadata": {
-            "title": "Myth & Legend",
+            "story_name": "Myth & Legend",
             "fandoms": [
                 "The Hobbit - All Media Types"
             ],
@@ -47,7 +47,7 @@
     {
         "date": "03 Jan 2024",
         "metadata": {
-            "title": "Kakorrhaphiophobia",
+            "story_name": "Kakorrhaphiophobia",
             "fandoms": [
                 "Teen Wolf (TV)"
             ],
@@ -62,7 +62,7 @@
     {
         "date": "04 Feb 2024",
         "metadata": {
-            "title": "Ardent",
+            "story_name": "Ardent",
             "fandoms": [
                 "Merlin (TV)"
             ],
@@ -77,7 +77,7 @@
     {
         "date": "17 Mar 2024",
         "metadata": {
-            "title": "Portmanteau",
+            "story_name": "Portmanteau",
             "fandoms": [
                 "Merlin (TV)"
             ],
@@ -92,7 +92,7 @@
     {
         "date": "24 Mar 2024",
         "metadata": {
-            "title": "Portents",
+            "story_name": "Portents",
             "fandoms": [
                 "Teen Wolf (TV)"
             ],

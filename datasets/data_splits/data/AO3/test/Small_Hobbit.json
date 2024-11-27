@@ -2,7 +2,7 @@
     {
         "date": "02 May 2024",
         "metadata": {
-            "title": "Elsinore Junior Academy",
+            "story_name": "Elsinore Junior Academy",
             "fandoms": [
                 "Hamlet - Shakespeare"
             ],
@@ -17,7 +17,7 @@
     {
         "date": "08 Jul 2024",
         "metadata": {
-            "title": "Mycroft Holmes' Summer Wonderland",
+            "story_name": "Mycroft Holmes' Summer Wonderland",
             "fandoms": [
                 "Sherlock (TV)"
             ],
@@ -32,7 +32,7 @@
     {
         "date": "21 Jul 2024",
         "metadata": {
-            "title": "Choir Practice",
+            "story_name": "Choir Practice",
             "fandoms": [
                 "Sherlock Holmes - Arthur Conan Doyle"
             ],
@@ -47,7 +47,7 @@
     {
         "date": "05 Oct 2024",
         "metadata": {
-            "title": "Hiding in Plain Sight",
+            "story_name": "Hiding in Plain Sight",
             "fandoms": [
                 "Spooks | MI-5"
             ],
@@ -62,7 +62,7 @@
     {
         "date": "02 Nov 2024",
         "metadata": {
-            "title": "Mycroft Holmes' Hallowe'en Wonderland",
+            "story_name": "Mycroft Holmes' Hallowe'en Wonderland",
             "fandoms": [
                 "Sherlock (TV)"
             ],

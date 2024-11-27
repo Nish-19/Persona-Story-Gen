@@ -2,7 +2,7 @@
     {
         "date": "12 Apr 2024",
         "metadata": {
-            "title": "Thorny Problem",
+            "story_name": "Thorny Problem",
             "fandoms": [
                 "Stargate SG-1"
             ],
@@ -17,7 +17,7 @@
     {
         "date": "05 Jul 2024",
         "metadata": {
-            "title": "False Alibi",
+            "story_name": "False Alibi",
             "fandoms": [
                 "FAKE (Manga)"
             ],
@@ -32,7 +32,7 @@
     {
         "date": "05 Aug 2024",
         "metadata": {
-            "title": "The Trials Of Parenthood",
+            "story_name": "The Trials Of Parenthood",
             "fandoms": [
                 "Torchwood"
             ],
@@ -47,7 +47,7 @@
     {
         "date": "09 Aug 2024",
         "metadata": {
-            "title": "Feeling Foolish",
+            "story_name": "Feeling Foolish",
             "fandoms": [
                 "FAKE (Manga)"
             ],
@@ -62,7 +62,7 @@
     {
         "date": "13 Sep 2024",
         "metadata": {
-            "title": "Not Quite Like Earth",
+            "story_name": "Not Quite Like Earth",
             "fandoms": [
                 "Stargate SG-1"
             ],

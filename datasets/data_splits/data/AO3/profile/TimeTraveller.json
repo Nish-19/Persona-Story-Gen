@@ -2,7 +2,7 @@
     {
         "date": "07 Dec 2023",
         "metadata": {
-            "title": "How can I ever go back?",
+            "story_name": "How can I ever go back?",
             "fandoms": [
                 "The Hobbit - All Media Types",
                 "The Hobbit (Jackson Movies)",
@@ -19,7 +19,7 @@
     {
         "date": "23 Dec 2023",
         "metadata": {
-            "title": "Ninth and Young",
+            "story_name": "Ninth and Young",
             "fandoms": [
                 "Doctor Who (2005)"
             ],
@@ -34,7 +34,7 @@
     {
         "date": "31 Dec 2023",
         "metadata": {
-            "title": "I must protect Molly",
+            "story_name": "I must protect Molly",
             "fandoms": [
                 "Chicken Run (2000)"
             ],
@@ -49,7 +49,7 @@
     {
         "date": "18 Jan 2024",
         "metadata": {
-            "title": "Meeting in the Dark, and the Cold",
+            "story_name": "Meeting in the Dark, and the Cold",
             "fandoms": [
                 "Stranger Things (TV 2016)"
             ],
@@ -64,7 +64,7 @@
     {
         "date": "10 Feb 2024",
         "metadata": {
-            "title": "I Must Leave",
+            "story_name": "I Must Leave",
             "fandoms": [
                 "Stranger Things (TV 2016)"
             ],
@@ -79,7 +79,7 @@
     {
         "date": "28 Feb 2024",
         "metadata": {
-            "title": "The Jedi or Sith Temple",
+            "story_name": "The Jedi or Sith Temple",
             "fandoms": [
                 "Star Wars - All Media Types",
                 "Star Wars: The Clone Wars (2008) - All Media Types"
@@ -95,7 +95,7 @@
     {
         "date": "06 Mar 2024",
         "metadata": {
-            "title": "Peter's cyber technology",
+            "story_name": "Peter's cyber technology",
             "fandoms": [
                 "Spider-Man (Comicverse)"
             ],
@@ -110,7 +110,7 @@
     {
         "date": "06 Mar 2024",
         "metadata": {
-            "title": "PTSD",
+            "story_name": "PTSD",
             "fandoms": [
                 "Death in Paradise"
             ],
@@ -125,7 +125,7 @@
     {
         "date": "06 Mar 2024",
         "metadata": {
-            "title": "Octavius and Peter Parker",
+            "story_name": "Octavius and Peter Parker",
             "fandoms": [
                 "Spider-Man (Comicverse)"
             ],
@@ -140,7 +140,7 @@
     {
         "date": "06 Mar 2024",
         "metadata": {
-            "title": "Master and Apprentice",
+            "story_name": "Master and Apprentice",
             "fandoms": [
                 "Spider-Man - All Media Types",
                 "Spider-Man (Movies - Raimi)",
