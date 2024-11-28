@@ -11,6 +11,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from collections import defaultdict
 from prompt_llm_utils import construct_prompt_message, prompt_openai
+import argparse
 
 class StoryGenMethods():
     def __init__(self):
@@ -38,9 +39,9 @@ class StoryGenMethods():
         writing_prompt = example['writing_prompt']
         # construct the user instruction 
         user_instruction = f"Write a short story corresponding to the following writing prompt. The story should be {story_length} words long."
-        if source_constraints:
-            user_instruction += "The story must follow the above mentioned constraints (## Story Constraints)."
-        user_instruction += "Directly start with the story, do not say things like 'Here\'s' the story \n\n"
+        # if source_constraints:
+        #     user_instruction += "The story must follow the above mentioned constraints (## Story Constraints)."
+        user_instruction += " Directly start with the story, do not say things like 'Here\'s' the story.\n\n"
         if source == 'AO3':
             del example['metadata']['story_name']
             user_instruction += f"Here is the metadata (fandom, rating, warnings, and relationships) for the story: {example['metadata']}\n\n"
@@ -91,6 +92,7 @@ class StoryGenMethods():
             # construct the user instruction
             user_instruction = self.construct_user_instruction(example, source_constraints, source)
 
+
             # construct OpenAI prompt
             prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints, few_shot_examples)
             return prompt
@@ -121,6 +123,14 @@ class StoryGenMethods():
         # read the system instructions
         with open(system_instructions_path, 'r') as f:
             system_instructions = f.read()
+
+        # NOTE: Edit the system instructions
+        # 1. Mention source constraints
+        system_instructions += ' Be sure to adhere to the ## Story Constraints provided to guide your narrative.'
+        # 2. Mention few shot demonstrations (chat history)
+        if few_shot:
+            system_instructions += ' Also, follow the patterns and examples demonstrated in the provided few-shot chat history as a reference for tone, style, and structure.'
+
         
         # read the user instructions
         with open(source_constraints_path, 'r') as f:
@@ -157,6 +167,11 @@ class StoryGenMethods():
             
             # iterate over the test data
             for ictr, example in tqdm(enumerate(test_data), desc=f'Processing {file}', total=len(test_data)):
+                
+                # stop after 2 iterations
+                if ictr > 1:
+                    break
+
                 # check if the example already exists in the results
                 if ictr < len(results):
                     continue
@@ -176,14 +191,25 @@ class StoryGenMethods():
                 with open(output_file_path, 'w') as f:
                     json.dump(results, f, indent=4)
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='Story Generation Methods')
+    # few shot
+    parser.add_argument('--few_shot', action='store_true', help='Few Shot Story Generation')
+    # source
+    parser.add_argument('--source', type=str, default='Reddit', help='Source of the data')
+    return parser.parse_args()
 
 def main():
+    # parse arguments
+    args = parse_args()
+    # source
+    source = args.source    
     # few shot 
-    few_shot = True
+    few_shot = args.few_shot
     # create an instance of the StoryGenMethods class
     story_gen_methods = StoryGenMethods()
     # perform Vanilla story generation
-    story_gen_methods.perform_vanilla(source='Reddit', few_shot=few_shot)
+    story_gen_methods.perform_vanilla(source=source, few_shot=few_shot)
 
 if __name__ == '__main__':
     main()
