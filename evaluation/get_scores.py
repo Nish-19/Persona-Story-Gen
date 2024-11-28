@@ -12,10 +12,13 @@ def parse_args():
     parser.add_argument('--few_shot', type=bool, default=False, help='Few shot')
     # source
     parser.add_argument('--source', type=str, default='Reddit', help='Source')
+    # method choice 
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema)')
     # verbose
     parser.add_argument('--verbose', type=bool, default=False, help='Verbose')
     # compute_gt
     parser.add_argument('--compute_gt', type=bool, default=False, help='Verbose')
+
     return parser.parse_args()
 
 def main():
@@ -26,6 +29,8 @@ def main():
     few_shot = args.few_shot
     # source 
     source = args.source
+    # choice
+    choice = args.choice
     # verbose
     verbose = args.verbose
     # compute_gt
@@ -39,10 +44,14 @@ def main():
 
     # root directories 
     gt_root_dir = f'../datasets/data_splits/data/{source}/test/'
-    expts_root_dir = f'../experiments/results/vanilla{suffix}/{source}'
+    if choice == 1:
+        consider_dir = f'vanilla{suffix}'
+    elif choice == 2:
+        consider_dir = f'no_schema'
+    expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
 
     # results output directory 
-    output_dir = f'vanilla{suffix}' 
+    output_dir = consider_dir
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
