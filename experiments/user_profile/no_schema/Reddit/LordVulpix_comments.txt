@@ -1,0 +1,34 @@
+<thinking>
+**Plot**: The user structures their stories with a clear beginning, middle, and end, often starting with a character in a challenging situation. Conflict is introduced early, and the narrative progresses through dialogue and character interactions. Resolutions are typically open-ended or suggest a continuation of the story, leaving some elements to the reader's imagination.
+
+**Creativity**: The user blends genres and incorporates imaginative elements, such as a lizardfolk practicing heretical medicine or a vampire running an orphanage. They reinterpret prompts in unique ways, often adding layers of irony or humor, such as a superhero inadvertently becoming a supervillain.
+
+**Development (Character and Setting)**: Characters are multidimensional, with clear motivations and emotional arcs. The user creates immersive settings that enhance the story's tone, such as a small village jail or a peaceful town with supernatural inhabitants. Dialogue is used effectively to reveal character traits and advance the plot.
+
+**Language Use**: The user employs descriptive language to create vivid imagery and set the scene. Pacing is well-managed, with a balance of action, dialogue, and introspection. The tone varies to match the story's mood, from tense and confrontational to light-hearted and humorous. Dialogue is natural and contributes to character development and plot progression.
+</thinking>
+
+<story_rules>
+**Plot Rules**:
+1. Start with a character in a challenging or unusual situation to hook the reader.
+2. Introduce conflict early through dialogue or character actions.
+3. Progress the narrative through character interactions and dialogue.
+4. Resolve the story in a way that suggests continuation or leaves some elements open-ended.
+
+**Creativity Rules**:
+1. Blend genres and incorporate imaginative or unconventional elements.
+2. Reinterpret prompts in unique ways, adding layers of irony or humor.
+3. Use unexpected twists or reveals to keep the reader engaged.
+
+**Character and Setting Rules**:
+1. Develop multidimensional characters with clear motivations and emotional arcs.
+2. Create immersive settings that enhance the story's tone and themes.
+3. Use dialogue to reveal character traits and advance the plot.
+4. Ensure characters' actions and decisions are consistent with their established traits.
+
+**Language Use Rules**:
+1. Employ descriptive language to create vivid imagery and set the scene.
+2. Balance action, dialogue, and introspection to manage pacing effectively.
+3. Match the tone to the story's mood, varying from tense and confrontational to light-hearted and humorous.
+4. Write natural dialogue that contributes to character development and plot progression.
+</story_rules>

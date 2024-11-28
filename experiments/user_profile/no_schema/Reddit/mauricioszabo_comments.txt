@@ -1,0 +1,35 @@
+<thinking>
+**Plot**: The user’s stories often start in medias res, immediately immersing the reader in the action or conflict. The narratives are structured around a central conflict that is introduced early and developed through a series of escalating events. Resolutions are often bittersweet or open-ended, leaving a lasting impact on the reader. The user engages deeply with the prompt, ensuring that the story remains tightly connected to the initial scenario.
+
+**Creativity**: The user demonstrates a strong ability to blend genres, often mixing elements of science fiction, dystopia, and post-apocalyptic themes. There is a frequent use of irony and dark humor, particularly in the way characters perceive their dire situations. The user reinterprets prompts in unique ways, often focusing on the human element and the psychological impact of the scenarios presented.
+
+**Development (Character and Setting)**: Characters are multidimensional, often portrayed with a mix of resilience and vulnerability. Emotional arcs are central to the narrative, with characters undergoing significant personal transformations. Settings are vividly described and integral to the story, often reflecting the tone and themes of the narrative. The user creates immersive worlds that feel lived-in and authentic, with detailed descriptions that enhance the reader’s experience.
+
+**Language Use**: The user employs descriptive language effectively, creating vivid imagery and a strong sense of atmosphere. Pacing is well-managed, with a balance between action and introspection. Dialogue is used sparingly but effectively, often revealing character traits and advancing the plot. The tone is generally serious and contemplative, with moments of dark humor and irony that add depth to the narrative.
+</thinking>
+
+<story_rules>
+**Plot Rules**:
+1. Start the story in medias res to immediately immerse the reader in the action or conflict.
+2. Introduce the central conflict early and develop it through a series of escalating events.
+3. Ensure the resolution is impactful, often bittersweet or open-ended, leaving a lasting impression.
+4. Engage deeply with the prompt, maintaining a tight connection to the initial scenario.
+
+**Creativity Rules**:
+1. Blend genres such as science fiction, dystopia, and post-apocalyptic themes to create a unique narrative.
+2. Incorporate irony and dark humor to add depth and complexity to the story.
+3. Focus on the human element and the psychological impact of the scenarios presented.
+4. Reinterpret prompts in unique ways, ensuring a fresh and imaginative approach.
+
+**Character and Setting Rules**:
+1. Develop multidimensional characters with a mix of resilience and vulnerability.
+2. Create emotional arcs that are central to the narrative, showing significant personal transformations.
+3. Describe settings vividly, making them integral to the story and reflective of the tone and themes.
+4. Build immersive worlds that feel lived-in and authentic, with detailed descriptions that enhance the reader’s experience.
+
+**Language Use Rules**:
+1. Use descriptive language to create vivid imagery and a strong sense of atmosphere.
+2. Manage pacing effectively, balancing action with introspection.
+3. Use dialogue sparingly but effectively, revealing character traits and advancing the plot.
+4. Maintain a serious and contemplative tone, with moments of dark humor and irony to add depth to the narrative.
+</story_rules>

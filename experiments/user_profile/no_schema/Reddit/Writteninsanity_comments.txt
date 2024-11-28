@@ -1,0 +1,35 @@
+<thinking>
+**Plot**: The user structures the story as a series of newsletter entries, each detailing events from various alternative realities. The plot is episodic, with each entry presenting a new scenario or update, often with a twist or unexpected development. The conflict is subtle, often implied through the strange and sometimes ominous events reported. The narrative resolves by gradually revealing the increasing instability of the multiverse and the eventual establishment of the Porcelain Queen as a new reality anchor.
+
+**Creativity**: The user demonstrates a high level of creativity by blending elements of science fiction, fantasy, and horror. The concept of a newsletter reporting on alternative realities is unique and allows for a wide range of imaginative scenarios. The use of humor and irony is evident in the casual tone of the newsletter juxtaposed with the often bizarre and unsettling content. The reinterpretation of the prompt is inventive, turning a simple idea into a complex and engaging narrative.
+
+**Development (Character and Setting)**: The characters are not deeply developed, as the focus is more on the events and the multiverse itself. However, the recurring mentions of Linda Hamilton add a personal touch and a sense of continuity. The setting is richly developed through the descriptions of various alternative realities, each with its own distinct characteristics and events. The tone is consistent, maintaining a balance between the mundane format of a newsletter and the extraordinary content it delivers.
+
+**Language Use**: The language is descriptive and engaging, with a conversational tone that suits the newsletter format. The pacing is brisk, with each entry providing just enough detail to intrigue the reader without overwhelming them. Dialogue is minimal, but the occasional direct address to the reader adds a personal touch. The tone is a mix of casual and ominous, creating a unique and immersive reading experience.
+</thinking>
+
+<story_rules>
+**Plot Rules**:
+1. Structure the story as a series of episodic entries, each presenting a new scenario or update.
+2. Introduce conflict subtly, often implied through strange or ominous events.
+3. Gradually reveal the increasing instability of the multiverse.
+4. Resolve the narrative by establishing a new status quo or significant change in the multiverse.
+
+**Creativity Rules**:
+1. Blend elements of science fiction, fantasy, and horror to create imaginative scenarios.
+2. Use humor and irony to contrast the casual tone of the newsletter with the bizarre content.
+3. Reinterpret the prompt in a unique and inventive way.
+4. Incorporate unexpected twists or developments in each entry.
+
+**Character and Setting Rules**:
+1. Focus more on the events and the multiverse rather than deeply developing characters.
+2. Use recurring mentions of specific characters to add continuity and a personal touch.
+3. Develop the setting through detailed descriptions of various alternative realities.
+4. Maintain a consistent tone that balances the mundane format of a newsletter with extraordinary content.
+
+**Language Use Rules**:
+1. Use descriptive and engaging language with a conversational tone.
+2. Keep the pacing brisk, providing enough detail to intrigue without overwhelming.
+3. Minimize dialogue, but use occasional direct address to the reader for a personal touch.
+4. Maintain a mix of casual and ominous tones to create a unique and immersive reading experience.
+</story_rules>

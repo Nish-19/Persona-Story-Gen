@@ -1,0 +1,33 @@
+<thinking>
+**Plot**: The user structures their stories with a clear beginning, middle, and end, often starting with a strong hook that introduces the main conflict. The narrative progresses through escalating tension and conflict, leading to a climactic resolution. The endings often provide a sense of closure, sometimes with a reflective or moral undertone.
+
+**Creativity**: The user demonstrates creativity by blending genres and reinterpreting common tropes. They often incorporate elements of surprise, such as a hero acting out of character or an unexpected twist in the plot. The stories are imaginative, with unique settings and scenarios that engage the reader.
+
+**Development (Character and Setting)**: Characters are multidimensional, with clear motivations and emotional arcs. The user often provides backstory and internal monologue to deepen character development. Settings are vividly described and integral to the story, enhancing the narrative's tone and themes.
+
+**Language Use**: The user employs descriptive language to create vivid imagery and atmosphere. Dialogue is natural and helps to reveal character traits and advance the plot. The pacing is well-managed, with a balance of action and introspection. The tone varies to match the story's mood, from tense and dramatic to reflective and somber.
+</thinking>
+
+<story_rules>
+**Plot Rules**:
+1. Start with a strong hook that introduces the main conflict.
+2. Progress the narrative through escalating tension and conflict.
+3. Lead to a climactic resolution that provides a sense of closure.
+4. Include a reflective or moral undertone in the ending.
+
+**Creativity Rules**:
+1. Blend genres and reinterpret common tropes to create unique scenarios.
+2. Incorporate elements of surprise, such as unexpected character actions or plot twists.
+3. Use imaginative settings and scenarios to engage the reader.
+
+**Character and Setting Rules**:
+1. Develop multidimensional characters with clear motivations and emotional arcs.
+2. Provide backstory and internal monologue to deepen character development.
+3. Describe settings vividly and make them integral to the story, enhancing the tone and themes.
+
+**Language Use Rules**:
+1. Employ descriptive language to create vivid imagery and atmosphere.
+2. Use natural dialogue to reveal character traits and advance the plot.
+3. Manage pacing with a balance of action and introspection.
+4. Vary the tone to match the story's mood, from tense and dramatic to reflective and somber.
+</story_rules>

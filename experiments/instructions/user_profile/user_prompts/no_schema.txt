@@ -1,0 +1,34 @@
+#### Instructions  
+
+1. **Analyze the Story**  
+   - Use the `<thinking></thinking>` tokens to analyze the user stories based on the following four criteria:  
+     - **Plot**: Evaluate how the user structures the story, introduces conflict, engages with the prompt, and resolves the narrative.  
+     - **Creativity**: Analyze the user’s approach to blending genres, using humor or irony, reinterpreting the prompt, and integrating unconventional or imaginative elements.  
+     - **Development (Character and Setting)**: Examine the user’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.  
+     - **Language Use**: Assess how the user employs descriptive language, pacing, dialogue, and tone to create an engaging and immersive narrative.  
+
+2. **Generate Story Rules**  
+   - After analyzing the user’s style within the `<thinking></thinking>` tokens, output a clear and actionable set of **Story Rules** in the <story_rules></story_rules> tag. These rules should:  
+     - Be organized into four categories: **Plot Rules**, **Creativity Rules**, **Character and Setting Rules**, and **Language Use Rules**.  
+     - Use **direct second-person instructions** (e.g., “Introduce conflict early to hook the reader” or “Incorporate humor or irony to lighten tense moments”).  
+     - Be specific and actionable, providing guidance for how to replicate the user’s storytelling style in response to new prompts.  
+
+---
+
+#### Input Format  
+- A set of user-written stories, each paired with its writing prompt (written as Python dictionaries). Additional metadata, such as story length, fandoms, relationship types, etc., may also be included.  
+
+---
+
+#### Output Format  
+<thinking>
+Output the story analysis under each of the four criteria: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.  
+</thinking>
+<story_rules>
+Output a clear and actionable set of **Story Rules** categorized using the above four categories as direct second person instructions.
+</story_rules>
+
+---
+
+Your output should effectively enable the generation of new stories that closely emulate the user’s distinctive style while adapting to varied prompts. Strictly adhere to the specified output format and ensure the content is included within the respective tags for direct parsing.
+

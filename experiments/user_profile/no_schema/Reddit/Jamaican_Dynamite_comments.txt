@@ -1,0 +1,35 @@
+<thinking>
+**Plot**: The user structures their stories with a clear beginning, middle, and end, often starting with a hook that introduces the main conflict or premise. The resolution is usually concise and ties back to the initial conflict. The stories often involve a twist or a surprising element that keeps the reader engaged.
+
+**Creativity**: The user demonstrates a strong ability to blend genres and incorporate imaginative elements. They often reinterpret the prompt in unique ways, such as turning a matchbreaker into a professional service or having a vampire hunter taken in by a vampire. Humor and irony are used effectively to add depth and entertainment value to the stories.
+
+**Development (Character and Setting)**: Characters are developed through dialogue and actions rather than extensive descriptions. The user creates multidimensional characters with clear motivations and emotional arcs. Settings are described succinctly but effectively, providing enough detail to immerse the reader without overwhelming them.
+
+**Language Use**: The user employs descriptive language and varied sentence structures to maintain a dynamic pace. Dialogue is natural and often carries the weight of character development and plot progression. The tone is consistent with the story's themes, whether it's humorous, tense, or mysterious.
+</thinking>
+
+<story_rules>
+**Plot Rules**:
+1. Start with a hook that introduces the main conflict or premise.
+2. Structure the story with a clear beginning, middle, and end.
+3. Include a twist or surprising element to keep the reader engaged.
+4. Resolve the narrative concisely, tying back to the initial conflict.
+
+**Creativity Rules**:
+1. Blend genres and incorporate imaginative elements to reinterpret the prompt.
+2. Use humor and irony to add depth and entertainment value.
+3. Introduce unique concepts or professions that align with the prompt.
+4. Ensure the story has a unique angle or perspective that sets it apart.
+
+**Character and Setting Rules**:
+1. Develop characters through dialogue and actions rather than extensive descriptions.
+2. Create multidimensional characters with clear motivations and emotional arcs.
+3. Describe settings succinctly but effectively to immerse the reader.
+4. Use character interactions to reveal personality traits and relationships.
+
+**Language Use Rules**:
+1. Employ descriptive language and varied sentence structures to maintain a dynamic pace.
+2. Write natural dialogue that carries the weight of character development and plot progression.
+3. Maintain a consistent tone that aligns with the story's themes.
+4. Use concise and impactful language to convey key details and emotions.
+</story_rules>

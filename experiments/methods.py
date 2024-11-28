@@ -20,11 +20,17 @@ class StoryGenMethods():
         # 1. data split directory
         self.data_split_dir = '../datasets/data_splits/data'
 
-        # 2. Vanilla directory
-        self.vanilla_prompt_dir = 'instructions/vanilla'
+        # 2. Vanilla instructions directory
+        self.vanilla_prompt_instructions_dir = 'instructions/vanilla'
+
+        # 3. User Profile instructions directory
+        self.user_profile_instructions_dir = 'instructions/user_profile'
 
         # output directory
         self.output_dir = 'results/'
+
+        # user profile directory
+        self.user_profile_dir = 'user_profile'
     
     def construct_user_instruction(self, example_raw, source_constraints=None, source='Reddit'):
         '''
@@ -116,25 +122,28 @@ class StoryGenMethods():
         # test directory
         test_dir = f'{self.data_split_dir}/{source}/test' 
         # system instructions 
-        system_instructions_path = f'{self.vanilla_prompt_dir}/system_prompts/{source}.txt'    
+        system_instructions_path = f'{self.vanilla_prompt_instructions_dir}/system_prompts/{source}.txt'    
         # source constraints
-        source_constraints_path = f'{self.vanilla_prompt_dir}/user_prompts/{source}.txt'
+        source_constraints_path = f'{self.vanilla_prompt_instructions_dir}/user_prompts/{source}.txt'
 
         # read the system instructions
         with open(system_instructions_path, 'r') as f:
             system_instructions = f.read()
 
-        # NOTE: Edit the system instructions
-        # 1. Mention source constraints
-        system_instructions += ' Be sure to adhere to the ## Story Constraints provided to guide your narrative.'
-        # 2. Mention few shot demonstrations (chat history)
-        if few_shot:
-            system_instructions += ' Also, follow the patterns and examples demonstrated in the provided few-shot chat history as a reference for tone, style, and structure.'
 
         
         # read the user instructions
         with open(source_constraints_path, 'r') as f:
             source_constraints = f.read()
+
+        # NOTE: Edit the system instructions
+        # 1. Mention source constraints
+        if source_constraints:
+            system_instructions += ' Be sure to adhere to the ## Story Constraints provided to guide your narrative.'
+        # 2. Mention few shot demonstrations (chat history)
+        if few_shot:
+            system_instructions += ' Also, follow the patterns and examples demonstrated in the provided few-shot chat history as a reference for tone, style, and structure.'
+
         
         # iterate through each file in the profile directory
         for ctr, file in tqdm(enumerate(os.listdir(test_dir)), total=len(os.listdir(test_dir)), desc='Vanilla Story Generation'):
@@ -190,6 +199,98 @@ class StoryGenMethods():
                 # write the results to the output directory
                 with open(output_file_path, 'w') as f:
                     json.dump(results, f, indent=4)
+    
+    def no_schema_user_profile(self, source='Reddit'):
+        '''
+        User Profile (No Schema)
+        '''
+
+        def construct_user_profile_prompt(examples):
+            '''
+            Construct the Prompt for User Profile
+            '''
+
+            # construct the user instruction
+            user_instruction = ''
+            # iterate through each example
+            for ectr, example in enumerate(examples): 
+                # deep copy example['metadata']
+                metadata = copy.deepcopy(example['metadata'])
+                # delete story name from metadata
+                if 'story_name' in metadata:
+                    del metadata['story_name']
+                # delete story length from metadata
+                example_dict = {'metadata': metadata, 'writing_prompt': example['writing_prompt'], 'story': example['story']}
+                user_instruction += f"Example {ectr + 1}:\n{json.dumps(example_dict, indent=4)}\n\n"
+
+            # construct OpenAI prompt
+            prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints)
+            return prompt
+
+        
+        print('Method: No Schema User Profile')
+        print(f'Source: {source}')
+
+        # user profile output directory
+        user_profile_output_dir = f'{self.user_profile_dir}/no_schema/{source}'
+        if not os.path.exists(user_profile_output_dir):
+            os.makedirs(user_profile_output_dir)
+
+
+        # no_schema results output directory
+        vanilla_output_dir = f'{self.output_dir}/no_schema/{source}'
+        if not os.path.exists(vanilla_output_dir):
+            os.makedirs(vanilla_output_dir)
+
+        # profile directory
+        profile_dir = f'{self.data_split_dir}/{source}/profile'
+        # test directory
+        test_dir = f'{self.data_split_dir}/{source}/test'
+
+        # 1. Generate User Profile
+
+        # sytem instructions
+        system_instructions_path = f'{self.user_profile_instructions_dir}/system_prompts/no_schema.txt'
+        # user instructions
+        user_instructions_path = f'{self.user_profile_instructions_dir}/user_prompts/no_schema.txt'
+
+        # read the system instructions
+        with open(system_instructions_path, 'r') as f:
+            system_instructions = f.read()
+        
+        # read the user instructions
+        with open(user_instructions_path, 'r') as f:
+            user_constraints = f.read()
+        
+        # iterate through each file in the profile directory
+        for file in tqdm(os.listdir(profile_dir), desc='User Profile (No Schema)', total=len(os.listdir(profile_dir))):
+            profile_file_path = os.path.join(profile_dir, file)
+            # profile data
+            with open(profile_file_path, 'r') as f:
+                profile_data = json.load(f)
+            
+            # output file path
+            output_file_path = os.path.join(user_profile_output_dir, file.split('.')[0] + '.txt')
+
+            # check if the output file already exists
+            if os.path.exists(output_file_path):
+                # read the output file
+                with open(output_file_path, 'r') as f:
+                    user_profile_response = f.read()
+            else:
+                # select last three examples from the profile data
+                examples = profile_data[-3:]
+                # construct the prompt
+                prompt = construct_user_profile_prompt(examples)
+                # call the OpenAI model
+                user_profile_response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+
+                # save the response to the output directory
+                with open(output_file_path, 'w') as f:
+                    f.write(user_profile_response)
+
+
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Story Generation Methods')
@@ -197,6 +298,10 @@ def parse_args():
     parser.add_argument('--few_shot', action='store_true', help='Few Shot Story Generation')
     # source
     parser.add_argument('--source', type=str, default='Reddit', help='Source of the data')
+    # # user profile (no schema) 'store_true'
+    # parser.add_argument('--no_schema', action='store_true', help='User Profile (No Schema)')
+    # int choice
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema)')
     return parser.parse_args()
 
 def main():
@@ -206,10 +311,18 @@ def main():
     source = args.source    
     # few shot 
     few_shot = args.few_shot
+    # # method choice
+    choice = args.choice
+    # choice = 2
     # create an instance of the StoryGenMethods class
     story_gen_methods = StoryGenMethods()
-    # perform Vanilla story generation
-    story_gen_methods.perform_vanilla(source=source, few_shot=few_shot)
+
+    if choice == 1:
+        # perform Vanilla story generation
+        story_gen_methods.perform_vanilla(source=source, few_shot=few_shot)
+    elif choice == 2:
+        # User Profile (No Schema)
+        story_gen_methods.no_schema_user_profile(source=source)
 
 if __name__ == '__main__':
     main()

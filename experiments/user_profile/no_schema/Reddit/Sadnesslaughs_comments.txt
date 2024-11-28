@@ -1,0 +1,51 @@
+<thinking>
+**Plot Analysis:**
+- The user structures their stories with a clear beginning, middle, and end, often starting with a conflict or a humorous misunderstanding that sets the tone.
+- Conflict is introduced early, often through dialogue that highlights a misunderstanding or a clash between characters.
+- The resolution tends to be light-hearted or ironic, with characters reaching a mutual understanding or a humorous conclusion.
+- The stories engage with the prompt directly, using it as a springboard for the narrative.
+
+**Creativity Analysis:**
+- The user blends genres, such as humor and fantasy or sci-fi, to create unique and engaging narratives.
+- Humor and irony are prevalent, often used to lighten the mood or highlight character flaws.
+- The prompts are reinterpreted in imaginative ways, leading to unconventional scenarios (e.g., a Trojan horse misunderstanding or a mimic discussing its preferences).
+- The user integrates imaginative elements, such as talking mimics or sentient weapons, to add depth and interest to the stories.
+
+**Development (Character and Setting) Analysis:**
+- Characters are developed through witty and dynamic dialogue, revealing their personalities and relationships.
+- Emotional arcs are present, often showing characters moving from conflict to understanding or resolution.
+- Settings are described in enough detail to be immersive but are secondary to character interactions and dialogue.
+- The tone and themes are consistent, often focusing on humor, irony, and the absurdity of the situations.
+
+**Language Use Analysis:**
+- Descriptive language is used effectively to create vivid imagery and set the scene.
+- Pacing is well-managed, with dialogue driving the narrative forward and keeping the reader engaged.
+- Dialogue is natural and witty, often serving as the primary vehicle for character development and plot progression.
+- The tone is light-hearted and humorous, even when dealing with potentially serious themes or conflicts.
+</thinking>
+
+<story_rules>
+**Plot Rules:**
+1. Introduce conflict early through a humorous misunderstanding or clash between characters.
+2. Use the prompt directly to set the stage for the narrative.
+3. Resolve the story with a light-hearted or ironic conclusion, often leading to mutual understanding or a humorous twist.
+4. Structure the story with a clear beginning, middle, and end, ensuring a satisfying narrative arc.
+
+**Creativity Rules:**
+1. Blend genres, such as humor and fantasy or sci-fi, to create unique and engaging scenarios.
+2. Incorporate humor and irony to highlight character flaws and lighten the mood.
+3. Reinterpret the prompt in imaginative ways, leading to unconventional and surprising situations.
+4. Integrate imaginative elements, such as talking mimics or sentient weapons, to add depth and interest to the story.
+
+**Character and Setting Rules:**
+1. Develop characters through witty and dynamic dialogue, revealing their personalities and relationships.
+2. Include emotional arcs that show characters moving from conflict to understanding or resolution.
+3. Describe settings in enough detail to be immersive but keep them secondary to character interactions and dialogue.
+4. Maintain a consistent tone and theme, focusing on humor, irony, and the absurdity of the situations.
+
+**Language Use Rules:**
+1. Use descriptive language to create vivid imagery and set the scene effectively.
+2. Manage pacing by using dialogue to drive the narrative forward and keep the reader engaged.
+3. Ensure dialogue is natural and witty, serving as the primary vehicle for character development and plot progression.
+4. Maintain a light-hearted and humorous tone, even when dealing with potentially serious themes or conflicts.
+</story_rules>
