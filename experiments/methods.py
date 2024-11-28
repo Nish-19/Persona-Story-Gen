@@ -12,6 +12,7 @@ from nltk.corpus import stopwords
 from collections import defaultdict
 from prompt_llm_utils import construct_prompt_message, prompt_openai
 import argparse
+import re
 
 class StoryGenMethods():
     def __init__(self):
@@ -24,7 +25,10 @@ class StoryGenMethods():
         self.vanilla_prompt_instructions_dir = 'instructions/vanilla'
 
         # 3. User Profile instructions directory
-        self.user_profile_instructions_dir = 'instructions/user_profile'
+        self.user_profile_instructions_dir = 'instructions/construct_user_profile'
+
+        # 4. Generate Story User Profile instructions directory
+        self.generate_story_user_profile_instructions_dir = 'instructions/generate_story_user_profile'
 
         # output directory
         self.output_dir = 'results/'
@@ -32,7 +36,7 @@ class StoryGenMethods():
         # user profile directory
         self.user_profile_dir = 'user_profile'
     
-    def construct_user_instruction(self, example_raw, source_constraints=None, source='Reddit'):
+    def construct_user_instruction(self, example_raw, source='Reddit'):
         '''
         Construct the user instruction
         '''
@@ -46,7 +50,7 @@ class StoryGenMethods():
         # construct the user instruction 
         user_instruction = f"Write a short story corresponding to the following writing prompt. The story should be {story_length} words long."
         # if source_constraints:
-        #     user_instruction += "The story must follow the above mentioned constraints (## Story Constraints)."
+        #     user_instruction += "The story must follow the above mentioned constraints (## Story Rules)."
         user_instruction += " Directly start with the story, do not say things like 'Here\'s' the story.\n\n"
         if source == 'AO3':
             del example['metadata']['story_name']
@@ -57,7 +61,7 @@ class StoryGenMethods():
         return user_instruction
 
 
-    def get_few_shot_examples(self, profile_data, example, source_constraints=None, source='Reddit', top_k=1):
+    def get_few_shot_examples(self, profile_data, example, source='Reddit', top_k=1):
         '''
         return the few shot examples
         '''
@@ -79,70 +83,57 @@ class StoryGenMethods():
         few_shot_examples = {}
         for pctr, pindex in enumerate(profile_indices):
             # construct user instruction 
-            user_instruction = self.construct_user_instruction(profile_data[pindex], source_constraints, source)
+            user_instruction = self.construct_user_instruction(profile_data[pindex], source)
             few_shot_examples[pctr] = {'User': user_instruction, 'Assistant': profile_data[pindex]['story']}
         
         return few_shot_examples
-    
-    def perform_vanilla(self, source='Reddit', few_shot=False):
+
+    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, system_instructions=''):
         '''
-        Perform Vanilla story generation
+        performs story generation given - source, few_shot, source_constraints, output_dir
         '''
-        def construct_vanilla_prompt(example, few_shot_examples=None):
+        def construct_story_prompt(example, source_constraints, few_shot_examples=None):
             '''
             Construct the Vanilla prompt
             '''
             # include user constraints
-            user_constraints = f"## Story Constraints\n{source_constraints}\n\n"
+            user_constraints = f"## Story Rules\n{source_constraints}\n\n"
 
             # construct the user instruction
-            user_instruction = self.construct_user_instruction(example, source_constraints, source)
+            user_instruction = self.construct_user_instruction(example, source)
 
 
             # construct OpenAI prompt
             prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints, few_shot_examples)
             return prompt
     
-        print('Method: Vanilla Story Generation')
-        print(f'Few Shot: {few_shot}')
-        print(f'Source: {source}')
 
         if few_shot:
             suffix = '_few_shot'
         else:
             suffix = ''
 
-        # vanilla output directory
-        vanilla_output_dir = f'{self.output_dir}/vanilla{suffix}/{source}'
-        if not os.path.exists(vanilla_output_dir):
-            os.makedirs(vanilla_output_dir)
-
         # profile directory 
         profile_dir = f'{self.data_split_dir}/{source}/profile'
         # test directory
         test_dir = f'{self.data_split_dir}/{source}/test' 
-        # system instructions 
-        system_instructions_path = f'{self.vanilla_prompt_instructions_dir}/system_prompts/{source}.txt'    
         # source constraints
-        source_constraints_path = f'{self.vanilla_prompt_instructions_dir}/user_prompts/{source}.txt'
-
-        # read the system instructions
-        with open(system_instructions_path, 'r') as f:
-            system_instructions = f.read()
-
-
+        if '.txt' in source_constraints_dir:
+            # read the user instructions
+            with open(source_constraints_dir, 'r') as f:
+                source_constraints = f.read()
+            iterate_over_source_constraints = False
+        else:
+            iterate_over_source_constraints = True
         
-        # read the user instructions
-        with open(source_constraints_path, 'r') as f:
-            source_constraints = f.read()
 
         # NOTE: Edit the system instructions
         # 1. Mention source constraints
-        if source_constraints:
-            system_instructions += ' Be sure to adhere to the ## Story Constraints provided to guide your narrative.'
+        # if source_constraints:
+        system_instructions += ' Be sure to adhere to the ## Story Rules provided, as they define the specific elements of the writing style you are expected to mimic.'
         # 2. Mention few shot demonstrations (chat history)
         if few_shot:
-            system_instructions += ' Also, follow the patterns and examples demonstrated in the provided few-shot chat history as a reference for tone, style, and structure.'
+            system_instructions += ' Also, follow the patterns and examples demonstrated in the provided few-shot chat history, as they illustrate the tone, style, and structure of the desired writing style of your story.'
 
         
         # iterate through each file in the profile directory
@@ -164,7 +155,7 @@ class StoryGenMethods():
                 test_data = json.load(f)
             
             # output file path
-            output_file_path = os.path.join(vanilla_output_dir, file)
+            output_file_path = os.path.join(story_output_dir, file)
 
             # check if the output file already exists
             if os.path.exists(output_file_path):
@@ -187,11 +178,22 @@ class StoryGenMethods():
             
                 # few_shot 
                 if few_shot:
-                    few_shot_examples = self.get_few_shot_examples(profile_data, example, source_constraints=source_constraints, source=source, top_k=1)
+                    few_shot_examples = self.get_few_shot_examples(profile_data, example, source=source, top_k=1)
                 else:
                     few_shot_examples = None
+                
+                if iterate_over_source_constraints:
+                    source_constraints_path = f'{source_constraints_dir}/{file.split(".")[0]}.txt'
+                    # read the user instructions
+                    with open(source_constraints_path, 'r') as f:
+                        source_constraints_raw = f.read()
+                        # TODO: Extract content between the tags <story_rules></story_rules>
+                        source_constraints = re.search(r'<story_rules>(.*?)</story_rules>', source_constraints_raw, re.DOTALL).group(1)
+                        # check if the source constraints are empty
+                        if not source_constraints:
+                            source_constraints = source_constraints_raw
 
-                prompt = construct_vanilla_prompt(example, few_shot_examples)
+                prompt = construct_story_prompt(example, source_constraints, few_shot_examples)
                 # call the OpenAI model
                 response = prompt_openai(prompt, max_tokens=4096, temperature=0.7, top_p=0.95)
                 results.append({'writing_prompt': example['writing_prompt'], 'story': response})
@@ -199,6 +201,40 @@ class StoryGenMethods():
                 # write the results to the output directory
                 with open(output_file_path, 'w') as f:
                     json.dump(results, f, indent=4)
+    
+    def perform_vanilla(self, source='Reddit', few_shot=False):
+        '''
+        Vanilla Story Generation
+        '''
+
+        if few_shot:
+            suffix = '_few_shot'
+        else:
+            suffix = ''
+
+        # output directory
+        output_dir = f'{self.output_dir}/vanilla{suffix}/{source}'
+
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        # system instructions 
+        system_instructions_path = f'{self.vanilla_prompt_instructions_dir}/system_prompts/{source}.txt'    
+        # read the system instructions
+        with open(system_instructions_path, 'r') as f:
+            system_instructions = f.read()
+
+        
+        # source constraints path
+        source_constraints_path = f'{self.vanilla_prompt_instructions_dir}/user_prompts/{source}.txt'
+        
+        print('Method: Vanilla Story Generation')
+        print(f'Few Shot: {few_shot}')
+        print(f'Source: {source}')
+
+        # perform story generation
+        self.perform_story_generation(source=source, few_shot=few_shot, story_output_dir=output_dir, source_constraints_dir=source_constraints_path, system_instructions=system_instructions)
+
     
     def no_schema_user_profile(self, source='Reddit'):
         '''
@@ -235,12 +271,6 @@ class StoryGenMethods():
         user_profile_output_dir = f'{self.user_profile_dir}/no_schema/{source}'
         if not os.path.exists(user_profile_output_dir):
             os.makedirs(user_profile_output_dir)
-
-
-        # no_schema results output directory
-        vanilla_output_dir = f'{self.output_dir}/no_schema/{source}'
-        if not os.path.exists(vanilla_output_dir):
-            os.makedirs(vanilla_output_dir)
 
         # profile directory
         profile_dir = f'{self.data_split_dir}/{source}/profile'
@@ -288,6 +318,27 @@ class StoryGenMethods():
                 # save the response to the output directory
                 with open(output_file_path, 'w') as f:
                     f.write(user_profile_response)
+        
+        print('User Profile (No Schema) Generated')
+
+
+        # TODO: Generate stories using the user profile generated above
+        story_output_dir = f'{self.output_dir}/no_schema/{source}'
+        if not os.path.exists(story_output_dir):
+            os.makedirs(story_output_dir)
+        
+        # system instructions
+        system_instructions_path = f'{self.generate_story_user_profile_instructions_dir}/system_prompts/{source}.txt'
+        # read the system instructions
+        with open(system_instructions_path, 'r') as f:
+            system_instructions = f.read()
+
+
+        print('Method: User Profile (No Schema) Story Generation')
+        print(f'Few Shot: True')
+        print(f'Source: {source}')
+
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = user_profile_output_dir, system_instructions=system_instructions)
 
 
 
