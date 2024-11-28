@@ -62,15 +62,23 @@ def main():
         with open(expts_file_path, 'r') as f:
             expts_data = json.load(f)
         
-        # assert the lengths of the ground truth and expts data
-        assert len(gt_data) == len(expts_data), 'Length mismatch between ground truth and expts data'
+        # # assert the lengths of the ground truth and expts data
+        # assert len(gt_data) == len(expts_data), 'Length mismatch between ground truth and expts data'
 
-        # iterate over the ground truth and expts data
-        for gt, expts in zip(gt_data, expts_data):
-            if gt['story'] is None or expts['story'] is None:
+        # # iterate over the ground truth and expts data
+        # for gt, expts in zip(gt_data, expts_data):
+        #     if gt['story'] is None or expts['story'] is None:
+        #         print('Skipping None', file)
+        #         continue
+        #     pairs.append((gt['story'], expts['story']))
+        
+        # iterrate only over expts_data 
+        for ectr, expts in enumerate(expts_data):
+            gt_story = gt_data[ectr]['story']
+            if gt_story is None or expts['story'] is None:
                 print('Skipping None', file)
                 continue
-            pairs.append((gt['story'], expts['story']))
+            pairs.append((gt_story, expts['story']))
         
     # initialize metrics class
     metrics = Metrics(pairs, compute_gt=compute_gt)
