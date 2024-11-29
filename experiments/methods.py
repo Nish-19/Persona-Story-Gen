@@ -171,17 +171,6 @@ class StoryGenMethods():
             else:
                 results = []
             
-            # Get source constraints for this user
-            if iterate_over_source_constraints:
-                source_constraints_path = f'{source_constraints_dir}/{file.split(".")[0]}.txt'
-                # read the user instructions
-                with open(source_constraints_path, 'r') as f:
-                    source_constraints_raw = f.read()
-                    # TODO: Extract content between the tags <story_rules></story_rules>
-                    source_constraints = re.search(r'<story_rules>(.*?)</story_rules>', source_constraints_raw, re.DOTALL).group(1)
-                    # check if the source constraints are empty
-                    if not source_constraints:
-                        source_constraints = source_constraints_raw
 
             
             # iterate over the test data
@@ -200,6 +189,29 @@ class StoryGenMethods():
                     few_shot_examples = self.get_few_shot_examples(profile_data, example, source=source, top_k=1)
                 else:
                     few_shot_examples = None
+
+                # Get source constraints for this user
+                if iterate_over_source_constraints:
+                    source_constraints_path = f'{source_constraints_dir}/{file.split(".")[0]}.txt'
+                    # check if the source constraints file exists
+                    if os.path.exists(source_constraints_path):
+                        # read the user instructions
+                        with open(source_constraints_path, 'r') as f:
+                            source_constraints_raw = f.read()
+                    else:
+                        source_constraints_path = f'{source_constraints_dir}/{file}'
+                        # read the user instructions
+                        with open(source_constraints_path, 'r') as f:
+                            all_source_constraints = json.load(f)
+                        
+                        source_constraints_raw = all_source_constraints[ictr]
+
+                    # TODO: Extract content between the tags <story_rules></story_rules>
+                    source_constraints = re.search(r'<story_rules>(.*?)</story_rules>', source_constraints_raw, re.DOTALL).group(1)
+                    # check if the source constraints are empty
+                    if not source_constraints:
+                        source_constraints = source_constraints_raw
+
                 
 
                 prompt = construct_story_prompt(example, source_constraints, few_shot_examples)
@@ -572,7 +584,11 @@ class StoryGenMethods():
             user_constraints_story_rules = f.read()
         
         # iterate through each file in the test directory
-        for file in tqdm(os.listdir(test_dir), desc='Story Rules (Schema)', total=len(os.listdir(test_dir))):
+        for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Story Rules (Schema)', total=len(os.listdir(test_dir))):
+            # break after 1 iteration
+            if fctr > 0:
+                break
+
             test_file_path = os.path.join(test_dir, file)
             # test data
             with open(test_file_path, 'r') as f:
@@ -615,6 +631,24 @@ class StoryGenMethods():
                 # write the results to the output directory
                 with open(output_file_path, 'w') as f:
                     json.dump(story_rules_response, f, indent=4)
+    
+
+        # NOTE: STEP 4: Generate stories using the user profile generated above
+        story_output_dir = f'{self.output_dir}/schema/{source}'
+        if not os.path.exists(story_output_dir):
+            os.makedirs(story_output_dir)
+        
+        # system instructions
+        system_instructions_path = f'{self.generate_story_user_profile_instructions_dir}/system_prompts/{source}.txt'
+        # read the system instructions
+        with open(system_instructions_path, 'r') as f:
+            system_instructions = f.read()
+        
+        print('Method: User Profile (Schema) Story Generation')
+        print(f'Few Shot: True')
+        print(f'Source: {source}')
+    
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions)
 
 
 
