@@ -15,8 +15,8 @@ def parse_args():
     parser.add_argument('--source', type=str, default='Reddit', help='Source')
     # method choice 
     parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema), 3. User Profile (Schema)')
-    # verbose
-    parser.add_argument('--verbose', type=bool, default=False, help='Verbose')
+    # verbose (store_true)
+    parser.add_argument('--verbose', action='store_true', help='Verbose')
 
     return parser.parse_args()
 
