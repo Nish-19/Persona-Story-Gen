@@ -100,13 +100,18 @@ def main():
         with open(gt_file_path, 'r') as f:
             gt_data = json.load(f)
         
-        # read the vanilla file
-        with open(vanilla_file_path, 'r') as f:
-            vanilla_data = json.load(f)
-        
-        # read the expts file
-        with open(expts_file_path, 'r') as f:
-            expts_data = json.load(f)
+        try:
+            # read the vanilla file
+            with open(vanilla_file_path, 'r') as f:
+                vanilla_data = json.load(f)
+            
+            # read the expts file
+            with open(expts_file_path, 'r') as f:
+                expts_data = json.load(f)
+        except:
+            if verbose:
+                print('Skipping', file)
+            continue
         
         
         # iterrate only over expts_data 

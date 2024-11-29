@@ -94,7 +94,7 @@ class StoryGenMethods():
         
         return few_shot_examples
 
-    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, system_instructions=''):
+    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, system_instructions='', debug=False):
         '''
         performs story generation given - source, few_shot, source_constraints, output_dir
         '''
@@ -143,7 +143,7 @@ class StoryGenMethods():
 
         
         # iterate through each file in the profile directory
-        for ctr, file in tqdm(enumerate(os.listdir(test_dir)), total=len(os.listdir(test_dir)), desc='Vanilla Story Generation'):
+        for ctr, file in tqdm(enumerate(os.listdir(test_dir)), total=len(os.listdir(test_dir)), desc='Story Generation'):
 
             # # break after 1 iteration
             # if ctr > 0:
@@ -175,14 +175,20 @@ class StoryGenMethods():
             
             # iterate over the test data
             for ictr, example in tqdm(enumerate(test_data), desc=f'Processing {file}', total=len(test_data)):
+
                 
                 # stop after 2 iterations
-                if ictr > 1:
-                    break
+                if debug:
+                    if ictr > 1:
+                        break
 
                 # check if the example already exists in the results
                 if ictr < len(results):
                     continue
+            
+                if len(profile_data) == 0:
+                    continue
+
             
                 # few_shot 
                 if few_shot:
@@ -201,8 +207,11 @@ class StoryGenMethods():
                     else:
                         source_constraints_path = f'{source_constraints_dir}/{file}'
                         # read the user instructions
-                        with open(source_constraints_path, 'r') as f:
-                            all_source_constraints = json.load(f)
+                        try:
+                            with open(source_constraints_path, 'r') as f:
+                                all_source_constraints = json.load(f)
+                        except Exception as e:
+                            continue
                         
                         source_constraints_raw = all_source_constraints[ictr]
 
@@ -216,14 +225,17 @@ class StoryGenMethods():
 
                 prompt = construct_story_prompt(example, source_constraints, few_shot_examples)
                 # call the OpenAI model
-                response = prompt_openai(prompt, max_tokens=4096, temperature=0.7, top_p=0.95)
+                try:
+                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.7, top_p=0.95)
+                except Exception as e:
+                    response = None
                 results.append({'writing_prompt': example['writing_prompt'], 'story': response})
                 
                 # write the results to the output directory
                 with open(output_file_path, 'w') as f:
                     json.dump(results, f, indent=4)
     
-    def perform_vanilla(self, source='Reddit', few_shot=False):
+    def perform_vanilla(self, source='Reddit', few_shot=False, debug=False):
         '''
         Vanilla Story Generation
         '''
@@ -254,10 +266,10 @@ class StoryGenMethods():
         print(f'Source: {source}')
 
         # perform story generation
-        self.perform_story_generation(source=source, few_shot=few_shot, story_output_dir=output_dir, source_constraints_dir=source_constraints_path, system_instructions=system_instructions)
+        self.perform_story_generation(source=source, few_shot=few_shot, story_output_dir=output_dir, source_constraints_dir=source_constraints_path, system_instructions=system_instructions, debug=debug)
 
     
-    def no_schema_user_profile(self, source='Reddit'):
+    def no_schema_user_profile(self, source='Reddit', debug=False):
         '''
         User Profile (No Schema)
         '''
@@ -359,9 +371,9 @@ class StoryGenMethods():
         print(f'Few Shot: True')
         print(f'Source: {source}')
 
-        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = user_profile_output_dir, system_instructions=system_instructions)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = user_profile_output_dir, system_instructions=system_instructions, debug=debug)
     
-    def schema_user_profile(self, source='Reddit'):
+    def schema_user_profile(self, source='Reddit', debug=False):
         '''
         User Profile (Schema)
         '''
@@ -486,7 +498,10 @@ class StoryGenMethods():
                 # construct the prompt
                 prompt = construct_user_sheet_prompt(example)
                 # call the OpenAI model
-                response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                try:
+                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                except Exception as e:
+                    response = None
                 user_sheet_response.append(response)
 
                 # write the results to the output directory
@@ -528,8 +543,11 @@ class StoryGenMethods():
             
             # open user sheet response
             user_sheet_response_path = os.path.join(user_sheets_output_dir, file)
-            with open(user_sheet_response_path, 'r') as f:
-                user_sheet_response = json.load(f)
+            try:
+                with open(user_sheet_response_path, 'r') as f:
+                    user_sheet_response = json.load(f)
+            except Exception as e:
+                continue
             
             # iterate through each example in the profile data
             for ectr, example in tqdm(enumerate(profile_data), desc=f'Processing {file}', total=len(profile_data)):
@@ -550,12 +568,17 @@ class StoryGenMethods():
                         prev_key = 'user_writing_sheet'
                     else:
                         prev_key = 'combined_user_sheet'
-                    prev_prompt_dict = {'previous_combined_user_sheet': extract_writing_sheet(user_profile_response[ectr - 1], key=prev_key)}
-                    current_prompt_dict = {'current_writing_prompt': example['writing_prompt'], 'current_user_sheet': extract_writing_sheet(user_sheet_response[ectr], key='user_writing_sheet')}
-                    # construct the prompt
-                    prompt = construct_user_profile_prompt(prev_prompt_dict, current_prompt_dict)
-                    # call the OpenAI model
-                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                    try:
+                        prev_prompt_dict = {'previous_combined_user_sheet': extract_writing_sheet(user_profile_response[ectr - 1], key=prev_key)}
+                        current_prompt_dict = {'current_writing_prompt': example['writing_prompt'], 'current_user_sheet': extract_writing_sheet(user_sheet_response[ectr], key='user_writing_sheet')}
+                        
+                        # construct the prompt
+                        prompt = construct_user_profile_prompt(prev_prompt_dict, current_prompt_dict)
+                        # call the OpenAI model
+                        response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                    except Exception as e:
+                        response = user_profile_response[ectr - 1]
+    
                     user_profile_response.append(response)
 
                 # write the results to the output directory
@@ -602,27 +625,35 @@ class StoryGenMethods():
             else:
                 story_rules_response = []
             
-            # open user profile response
-            user_profile_response_path = os.path.join(user_profile_output_dir, file)
-            with open(user_profile_response_path, 'r') as f:
-                user_profile_response = json.load(f)
             
-            user_profile = extract_writing_sheet(user_profile_response[-1], key='combined_user_sheet')
+            try:
+                # open user profile response
+                user_profile_response_path = os.path.join(user_profile_output_dir, file)
+                with open(user_profile_response_path, 'r') as f:
+                    user_profile_response = json.load(f)
+
+                user_profile = extract_writing_sheet(user_profile_response[-1], key='combined_user_sheet')
+            except Exception as e:
+                continue
             
             # iterate through each example in the test data
             for ectr, example in enumerate(test_data):
                 # check if the example already exists in the story rules response
                 if ectr < len(story_rules_response):
                     continue
-
-                # break after 2 iterations
-                if ectr > 1:
-                    break
+                
+                if debug:
+                    # break after 2 iterations
+                    if ectr > 1:
+                        break
 
                 # construct the prompt
                 prompt = construct_story_rules_prompt(example['writing_prompt'], user_profile)
                 # call the OpenAI model
-                response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                try:
+                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                except Exception as e:
+                    response = None
                 story_rules_response.append(response)
 
                 # write the results to the output directory
@@ -645,7 +676,7 @@ class StoryGenMethods():
         print(f'Few Shot: True')
         print(f'Source: {source}')
     
-        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug)
 
 
 
@@ -659,6 +690,8 @@ def parse_args():
     # parser.add_argument('--no_schema', action='store_true', help='User Profile (No Schema)')
     # int choice
     parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema)')
+    # debug mode
+    parser.add_argument('--debug', action='store_true', help='Debug Mode')
     return parser.parse_args()
 
 def main():
@@ -676,13 +709,13 @@ def main():
 
     if choice == 1:
         # perform Vanilla story generation
-        story_gen_methods.perform_vanilla(source=source, few_shot=few_shot)
+        story_gen_methods.perform_vanilla(source=source, few_shot=few_shot, debug=args.debug)
     elif choice == 2:
         # User Profile (No Schema)
-        story_gen_methods.no_schema_user_profile(source=source)
+        story_gen_methods.no_schema_user_profile(source=source, debug=args.debug)
     elif choice == 3:
         # User Profile (Schema)
-        story_gen_methods.schema_user_profile(source=source)
+        story_gen_methods.schema_user_profile(source=source, debug=args.debug)
 
 if __name__ == '__main__':
     main()

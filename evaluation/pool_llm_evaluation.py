@@ -33,7 +33,6 @@ def parse_args():
     parser.add_argument('--verbose', type=bool, default=False, help='Verbose')
 
     return parser.parse_args()
-
         
 
 def main():
@@ -84,15 +83,15 @@ def main():
         else:
             all_results.append('Tie')
     
-    output_dir = 'llm_evaluation_combine/no_schema/'
+    output_dir = f'llm_evaluation_combine/{consider_dir}/{source}'
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    ouput_path = os.path.join(output_dir, 'Reddit.json')
+    ouput_path = os.path.join(output_dir, f'winner.json')
     with open(ouput_path, 'w') as f:
         json.dump(all_results, f, indent=4)
     
     # dump pair results
-    pair_output_path = os.path.join(output_dir, 'Reddit_pair.json')
+    pair_output_path = os.path.join(output_dir, 'pair.json')
     with open(pair_output_path, 'w') as f:
         json.dump(pair_reults, f, indent=4)
     
@@ -102,6 +101,9 @@ def main():
     # sort the labels count
     labels_count = dict(sorted(labels_count.items(), key=lambda x: x[1], reverse=True))
 
+    labels_output_path = os.path.join(output_dir, 'winner_stats.json')
+    with open(labels_output_path, 'w') as f:
+        json.dump(labels_count, f, indent=4)
     print(labels_count)
 
 
