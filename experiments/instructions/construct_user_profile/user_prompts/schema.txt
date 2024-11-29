@@ -1,0 +1,76 @@
+#### Instructions  
+
+1. **Analyze the Story**  
+   - Use the `<thinking></thinking>` tokens to analyze the story systematically. Address each question listed below for the four criteria, ensuring a detailed and thoughtful response.  
+
+2. **Generate the User Writing Sheet**  
+   - After completing the analysis, output a well-structured **User Writing Sheet** under the `<user_writing_sheet></user_writing_sheet>` tag.  
+   - Include all categories and questions explicitly under their respective headers and provide detailed responses tailored to the given story and writing prompt.  
+
+---
+
+#### Input Format  
+- A single user-written story paired with its writing prompt (provided as a Python dictionary).  
+
+---
+
+#### Output Format  
+<thinking>  
+Add the analysis for the four criteria: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**, answering each question in detail.  
+</thinking>  
+<user_writing_sheet>  
+
+### **Plot**  
+
+#### Story Beginning  
+How does the user begin the story, and what narrative devices or stylistic choices do they use to set the tone?  
+
+#### Story Ending  
+How does the user conclude the story, and what narrative devices or stylistic choices contribute to the resolution or final impact?  
+
+#### Narrative Structure  
+How does the user structure the story with a recognizable beginning, middle, and end, and what techniques do they use to connect these elements cohesively?  
+
+### **Creativity**  
+
+#### Unique Elements  
+What original or imaginative elements does the user add to the story that were not explicitly mentioned in the prompt?  
+
+#### Engaging Themes and Imagery  
+How does the user create engaging characters, themes, or imagery that draw the reader in and resonate with the story’s tone?  
+
+#### Use of Tropes or Clichés  
+How does the user handle common tropes or clichés, and do they use them intentionally for effect or subvert them to add originality?  
+
+### **Development (Character and Setting)**  
+
+#### Main Character  
+How does the user develop the main character, especially if it is derived from the prompt, and how is their role or arc established?  
+
+#### Setting Establishment  
+How does the user establish the setting, and what specific details or techniques make it immersive or relevant to the story?  
+
+#### Supporting Characters and Interactions  
+How does the user incorporate additional characters, and what role do their interactions (e.g., dialogue or actions) play in advancing the story?  
+
+### **Language Use**  
+
+#### Narrative Perspective  
+What grammatical person does the user employ, and how do they use dialogue or monologue to add depth to the narrative?  
+
+#### Stylistic Elements  
+How does the user utilize sentence structure, vocabulary, and rhetorical devices to enhance the story’s impact or tone?  
+
+#### Tone and Mood Alignment  
+How does the tone or mood of the story align with the writing prompt, and what word choices or recurring phrases reinforce this alignment?  
+
+</user_writing_sheet>  
+
+---
+
+Your output must fully address each question within the tags `<thinking>` and `<user_writing_sheet>`. Ensure the responses provide actionable insights into the user's storytelling style and are easy to parse for further analysis.  
+
+
+
+
+

@@ -165,6 +165,19 @@ class StoryGenMethods():
             else:
                 results = []
             
+            # Get source constraints for this user
+            if iterate_over_source_constraints:
+                source_constraints_path = f'{source_constraints_dir}/{file.split(".")[0]}.txt'
+                # read the user instructions
+                with open(source_constraints_path, 'r') as f:
+                    source_constraints_raw = f.read()
+                    # TODO: Extract content between the tags <story_rules></story_rules>
+                    source_constraints = re.search(r'<story_rules>(.*?)</story_rules>', source_constraints_raw, re.DOTALL).group(1)
+                    # check if the source constraints are empty
+                    if not source_constraints:
+                        source_constraints = source_constraints_raw
+
+            
             # iterate over the test data
             for ictr, example in tqdm(enumerate(test_data), desc=f'Processing {file}', total=len(test_data)):
                 
@@ -182,16 +195,6 @@ class StoryGenMethods():
                 else:
                     few_shot_examples = None
                 
-                if iterate_over_source_constraints:
-                    source_constraints_path = f'{source_constraints_dir}/{file.split(".")[0]}.txt'
-                    # read the user instructions
-                    with open(source_constraints_path, 'r') as f:
-                        source_constraints_raw = f.read()
-                        # TODO: Extract content between the tags <story_rules></story_rules>
-                        source_constraints = re.search(r'<story_rules>(.*?)</story_rules>', source_constraints_raw, re.DOTALL).group(1)
-                        # check if the source constraints are empty
-                        if not source_constraints:
-                            source_constraints = source_constraints_raw
 
                 prompt = construct_story_prompt(example, source_constraints, few_shot_examples)
                 # call the OpenAI model
