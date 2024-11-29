@@ -1,0 +1,74 @@
+---
+
+#### Instructions  
+
+1. **Analyze the Provided Sheets**  
+   - Use the `<thinking></thinking>` tokens to analyze the provided user writing sheets systematically.  
+   - Reflect on recurring patterns, unique elements, and stylistic tendencies across all stories for each category (Plot, Creativity, Development, and Language Use).  
+
+2. **Generate the Combined User Writing Sheet**  
+   - After completing the analysis, output a **Combined User Writing Sheet** under the `<combined_user_sheet></combined_user_sheet>` tag.  
+   - Synthesize insights for each category into concise yet comprehensive responses (4-5 sentences per question).  
+   - Include relevant examples from the original sheets where applicable. Ensure the combined sheet reflects the user's distinct style with respect to writing prompts.
+
+---
+
+#### Input Format  
+- Two **User Writing Sheets**, each paired with its corresponding writing prompt (as a Python Dictionary - previous_user_sheet, and current_user_sheet)
+
+---
+
+#### Output Format  
+```plaintext
+<thinking>  
+Add your analysis of recurring patterns, unique elements, and stylistic tendencies across all the user writing sheets. Address the categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** systematically.  
+</thinking>  
+<combined_user_sheet>  
+
+### **Plot**  
+
+#### Story Beginning  
+[Combine insights on how the user typically begins their stories, incorporating examples from the provided sheets.]  
+
+#### Story Ending  
+[Combine insights on how the user concludes their stories, with examples from the sheets.]  
+
+#### Narrative Structure  
+[Combine insights on how the user structures their stories and connects events cohesively.]  
+
+### **Creativity**  
+
+#### Unique Elements  
+[Combine insights on how the user introduces original ideas and builds upon the prompt.]  
+
+#### Engaging Themes and Imagery  
+[Combine insights on the user’s ability to create engaging characters, themes, and imagery.]  
+
+#### Use of Tropes or Clichés  
+[Combine insights on how the user employs or subverts tropes and clichés.]  
+
+### **Development (Character and Setting)**  
+
+#### Main Character  
+[Combine insights on how the user develops main characters and connects them to the prompt.]  
+
+#### Setting Establishment  
+[Combine insights on how the user establishes immersive settings.]  
+
+#### Supporting Characters and Interactions  
+[Combine insights on the role of supporting characters and their interactions.]  
+
+### **Language Use**  
+
+#### Narrative Perspective  
+[Combine insights on how the user employs narrative perspective effectively.]  
+
+#### Stylistic Elements  
+[Combine insights on how the user uses sentence structure, vocabulary, and rhetorical devices.]  
+
+#### Tone and Mood Alignment  
+[Combine insights on how the user aligns tone and mood with the prompt and narrative.]  
+
+</combined_user_sheet>  
+
+Ensure that your output is within the respective tags <thinking> and <combined_user_sheet> to parse the output seamlessly. 

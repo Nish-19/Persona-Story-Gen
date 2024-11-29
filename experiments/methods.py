@@ -35,6 +35,9 @@ class StoryGenMethods():
 
         # user profile directory
         self.user_profile_dir = 'user_profile'
+
+        # user sheets directory
+        self.user_sheets_dir = 'user_sheets'
     
     def construct_user_instruction(self, example_raw, source='Reddit'):
         '''
@@ -342,8 +345,175 @@ class StoryGenMethods():
         print(f'Source: {source}')
 
         self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = user_profile_output_dir, system_instructions=system_instructions)
+    
+    def schema_user_profile(self, source='Reddit'):
+        '''
+        User Profile (Schema)
+        '''
 
+        def construct_user_sheet_prompt(example):
+            '''
+            Construct the Prompt for User Profile
+            '''
 
+            # construct the user instruction
+            user_instruction = ''
+            # deep copy example['metadata']
+            metadata = copy.deepcopy(example['metadata'])
+            # delete story name from metadata
+            if 'story_name' in metadata:
+                del metadata['story_name']
+            # delete story length from metadata
+            example_dict = {'metadata': metadata, 'writing_prompt': example['writing_prompt'], 'story': example['story']}
+            user_instruction += f"{json.dumps(example_dict, indent=4)}\n\n"
+
+            # construct OpenAI prompt
+            prompt = construct_prompt_message(system_instructions_sheet, user_instruction, user_constraints_sheet)
+            return prompt
+
+        def construct_user_profile_prompt(prev_prompt_dict, current_prompt_dict):
+            '''
+            Construct the Prompt for User Profile
+            '''
+
+            # construct the user instruction
+            user_instruction = ''
+            input_prompt_dict = {'previous_user_sheet': prev_prompt_dict, 'current_user_sheet': current_prompt_dict}
+            user_instruction += f"{json.dumps(input_prompt_dict, indent=4)}\n\n"
+
+            # construct OpenAI prompt
+            prompt = construct_prompt_message(system_instructions_combine, user_instruction, user_constraints_combine)
+            return prompt
+    
+        print('Method: Schema User Profile')
+        print(f'Source: {source}')
+
+        # user sheets output directory
+        user_sheets_output_dir = f'{self.user_sheets_dir}/{source}'
+        if not os.path.exists(user_sheets_output_dir):
+            os.makedirs(user_sheets_output_dir)
+        
+        # user profile output directory
+        user_profile_output_dir = f'{self.user_profile_dir}/schema/{source}'
+        if not os.path.exists(user_profile_output_dir):
+            os.makedirs(user_profile_output_dir)
+        
+        # profile directory
+        profile_dir = f'{self.data_split_dir}/{source}/profile'
+        # test directory
+        test_dir = f'{self.data_split_dir}/{source}/test'
+
+        # NOTE: STEP 1: Generate the User Writing Sheets
+        # sytem instructions
+        system_instructions_sheet_path = f'{self.user_profile_instructions_dir}/system_prompts/schema.txt'
+        # user instructions
+        user_instructions_sheet_path = f'{self.user_profile_instructions_dir}/user_prompts/schema.txt'
+
+        # read the system instructions
+        with open(system_instructions_sheet_path, 'r') as f:
+            system_instructions_sheet = f.read()
+        
+        # read the user instructions
+        with open(user_instructions_sheet_path, 'r') as f:
+            user_constraints_sheet = f.read()
+        
+        # iterate through each file in the profile directory
+        for file in tqdm(os.listdir(profile_dir), desc='User Sheet (Schema)', total=len(os.listdir(profile_dir))):
+            profile_file_path = os.path.join(profile_dir, file)
+            # profile data
+            with open(profile_file_path, 'r') as f:
+                profile_data = json.load(f)
+            
+            # output file path
+            output_file_path = os.path.join(user_sheets_output_dir, file)
+
+            # check if the output file already exists
+            if os.path.exists(output_file_path):
+                # read the output file
+                with open(output_file_path, 'r') as f:
+                    user_sheet_response = json.load(f)
+            else:
+                user_sheet_response = []
+            
+            # iterate through each example in the profile data
+            for ectr, example in enumerate(profile_data):
+                # check if the example already exists in the user sheet response
+                if ectr < len(user_sheet_response):
+                    continue
+
+                # break after 3 iterations
+                if ectr > 2:
+                    break
+                
+                # construct the prompt
+                prompt = construct_user_sheet_prompt(example)
+                # call the OpenAI model
+                response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                user_sheet_response.append(response)
+
+                # write the results to the output directory
+                with open(output_file_path, 'w') as f:
+                    json.dump(user_sheet_response, f, indent=4)
+        
+        # NOTE: STEP 2: Generate User Profiles using the User Writing Sheets
+
+        # system instructions
+        system_instructions_combine_path = f'{self.user_profile_instructions_dir}/system_prompts/combine.txt'
+        # user instructions
+        user_instructions_combine_path = f'{self.user_profile_instructions_dir}/user_prompts/combine.txt'
+
+        # read the system instructions
+        with open(system_instructions_combine_path, 'r') as f:
+            system_instructions_combine = f.read()
+        
+        # read the user instructions
+        with open(user_instructions_combine_path, 'r') as f:
+            user_constraints_combine = f.read()
+
+        # iterate through each file in the profile directory
+        for file in tqdm(os.listdir(profile_dir), desc='User Profile (Schema)', total=len(os.listdir(profile_dir))):
+            profile_file_path = os.path.join(profile_dir, file)
+            # profile data
+            with open(profile_file_path, 'r') as f:
+                profile_data = json.load(f)
+            
+            # output file path
+            output_file_path = os.path.join(user_profile_output_dir, file)
+
+            # check if the output file already exists
+            if os.path.exists(output_file_path):
+                # read the output file
+                with open(output_file_path, 'r') as f:
+                    user_profile_response = json.load(f)
+            else:
+                user_profile_response = []
+            
+            # iterate through each example in the profile data
+            for ectr, example in enumerate(profile_data):
+                # check if the example already exists in the user sheet response
+                if ectr < len(user_profile_response):
+                    continue
+
+                # break after 3 iterations
+                if ectr > 2:
+                    break
+
+                # if ectr == 0 just use the user sheet response
+                if ectr == 0:
+                    user_profile_response.append(user_sheet_response[ectr])
+                else:
+                    # construct the prompt
+                    prev_prompt_dict = {'user_sheet': user_sheet_response[ectr - 1], 'prompt': profile_data[ectr - 1]['writing_prompt']}
+                    current_prompt_dict = {'user_sheet': user_sheet_response[ectr], 'prompt': example['writing_prompt']}
+                    # construct the prompt
+                    prompt = construct_user_profile_prompt(prev_prompt_dict, current_prompt_dict)
+                    # call the OpenAI model
+                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                    user_profile_response.append(response)
+
+                    # write the results to the output directory
+                    with open(output_file_path, 'w') as f:
+                        json.dump(user_profile_response, f, indent=4)
 
 
 def parse_args():
@@ -355,7 +525,7 @@ def parse_args():
     # # user profile (no schema) 'store_true'
     # parser.add_argument('--no_schema', action='store_true', help='User Profile (No Schema)')
     # int choice
-    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema)')
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema)')
     return parser.parse_args()
 
 def main():
@@ -366,8 +536,8 @@ def main():
     # few shot 
     few_shot = args.few_shot
     # # method choice
-    choice = args.choice
-    # choice = 2
+    # choice = args.choice
+    choice = 3
     # create an instance of the StoryGenMethods class
     story_gen_methods = StoryGenMethods()
 
@@ -377,6 +547,9 @@ def main():
     elif choice == 2:
         # User Profile (No Schema)
         story_gen_methods.no_schema_user_profile(source=source)
+    elif choice == 3:
+        # User Profile (Schema)
+        story_gen_methods.schema_user_profile(source=source)
 
 if __name__ == '__main__':
     main()

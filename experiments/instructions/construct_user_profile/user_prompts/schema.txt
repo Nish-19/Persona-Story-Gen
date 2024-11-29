@@ -5,18 +5,18 @@
 
 2. **Generate the User Writing Sheet**  
    - After completing the analysis, output a well-structured **User Writing Sheet** under the `<user_writing_sheet></user_writing_sheet>` tag.  
-   - Include all categories and questions explicitly under their respective headers and provide detailed responses tailored to the given story and writing prompt.  
+   - Provide responses to every category and it's respective question in the form of 2-3 short, simple sentences tailored to the given story and writing prompt. Do not repeat the questions, just provide the answer to every question under the respective header.
 
 ---
 
 #### Input Format  
-- A single user-written story paired with its writing prompt (provided as a Python dictionary).  
+- A single user-written story paired with its writing prompt (provided as a Python dictionary). Additional metadata, such as story length, fandoms, relationship types, etc., may also be included.   
 
 ---
 
 #### Output Format  
 <thinking>  
-Add the analysis for the four criteria: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**, answering each question in detail.  
+Add the general analysis for the four criteria: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** that will help you to answer the following questions better.
 </thinking>  
 <user_writing_sheet>  
 
@@ -68,7 +68,7 @@ How does the tone or mood of the story align with the writing prompt, and what w
 
 ---
 
-Your output must fully address each question within the tags `<thinking>` and `<user_writing_sheet>`. Ensure the responses provide actionable insights into the user's storytelling style and are easy to parse for further analysis.  
+Your output must fully address each question within the tags `<thinking>` and `<user_writing_sheet>`. Ensure the responses provide actionable insights into the user's storytelling style and are easy to parse (the content is included within the respective tags) for further analysis.  
 
 
 
