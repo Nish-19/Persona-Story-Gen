@@ -17,8 +17,6 @@ def parse_args():
     parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema), 3. User Profile (Schema)')
     # verbose
     parser.add_argument('--verbose', type=bool, default=False, help='Verbose')
-    # compute_gt
-    parser.add_argument('--compute_gt', type=bool, default=False, help='Verbose')
 
     return parser.parse_args()
 
@@ -46,8 +44,6 @@ def main():
     choice = args.choice
     # verbose
     verbose = args.verbose
-    # compute_gt
-    compute_gt = args.compute_gt
 
     # suffix 
     if few_shot:
@@ -69,6 +65,14 @@ def main():
     output_dir = f"llm_evaluation/{consider_dir}"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+    
+    output_file = f'{output_dir}/{source}.json'
+    # check if the file exists
+    if os.path.exists(output_file):
+        with open(output_file, 'r') as f:
+            all_responses = json.load(f)
+    else:
+        all_responses = {}
     
     # read prompts 
     system_prompt_path = 'instructions/system_prompt/compare.txt'
@@ -107,21 +111,28 @@ def main():
         
         # iterrate only over expts_data 
         for ectr, expts in enumerate(expts_data):
+            # add the pair
+            identifier = f"{file}_{ectr}"
+
+            # check if the identifier exists in the output file
+            if identifier in all_responses:
+                if verbose:
+                    print(f"Skipping {identifier}")
+                continue
+
             gt_wp = gt_data[ectr]['writing_prompt']
             gt_story = gt_data[ectr]['story']
             if gt_story is None or expts['story'] is None:
                 print('Skipping None', file)
                 continue
-            # add the pair
-            pairs.append((gt_wp, gt_story, vanilla_data[ectr]['story'], expts['story']))
+            pairs.append((identifier, gt_wp, gt_story, vanilla_data[ectr]['story'], expts['story']))
     
     print(f"Using {consider_dir} method")
     print(f"Consider {len(pairs)} pairs for comparison")
     
     # iterate over the pairs
-    all_responses = []
-    for pair in tqdm(pairs, desc='Prompting OpenAI', total=len(pairs)):
-        gt_wp, gt_story, vanilla_story, expts_story = pair
+    for pair in tqdm(pairs, desc='Pair-wise Evaluation', total=len(pairs)):
+        identifier, gt_wp, gt_story, vanilla_story, expts_story = pair
         prompt = construct_compare_prompt_message(gt_wp, gt_story, vanilla_story, expts_story, system_prompt, user_constraints)
         # prompt the OpenAI model
         response = prompt_openai(prompt)
@@ -134,10 +145,9 @@ def main():
         response_dict[2] = response
 
         # add the responses to the list
-        all_responses.append(response_dict)
+        all_responses[identifier] = response_dict
     
         # write the responses to a file
-        output_file = f'{output_dir}/{source}.json'
         with open(output_file, 'w') as f:
             json.dump(all_responses, f, indent=4)
         

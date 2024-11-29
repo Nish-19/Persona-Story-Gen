@@ -5,6 +5,7 @@ consolidate the results of llm_prompting
 import os 
 import re
 import json
+import argparse
 from collections import Counter 
 
 def extract_winner(res):
@@ -20,10 +21,49 @@ def extract_winner(res):
         return winner_text.strip()
     except AttributeError:
         return 'Tie'
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--few_shot', type=bool, default=False, help='Few shot')
+    # source
+    parser.add_argument('--source', type=str, default='Reddit', help='Source')
+    # method choice 
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema), 3. User Profile (Schema)')
+    # verbose
+    parser.add_argument('--verbose', type=bool, default=False, help='Verbose')
+
+    return parser.parse_args()
+
         
 
 def main():
-    eval_path = 'llm_evaluation/no_schema/Reddit.json' 
+    # parse arguments
+    args = parse_args()
+
+    # few shot
+    few_shot = args.few_shot
+
+    # source
+    source = args.source
+    # choice
+    choice = args.choice
+
+    # suffix 
+    if few_shot:
+        suffix = '_few_shot'
+    else:
+        suffix = ''
+
+    # root directories 
+    if choice == 1:
+        consider_dir = f'vanilla{suffix}'
+    elif choice == 2:
+        consider_dir = f'no_schema'
+    elif choice == 3:
+        consider_dir = f'schema'
+
+
+    eval_path = f'llm_evaluation/{consider_dir}/{source}.json' 
 
     # read the evaluation file
     with open(eval_path, 'r') as f:
@@ -32,7 +72,7 @@ def main():
     # iterate over the evaluation data
     all_results = []
     pair_reults = []
-    for data in eval_data:
+    for key, data in eval_data.items():
         res_1 = extract_winner(data["1"])
         res_2 = extract_winner(data["2"])
         pair_reults.append((res_1, res_2))
