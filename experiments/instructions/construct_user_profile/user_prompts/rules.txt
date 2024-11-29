@@ -1,0 +1,96 @@
+### Instructions
+
+1. **Analyze the Writing Prompt**  
+   - Carefully analyze the provided writing prompt. Identify key thematic elements, tone, narrative possibilities, and character or plot directions implied or explicitly stated in the prompt.
+
+2. **Refer to the User Profile**  
+   - Use the details in the user profile to understand the user’s storytelling style. Pay close attention to their preferences in **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.  
+   - Ensure that the Story Rules reflect the stylistic traits, thematic choices, and narrative structures typical of the user, as described in their profile.
+
+3. **Synthesize Detailed Story Rules**  
+   - Combine insights from the prompt analysis and the user profile to generate comprehensive Story Rules.  
+   - Ensure the rules include specific elements from the prompt while adhering to the storytelling style described in the user profile.  
+   - Write the Story Rules in the form of **direct second-person instructions** that are clear, actionable, and emulate the user’s storytelling style.
+
+---
+
+#### Input Format  
+- The writing prompt and user profile as a Python Dictionary.
+
+---
+
+### Output Format  
+
+#### Thinking Tags  
+- Use `<thinking></thinking>` tags to describe your thought process while analyzing the writing prompt and synthesizing Story Rules.
+
+#### Story Rules Tags  
+- Provide the final Story Rules under `<story_rules></story_rules>` tags.  
+- Organize the rules into four main categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.  
+- Ensure each category is divided into subcategories (e.g., Story Beginning, Story Ending, Narrative Structure under **Plot**) and written as actionable second-person instructions.
+
+---
+
+### Example Output  
+
+#### Output Format  
+
+```markdown
+<thinking>
+Explain how the provided writing prompt inspires specific plot, character, or setting elements. Mention how the user profile influences decisions regarding the tone, narrative structure, or stylistic choices.
+</thinking>
+
+<story_rules>
+### **Plot**
+
+#### Story Beginning
+- Begin with a dramatic scene that establishes [specific thematic elements from the prompt], aligning with the user’s engaging opening style, such as a frantic or humorous moment.
+
+#### Story Ending
+- Conclude with a sense of resolution or humor that ties back to the prompt’s central theme. Incorporate a reflective moment or a witty touch, as seen in the user’s preferred style.
+
+#### Narrative Structure
+- Create a clear and cohesive structure, connecting a strong beginning, engaging middle, and impactful ending. Ensure transitions between events reflect logical progression and purposeful disruptions where relevant.
+
+---
+
+### **Creativity**
+
+#### Unique Elements
+- Add imaginative details inspired by the prompt, such as [specific elements not explicitly mentioned but logically extended]. Ensure these reflect the user’s preference for originality.
+
+#### Engaging Themes and Imagery
+- Use vivid imagery and thematic depth to capture the mood of the prompt, whether it be dramatic, humorous, or whimsical, in line with the user’s engaging style.
+
+#### Use of Tropes or Clichés
+- Subvert or enhance common tropes related to [the prompt’s themes], ensuring originality while incorporating humor or irony when appropriate.
+
+---
+
+### **Development (Character and Setting)**
+
+#### Main Character
+- Develop the protagonist with clear motivations and a connection to the prompt’s scenario. Ensure their arc is well-established and aligned with the user’s detailed character-building approach.
+
+#### Setting Establishment
+- Build immersive settings with descriptive details that bring [specific scenes or locations in the prompt] to life. Ensure they feel relevant and vivid, matching the user’s immersive style.
+
+#### Supporting Characters and Interactions
+- Introduce secondary characters that complement the protagonist and contribute meaningfully to the plot. Use interactions to add emotional depth or advance the story.
+
+---
+
+### **Language Use**
+
+#### Narrative Perspective
+- Use [a specific narrative perspective] to provide depth and balance between action and introspection. Ensure the tone aligns with the user’s preferred narrative techniques.
+
+#### Stylistic Elements
+- Employ varied sentence structures and rich vocabulary to enhance the narrative. Include rhetorical devices, such as humor, irony, or vivid descriptions, to create impact.
+
+#### Tone and Mood Alignment
+- Maintain a tone and mood that reflects the prompt’s themes while adhering to the user’s balance of humor, tension, or heartfelt moments.
+
+</story_rules>
+
+Ensure that your output is within the respective tags <thinking> and <story_rules>, to parse the output seamlessly. 

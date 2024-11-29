@@ -14,7 +14,7 @@
 ---
 
 #### Input Format  
-- Two **User Writing Sheets**, each paired with its corresponding writing prompt (as a Python Dictionary - previous_user_sheet, and current_user_sheet)
+- The  **Previous Combined User Writing Sheet** current writing prompt and the corresponding **User Writing Sheet** for the current prompt (as a Python Dictionary - "Previous_Information", and "Current_Information")
 
 ---
 
@@ -71,4 +71,4 @@ Add your analysis of recurring patterns, unique elements, and stylistic tendenci
 
 </combined_user_sheet>  
 
-Ensure that your output is within the respective tags <thinking> and <combined_user_sheet> to parse the output seamlessly. 
+Ensure that your output is within the respective tags <thinking> and <combined_user_sheet>, to parse the output seamlessly. 
