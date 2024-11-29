@@ -474,14 +474,14 @@ class StoryGenMethods():
                 user_sheet_response = []
             
             # iterate through each example in the profile data
-            for ectr, example in enumerate(profile_data):
+            for ectr, example in tqdm(enumerate(profile_data), desc=f'Processing {file}', total=len(profile_data)):
                 # check if the example already exists in the user sheet response
                 if ectr < len(user_sheet_response):
                     continue
 
-                # break after 3 iterations
-                if ectr > 2:
-                    break
+                # # break after 3 iterations
+                # if ectr > 2:
+                #     break
                 
                 # construct the prompt
                 prompt = construct_user_sheet_prompt(example)
@@ -532,14 +532,14 @@ class StoryGenMethods():
                 user_sheet_response = json.load(f)
             
             # iterate through each example in the profile data
-            for ectr, example in enumerate(profile_data):
+            for ectr, example in tqdm(enumerate(profile_data), desc=f'Processing {file}', total=len(profile_data)):
                 # check if the example already exists in the user sheet response
                 if ectr < len(user_profile_response):
                     continue
 
-                # break after 3 iterations
-                if ectr > 2:
-                    break
+                # # break after 3 iterations
+                # if ectr > 2:
+                #     break
 
                 # if ectr == 0 just use the user sheet response
                 if ectr == 0:
@@ -585,9 +585,6 @@ class StoryGenMethods():
         
         # iterate through each file in the test directory
         for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Story Rules (Schema)', total=len(os.listdir(test_dir))):
-            # break after 1 iteration
-            if fctr > 0:
-                break
 
             test_file_path = os.path.join(test_dir, file)
             # test data
@@ -618,8 +615,8 @@ class StoryGenMethods():
                 if ectr < len(story_rules_response):
                     continue
 
-                # break after 3 iterations
-                if ectr > 2:
+                # break after 2 iterations
+                if ectr > 1:
                     break
 
                 # construct the prompt
@@ -672,8 +669,8 @@ def main():
     # few shot 
     few_shot = args.few_shot
     # # method choice
-    # choice = args.choice
-    choice = 3
+    choice = args.choice
+    # choice = 3
     # create an instance of the StoryGenMethods class
     story_gen_methods = StoryGenMethods()
 
