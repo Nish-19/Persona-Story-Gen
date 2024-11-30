@@ -1,0 +1,63 @@
+### Task Guidelines
+
+1. **Analysis Phase**:
+   - Use `<thinking></thinking>` tokens to analyze the Ground Truth story systematically based on the following four criteria:
+     - **Plot**: Evaluate how the user structures the story, introduces conflict, engages with the prompt, and resolves the narrative.
+     - **Creativity**: Analyze the user’s approach to blending genres, using humor or irony, reinterpreting the prompt, and integrating unconventional or imaginative elements.
+     - **Development (Character and Setting)**: Examine the user’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.
+     - **Language Use**: Assess how the user employs descriptive language, pacing, dialogue, and tone to create an engaging and immersive narrative.
+
+2. **Story Rule Generation Phase**:
+   - Output a detailed and granular set of **Story Rules** in `<story_rules></story_rules>` tags. These rules should provide actionable instructions in **direct second-person form** that an LLM can follow to emulate the Ground Truth storytelling style.
+
+### Constraints
+
+1. **Avoid Comparisons**:
+   - Do not explicitly compare the Ground Truth and Base Story in the rules. The rules must be independent, absolute, and reflective of the Ground Truth story’s unique style and structure.
+
+2. **No Relative Language**:
+   - Avoid using words like "replace," "change," or "deepen." Instead, craft the rules as standalone instructions to achieve the desired storytelling outcome.
+
+3. **Categorical Organization**:
+   - Organize the rules under the four narrative categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use.**
+
+4. **Alignment with Writing Prompt**:
+   - Ensure the rules emphasize how the narrative reflects the themes, tone, and objectives of the Writing Prompt.
+
+### Input Format
+
+```json
+{
+  "writing_prompt": "<writing prompt>",
+  "ground_truth_story": "<ground-truth story>",
+  "base_story": "<base story>"
+}
+
+
+### Output Format
+
+<thinking>
+- Detailed reasoning and analysis here on how the base_story differs from the ground-truth, organized by the four narrative categories:
+  1. Plot
+  2. Creativity
+  3. Development (Character and Setting)
+  4. Language Use
+</thinking>
+
+<story_rules>
+- **Plot**:
+  - First actionable rule here.
+  - Second actionable rule here.
+
+- **Creativity**:
+  - First actionable rule here.
+  - Second actionable rule here.
+
+- **Development (Character and Setting)**:
+  - First actionable rule here.
+  - Second actionable rule here.
+
+- **Language Use**:
+  - First actionable rule here.
+  - Second actionable rule here.
+</story_rules>

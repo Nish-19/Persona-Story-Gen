@@ -8,7 +8,7 @@ import time
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 
 
-def construct_prompt_message(system_prompt, user_prompt, user_constraints=None, few_shot_prompt=None):
+def construct_prompt_message(system_prompt, user_prompt, user_constraints=None, few_shot_prompt=None, add_at_end=False):
     '''
     Construct a prompt message for OpenAI ChatCompletion model
     '''
@@ -16,12 +16,16 @@ def construct_prompt_message(system_prompt, user_prompt, user_constraints=None, 
     # add system prompt
     prompt_message.append({'role': 'system', 'content': system_prompt})
     # add user constraints
-    if user_constraints:
-        prompt_message.append({'role': 'user', 'content': user_constraints})
+    if not add_at_end:
+        if user_constraints:
+            prompt_message.append({'role': 'user', 'content': user_constraints})
     if few_shot_prompt:
         for example_num, example in few_shot_prompt.items():
             prompt_message.append({'role': 'user', 'content': example["User"]})
             prompt_message.append({'role': 'assistant', 'content': example["Assistant"]})
+    if add_at_end:
+        if user_constraints:
+            prompt_message.append({'role': 'user', 'content': user_constraints})
 
     prompt_message.append({'role': 'user', 'content': user_prompt})
 

@@ -27,11 +27,17 @@ class StoryGenMethods():
         # 3. User Profile instructions directory
         self.user_profile_instructions_dir = 'instructions/construct_user_profile'
 
+        # 4. Rule extractor instructions directory
+        self.rule_extractor_instructions_dir = 'instructions/rule_extractor'
+
         # 4. Generate Story User Profile instructions directory
         self.generate_story_user_profile_instructions_dir = 'instructions/generate_story_user_profile'
 
         # output directory
         self.output_dir = 'results/'
+
+        # output directory (profile)
+        self.output_dir_profile = 'results_profile/'
 
         # user profile directory
         self.user_profile_dir = 'user_profile'
@@ -92,9 +98,9 @@ class StoryGenMethods():
             user_instruction = self.construct_user_instruction(profile_data[pindex], source)
             few_shot_examples[pctr] = {'User': user_instruction, 'Assistant': profile_data[pindex]['story']}
         
-        return few_shot_examples
+        return few_shot_examples, profile_indices
 
-    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, system_instructions='', debug=False):
+    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, system_instructions='', debug=False, is_profile=False):
         '''
         performs story generation given - source, few_shot, source_constraints, output_dir
         '''
@@ -107,7 +113,6 @@ class StoryGenMethods():
 
             # construct the user instruction
             user_instruction = self.construct_user_instruction(example, source)
-
 
             # construct OpenAI prompt
             prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints, few_shot_examples)
@@ -170,12 +175,14 @@ class StoryGenMethods():
                     results = json.load(f)
             else:
                 results = []
-            
 
+            if is_profile:
+                consider_data = profile_data
+            else:
+                consider_data = test_data
             
             # iterate over the test data
-            for ictr, example in tqdm(enumerate(test_data), desc=f'Processing {file}', total=len(test_data)):
-
+            for ictr, example in tqdm(enumerate(consider_data), desc=f'Processing {file}', total=len(consider_data)):
                 
                 # stop after 2 iterations
                 if debug:
@@ -188,11 +195,10 @@ class StoryGenMethods():
             
                 if len(profile_data) == 0:
                     continue
-
             
                 # few_shot 
                 if few_shot:
-                    few_shot_examples = self.get_few_shot_examples(profile_data, example, source=source, top_k=1)
+                    few_shot_examples, _ = self.get_few_shot_examples(profile_data, example, source=source, top_k=1)
                 else:
                     few_shot_examples = None
 
@@ -210,18 +216,16 @@ class StoryGenMethods():
                         try:
                             with open(source_constraints_path, 'r') as f:
                                 all_source_constraints = json.load(f)
+                            
+                            source_constraints_raw = all_source_constraints[ictr]
+                            # TODO: Extract content between the tags <story_rules></story_rules>
+                            source_constraints = re.search(r'<story_rules>(.*?)</story_rules>', source_constraints_raw, re.DOTALL).group(1)
+                            # check if the source constraints are empty
+                            if not source_constraints:
+                                source_constraints = source_constraints_raw
                         except Exception as e:
                             continue
                         
-                        source_constraints_raw = all_source_constraints[ictr]
-
-                    # TODO: Extract content between the tags <story_rules></story_rules>
-                    source_constraints = re.search(r'<story_rules>(.*?)</story_rules>', source_constraints_raw, re.DOTALL).group(1)
-                    # check if the source constraints are empty
-                    if not source_constraints:
-                        source_constraints = source_constraints_raw
-
-                
 
                 prompt = construct_story_prompt(example, source_constraints, few_shot_examples)
                 # call the OpenAI model
@@ -235,7 +239,7 @@ class StoryGenMethods():
                 with open(output_file_path, 'w') as f:
                     json.dump(results, f, indent=4)
     
-    def perform_vanilla(self, source='Reddit', few_shot=False, debug=False):
+    def perform_vanilla(self, source='Reddit', few_shot=False, debug=False, is_profile=False):
         '''
         Vanilla Story Generation
         '''
@@ -246,7 +250,10 @@ class StoryGenMethods():
             suffix = ''
 
         # output directory
-        output_dir = f'{self.output_dir}/vanilla{suffix}/{source}'
+        if not is_profile:
+            output_dir = f'{self.output_dir}/vanilla{suffix}/{source}'
+        else:
+            output_dir = f'{self.output_dir_profile}/vanilla{suffix}/{source}'
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -262,11 +269,13 @@ class StoryGenMethods():
         source_constraints_path = f'{self.vanilla_prompt_instructions_dir}/user_prompts/{source}.txt'
         
         print('Method: Vanilla Story Generation')
+        if is_profile:
+            print('Profile Data')
         print(f'Few Shot: {few_shot}')
         print(f'Source: {source}')
 
         # perform story generation
-        self.perform_story_generation(source=source, few_shot=few_shot, story_output_dir=output_dir, source_constraints_dir=source_constraints_path, system_instructions=system_instructions, debug=debug)
+        self.perform_story_generation(source=source, few_shot=few_shot, story_output_dir=output_dir, source_constraints_dir=source_constraints_path, system_instructions=system_instructions, debug=debug, is_profile=is_profile)
 
     
     def no_schema_user_profile(self, source='Reddit', debug=False):
@@ -589,7 +598,7 @@ class StoryGenMethods():
         test_dir = f'{self.data_split_dir}/{source}/test'
 
         # story rules output directory
-        story_rules_output_dir = f'{self.story_rules_dir}/{source}'
+        story_rules_output_dir = f'{self.story_rules_dir}/schema/{source}'
         if not os.path.exists(story_rules_output_dir):
             os.makedirs(story_rules_output_dir)
         
@@ -677,7 +686,225 @@ class StoryGenMethods():
         print(f'Source: {source}')
     
         self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug)
+    
+    def rule_generator(self, source='Reddit'):
+        '''
+        generate rules for the stories in the profile set
+        '''
+        def construct_rule_extractor_prompt(system_instructions, writing_prompt, profile_story, base_story, user_constraints):
+            '''
+            Construct the Rule Extractor Prompt
+            '''
+            # construct the user instruction
+            user_instruction_dict = {'writing_prompt': writing_prompt, 'ground_truth_story': profile_story, 'base_story': base_story}
+            user_instruction = f"{json.dumps(user_instruction_dict, indent=4)}\n\n"
 
+            # construct OpenAI prompt
+            prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints)
+            return prompt
+
+
+
+        # ground truth profile directory
+        profile_dir = f'{self.data_split_dir}/{source}/profile'
+
+        # base story directory 
+        base_story_dir = f'{self.output_dir_profile}/vanilla/{source}'
+
+        # story rules output directory
+        story_rules_output_dir = f'{self.output_dir_profile}/rules/{source}'
+        if not os.path.exists(story_rules_output_dir):
+            os.makedirs(story_rules_output_dir)
+
+        # system instructions
+        with open(f"{self.rule_extractor_instructions_dir}/system_prompts/delta_rules.txt", 'r') as f:
+            system_instructions = f.read()
+        
+        # user instructions
+        with open(f"{self.rule_extractor_instructions_dir}/user_prompts/delta_rules.txt", 'r') as f:
+            user_constraints = f.read()
+        
+        # iterate through each file in the profile directory
+        for file in tqdm(os.listdir(profile_dir), desc='Rule Generation', total=len(os.listdir(profile_dir))):
+            profile_file_path = os.path.join(profile_dir, file)
+            # profile data
+            with open(profile_file_path, 'r') as f:
+                profile_data = json.load(f)
+            
+            # base story file path
+            base_story_file_path = os.path.join(base_story_dir, file)
+            # base story data
+            try:
+                with open(base_story_file_path, 'r') as f:
+                    base_story_data = json.load(f)
+            except Exception as e:
+                continue
+            
+            # output file path
+            output_file_path = os.path.join(story_rules_output_dir, file)
+
+            # check if the output file already exists
+            if os.path.exists(output_file_path):
+                # read the output file
+                with open(output_file_path, 'r') as f:
+                    story_rules_response = json.load(f)
+            else:
+                story_rules_response = []
+            
+            # iterate through each example in the profile data
+            for ectr, example in tqdm(enumerate(profile_data), desc=f'Processing {file}', total=len(profile_data)):
+                # check if the example already exists in the story rules response
+                if ectr < len(story_rules_response):
+                    continue
+
+                # # break after 3 iterations
+                # if ectr > 2:
+                #     break
+
+                # writing prompt 
+                writing_prompt = example['writing_prompt']
+                # base story
+                base_story = base_story_data[ectr]['story']
+                # profile story
+                profile_story = example['story']
+                # construct the prompt
+                prompt = construct_rule_extractor_prompt(system_instructions, writing_prompt, profile_story, base_story, user_constraints)
+                # call the OpenAI model
+                try:
+                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                except Exception as e:
+                    response = None
+                story_rules_response.append(response)
+
+                # write the results to the output directory
+                with open(output_file_path, 'w') as f:
+                    json.dump(story_rules_response, f, indent=4)
+    
+    def personalized_rule_generator(self, source='Reddit', debug=False):
+        '''
+        generate personalized rules for the stories in the profile set
+        '''
+        def construct_personalized_story_rules_prompt(system_instructions, writing_prompt, few_shot_examples, user_constraints):
+            '''
+            Construct the Rule Generator Prompt
+            '''
+            # construct the user instruction
+            user_instruction = f"Writing Prompt: {writing_prompt}"
+
+            # construct OpenAI prompt
+            prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints, few_shot_examples, add_at_end=True)
+            return prompt
+
+        # ground truth profile directory
+        profile_dir = f'{self.data_split_dir}/{source}/profile'
+
+        # test directory
+        test_dir = f'{self.data_split_dir}/{source}/test'
+
+        # profile story rules output directory
+        profile_story_rules_input_dir = f'{self.output_dir_profile}/rules/{source}'
+
+        # system instructions
+        with open(f"{self.rule_extractor_instructions_dir}/system_prompts/rule_generator.txt", 'r') as f:
+            system_instructions = f.read()
+        
+        # user instructions
+        with open(f"{self.rule_extractor_instructions_dir}/user_prompts/rule_generator.txt", 'r') as f:
+            user_constraints = f.read()
+        
+        # story rules output directory
+        story_rules_output_dir = f'{self.story_rules_dir}/delta/{source}'
+        if not os.path.exists(story_rules_output_dir):
+            os.makedirs(story_rules_output_dir)
+
+        # iterate through each file in the test directory
+        for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Story Rules (Schema)', total=len(os.listdir(test_dir))):
+                        
+            profile_file_path = os.path.join(profile_dir, file)
+            test_file_path = os.path.join(test_dir, file)
+
+            # profile data
+            with open(profile_file_path, 'r') as f:
+                profile_data = json.load(f)
+            
+            # test data
+            with open(test_file_path, 'r') as f:
+                test_data = json.load(f)
+            
+            # output file path
+            output_file_path = os.path.join(story_rules_output_dir, file)
+
+            # check if the output file already exists
+            if os.path.exists(output_file_path):
+                # read the output file
+                with open(output_file_path, 'r') as f:
+                    story_rules_response = json.load(f)
+            else:
+                story_rules_response = []
+            
+            try:
+                # open profile_story_rules_input_dir
+                profile_story_rules_path = os.path.join(profile_story_rules_input_dir, file)
+                with open(profile_story_rules_path, 'r') as f:
+                    profile_story_rules = json.load(f)
+            except Exception as e:
+                continue
+            
+            # iterate through each example in the test data
+            for ectr, example in tqdm(enumerate(test_data), desc=f'Processing {file}', total=len(test_data)):
+                # check if the example already exists in the story rules response
+                if ectr < len(story_rules_response):
+                    continue
+                
+                if debug:
+                    # break after 2 iterations
+                    if ectr > 1:
+                        break
+                
+                _, profile_indices = self.get_few_shot_examples(profile_data, example, source=source, top_k=3)
+
+                # construct few shot examples
+                few_shot_examples = {}
+                for pctr, pindex in enumerate(profile_indices):
+                    # construct user instruction 
+                    profile_rules_raw = profile_story_rules[pindex]
+                    # extract text between <story_rules></story_rules> tag
+                    profile_rules = re.search(r'<story_rules>(.*?)</story_rules>', profile_rules_raw, re.DOTALL).group(1)
+                    if not profile_rules:
+                        profile_rules = profile_rules_raw
+                    few_shot_examples[pctr] = {'User': f'Writing Prompt: {profile_data[pindex]['writing_prompt']}', 'Assistant': f'Story Rules: {profile_rules}'}
+
+
+                # construct the prompt
+                prompt = construct_personalized_story_rules_prompt(system_instructions, example['writing_prompt'], few_shot_examples, user_constraints)
+                # call the OpenAI model
+                try:
+                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                except Exception as e:
+                    response = None
+                story_rules_response.append(response)
+
+                # write the results to the output directory
+                with open(output_file_path, 'w') as f:
+                    json.dump(story_rules_response, f, indent=4)
+    
+        # TODO: Story Generation using the personalized rules
+        story_output_dir = f'{self.output_dir}/delta/{source}'
+
+        if not os.path.exists(story_output_dir):
+            os.makedirs(story_output_dir)
+        
+        # system instructions
+        system_instructions_path = f'{self.generate_story_user_profile_instructions_dir}/system_prompts/{source}.txt'
+        # read the system instructions
+        with open(system_instructions_path, 'r') as f:
+            system_instructions = f.read()
+        
+        print('Method: Personalized Rule Generator Story Generation')
+        print(f'Few Shot: True')
+        print(f'Source: {source}')
+
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug)
 
 
 def parse_args():
@@ -689,7 +916,11 @@ def parse_args():
     # # user profile (no schema) 'store_true'
     # parser.add_argument('--no_schema', action='store_true', help='User Profile (No Schema)')
     # int choice
-    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema)')
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator')
+    # is_profile
+    parser.add_argument('--is_profile', action='store_true', help='generate on profile data')
+    # extract rules
+    parser.add_argument('--extract_rules', action='store_true', help='extract rules')
     # debug mode
     parser.add_argument('--debug', action='store_true', help='Debug Mode')
     return parser.parse_args()
@@ -703,19 +934,31 @@ def main():
     few_shot = args.few_shot
     # # method choice
     choice = args.choice
+    # choice = 4
+    # is_profile
+    is_profile = args.is_profile
+    # # extract rules
+    extract_rules = args.extract_rules
     # choice = 3
     # create an instance of the StoryGenMethods class
     story_gen_methods = StoryGenMethods()
 
-    if choice == 1:
-        # perform Vanilla story generation
-        story_gen_methods.perform_vanilla(source=source, few_shot=few_shot, debug=args.debug)
-    elif choice == 2:
-        # User Profile (No Schema)
-        story_gen_methods.no_schema_user_profile(source=source, debug=args.debug)
-    elif choice == 3:
-        # User Profile (Schema)
-        story_gen_methods.schema_user_profile(source=source, debug=args.debug)
+    if extract_rules:
+        # extract rules
+        story_gen_methods.rule_generator(source=source)
+    else:
+        if choice == 1:
+            # perform Vanilla story generation
+            story_gen_methods.perform_vanilla(source=source, few_shot=few_shot, debug=args.debug, is_profile=is_profile)
+        elif choice == 2:
+            # User Profile (No Schema)
+            story_gen_methods.no_schema_user_profile(source=source, debug=args.debug)
+        elif choice == 3:
+            # User Profile (Schema)
+            story_gen_methods.schema_user_profile(source=source, debug=args.debug)
+        elif choice == 4:
+            # Rule Generator
+            story_gen_methods.personalized_rule_generator(source=source)
 
 if __name__ == '__main__':
     main()

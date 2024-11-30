@@ -1,0 +1,46 @@
+#### Constraints
+1. **Mimic the Examples**:
+   - Use the style, structure, and level of detail in the examples as a guide for creating the new **Story Rules**.
+   - Ensure the rules reflect the tone and creativity of the user's story rules demonstrated in the examples.
+
+2. **Categorical Organization**:
+   - Structure the rules under the following categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.
+
+3. **Alignment with Writing Prompt**:
+   - Tailor the rules specifically to the new writing prompt, incorporating its themes, tone, and narrative potential.
+
+4. **Independent Rules**:
+   - Write the rules as standalone, actionable instructions in the second person.
+   - Avoid using comparative or relative terms (e.g., "similar to," "like in," "adjust"). Rules must be absolute and directly applicable.
+
+5. **Comprehensive Detailing**:
+   - Cover all narrative aspects (e.g., pacing, humor, character dynamics) relevant to the prompt and inferred from the examples.
+   - Ensure the rules provide granular and actionable guidance.
+
+---
+
+#### Input Format
+1. **Few-shot Examples**: A set of writing prompts paired with their corresponding **Story Rules** in the chat history.
+2. **New Writing Prompt**: A single writing prompt for which you will generate the **Story Rules**.
+
+---
+
+#### Output Format
+<thinking>
+Analyze the style, structure, and detailing of the examples to infer patterns and key elements. Use this analysis to determine how to craft the **Story Rules** for the new writing prompt.
+</thinking>
+<story_rules>
+- **Plot**:
+  - [Insert detailed, actionable rules for plot development tailored to the new prompt.]
+  
+- **Creativity**:
+  - [Insert detailed, actionable rules for creativity tailored to the new prompt.]
+
+- **Development (Character and Setting)**:
+  - [Insert detailed, actionable rules for character and setting development tailored to the new prompt.]
+
+- **Language Use**:
+  - [Insert detailed, actionable rules for language use tailored to the new prompt.]
+</story_rules>
+
+Follow the exact output format specified above and output both the <thinking> and the <story_rules> tags to facilitate seamless parsing. 
