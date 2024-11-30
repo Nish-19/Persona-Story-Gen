@@ -64,6 +64,8 @@ def main():
         consider_dir = f'no_schema'
     elif choice == 3:
         consider_dir = f'schema'
+    elif choice == 4:
+        consider_dir = f'delta'
 
     if pool_choice == 1:
         llm_eval_name = 'llm_evaluation'
