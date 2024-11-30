@@ -14,10 +14,10 @@ def parse_args():
     parser.add_argument('--source', type=str, default='Reddit', help='Source')
     # method choice 
     parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema), 3. User Profile (Schema)')
-    # verbose
-    parser.add_argument('--verbose', type=bool, default=False, help='Verbose')
+    # verbose (store_true)
+    parser.add_argument('--verbose', action='store_true', help='enable verbose mode')
     # compute_gt
-    parser.add_argument('--compute_gt', type=bool, default=False, help='Verbose')
+    parser.add_argument('--compute_gt', action='store_true', help='compute ground truth')
 
     return parser.parse_args()
 
@@ -65,13 +65,17 @@ def main():
         # expts file path
         expts_file_path = os.path.join(expts_root_dir, file)
 
-        # read the ground truth file
-        with open(gt_file_path, 'r') as f:
-            gt_data = json.load(f)
-        
-        # read the expts file
-        with open(expts_file_path, 'r') as f:
-            expts_data = json.load(f)
+        try:
+            # read the ground truth file
+            with open(gt_file_path, 'r') as f:
+                gt_data = json.load(f)
+            
+            # read the expts file
+            with open(expts_file_path, 'r') as f:
+                expts_data = json.load(f)
+        except:
+            print('Error reading file', file)
+            continue
         
         # # assert the lengths of the ground truth and expts data
         # assert len(gt_data) == len(expts_data), 'Length mismatch between ground truth and expts data'
