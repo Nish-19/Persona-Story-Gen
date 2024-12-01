@@ -160,7 +160,7 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
 
     # write the examples to a file
-    with open(f'{output_dir}/examples.json', 'w') as f:
+    with open(f'{output_dir}/data.json', 'w') as f:
         json.dump(select_examples, f, indent=4)
     
     with open(f'{output_dir}/metadata.json', 'w') as f:
