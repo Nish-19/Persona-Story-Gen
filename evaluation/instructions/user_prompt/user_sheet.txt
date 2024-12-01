@@ -1,51 +1,22 @@
+#### Input Format  
+
+You will receive the following inputs:  
+1. **Writing Prompt**: The prompt that both stories were written in response to.  
+2. **User Writing Sheet**: A detailed breakdown of the user's storytelling preferences across multiple criteria.  
+3. **Category to Evaluate**: The single fine-grained category for evaluation.  
+4. **Story A and Story B**: The two stories to be evaluated.  
+
 #### Evaluation Guidelines  
 - **Impartiality**: Avoid any position biases; ensure that the order in which the stories are presented does not influence your decision.  
-- **Length**: Do not allow the length of the responses to influence your evaluation.  
-- **Focus**: Assess each story based solely on how well it aligns with the user's preferences as described in the User Writing Sheet.  
-- **Clarity**: For each fine-grained category, determine the winner between the two stories and provide reasoning for your choice.  
+- **Focus**: Assess each story based solely on how well it aligns with the user's preferences for the specified category.  
+- **Clarity**: Provide detailed reasoning and explicitly determine the winner between the two stories for the category under evaluation.  
 
-#### Constraints  
-1. **Categorical Winner Selection**: You must identify a winner (Story A or Story B) for each fine-grained category, based on alignment with the User Writing Sheet.  
-2. **Detailed Reasoning**: Use the `<thinking></thinking>` token to provide reasoning for each category.  
-3. **Output Format**: Use the `<winner_per_category>` token to list winners for all categories, formatted as follows:  
+#### Output Format  
 
-#### Input Format  
-You will receive the following inputs (as a Python Dictionary):  
-1. **Writing Prompt**: The prompt that both stories were written in response to.  
-2. **User Writing Sheet**: A detailed breakdown of the user's storytelling preferences across the following criteria:  
-   - **Plot**  
-     - Story Beginning  
-     - Story Ending  
-     - Narrative Structure  
-   - **Creativity**  
-     - Unique Elements  
-     - Engaging Themes and Imagery  
-     - Use of Tropes or Clichés  
-   - **Development (Character and Setting)**  
-     - Main Character  
-     - Setting Establishment  
-     - Supporting Characters and Interactions  
-   - **Language Use**  
-     - Narrative Perspective  
-     - Stylistic Elements  
-     - Tone and Mood Alignment  
-3. **Story A and Story B**: The two stories to be evaluated.  
+<thinking>  
+Provide detailed reasoning for the evaluation of the two stories, focusing exclusively on the specified category and explaining how each aligns with the User Writing Sheet.  
+</thinking>  
 
-#### Output Format 
-<thinking> Provide detailed reasoning for each fine-grained category, explaining how each story aligns with the User Writing Sheet and why you selected the winner. </thinking>
-<winner_per_category>
-Plot_Story_Beginning: [A or B]
-Plot_Story_Ending: [A or B]
-Plot_Narrative_Structure: [A or B]
-Creativity_Unique_Elements: [A or B]
-Creativity_Engaging_Themes_and_Imagery: [A or B]
-Creativity_Use_of_Tropes_or_Clichés: [A or B]
-Development_Main_Character: [A or B]
-Development_Setting_Establishment: [A or B]
-Development_Supporting_Characters_and_Interactions: [A or B]
-Language_Use_Narrative_Perspective: [A or B]
-Language_Use_Stylistic_Elements: [A or B]
-Language_Use_Tone_and_Mood_Alignment: [A or B]
-</winner_per_category>
-
-Adhere to the above output format by using the respective tags to facilitate seamless parsing of your output.
+<winner>  
+State the label of the winning story (either 'A' or 'B' only)
+</winner>

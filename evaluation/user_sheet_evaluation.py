@@ -7,6 +7,7 @@ import json
 import argparse
 from tqdm import tqdm
 import random
+from collections import defaultdict
 import re
 from prompt_llm_utils import construct_prompt_message, prompt_openai
 
@@ -24,11 +25,11 @@ def parse_args():
 
     return parser.parse_args()
 
-def construct_compare_prompt_message(gt_wp, writing_sheet, story_a, story_b, system_prompt, user_constraints):
+def construct_compare_prompt_message(gt_wp, writing_sheet, cat, story_a, story_b, system_prompt, user_constraints):
     '''
     construct prompt for pair-wise comparison
     '''
-    input_dict = {'Writing Prompt': gt_wp, 'User Writing Sheet': writing_sheet, 'Story A': story_a, 'Story B': story_b}
+    input_dict = {'Writing Prompt': gt_wp, 'User Writing Sheet': writing_sheet, 'Category to Evaluate': cat, 'Story A': story_a, 'Story B': story_b}
     user_instruction = f"{json.dumps(input_dict)}"
 
     prompt = construct_prompt_message(system_prompt, user_instruction, user_constraints)
@@ -50,6 +51,23 @@ def main():
     choice = args.choice
     # verbose
     verbose = args.verbose
+
+    # pre-defined categories for evaluation
+    categories = [
+    "Story Beginning",
+    "Story Ending",
+    "Narrative Structure",
+    "Unique Elements",
+    "Engaging Themes and Imagery",
+    "Use of Tropes or Clichés",
+    "Main Character",
+    "Setting Establishment",
+    "Supporting Characters and Interactions",
+    "Narrative Perspective",
+    "Stylistic Elements",
+    "Tone and Mood Alignment"
+    ]   
+
 
     # suffix 
     if few_shot:
@@ -89,7 +107,7 @@ def main():
         with open(output_file, 'r') as f:
             all_responses = json.load(f)
     else:
-        all_responses = {}
+        all_responses = defaultdict(dict)
     
     # read prompts 
     system_prompt_path = 'instructions/system_prompt/user_sheet.txt'
@@ -181,28 +199,31 @@ def main():
     # iterate over the pairs
     for pair in tqdm(pairs, desc='Pair-wise Evaluation', total=len(pairs)):
         identifier, gt_wp, w_sheet, vanilla_story, expts_story = pair
+
+        # iterate over the categories
+        for cat in categories:
         
-        # generate random number (0 or 1)
-        random_number = random.randint(0, 1)
-        if random_number == 0:
+            # generate random number (0 or 1)
+            random_number = random.randint(0, 1)
+            if random_number == 0:
 
-            prompt = construct_compare_prompt_message(gt_wp, w_sheet, vanilla_story, expts_story, system_prompt, user_constraints)
-            # prompt the OpenAI model
-            response = prompt_openai(prompt)
-            response_dict = {1: response, 2: 'A: vanilla'} 
-        else:
-            # reverse the order of the stories
-            prompt = construct_compare_prompt_message(gt_wp, w_sheet, expts_story, vanilla_story, system_prompt, user_constraints)
-            # prompt the OpenAI model
-            response = prompt_openai(prompt)
-            response_dict = {1: response, 2: 'A: expts'}
+                prompt = construct_compare_prompt_message(gt_wp, w_sheet, cat, vanilla_story, expts_story, system_prompt, user_constraints)
+                # prompt the OpenAI model
+                response = prompt_openai(prompt)
+                response_dict = {1: response, 2: 'A: vanilla', 'Category': cat} 
+            else:
+                # reverse the order of the stories
+                prompt = construct_compare_prompt_message(gt_wp, w_sheet, cat, expts_story, vanilla_story, system_prompt, user_constraints)
+                # prompt the OpenAI model
+                response = prompt_openai(prompt)
+                response_dict = {1: response, 2: 'A: expts', 'Category': cat}
 
-        # add the responses to the list
-        all_responses[identifier] = response_dict
-    
-        # write the responses to a file
-        with open(output_file, 'w') as f:
-            json.dump(all_responses, f, indent=4)
+            # add the responses to the dictionary
+            all_responses[identifier][cat] = response_dict
+        
+            # write the responses to a file
+            with open(output_file, 'w') as f:
+                json.dump(all_responses, f, indent=4)
         
 
 if __name__ == '__main__':

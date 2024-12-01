@@ -12,39 +12,15 @@ def extract_winner(res):
     '''
     extract text between the tag <winner></winner>
     '''
+    # replace all \n with ''
+    res = res.replace('\n', '')
 
-    winner = re.search(r'<winner_per_category>(.*?)</winner_per_category>', res, re.DOTALL)
-    category_winners = {}
-    overall_winner = ''
+    winner = re.search(r'<winner>(.*?)</winner>', res, re.DOTALL)
     try:
         winner_text = winner.group(1)
-        # Remove the tags and split into lines
-        winner_text = winner_text.replace("\\n", "\n")
-
-        lines = winner_text.strip().split("\n")
-        lines = [line for line in lines if not re.match(r"<.*?>", line)]
-        # iterate over each category and extract the winner
-        for line in lines:
-            line = line.strip()
-            try:
-                category_name, winner = line.split(': ')
-                category_winners[category_name.strip()] = winner.strip()
-            except:
-                pass
-        
-        try:
-            # max count of winners
-            winners = Counter(category_winners.values())
-            # get the winner with max count
-            overall_winner = winners.most_common(1)[0][0]
-
-            return category_winners, overall_winner
-        except:
-            return None, None
-
-        
+        return winner_text.strip()
     except AttributeError:
-        return None, None
+        return None
     
 
 def parse_args():
@@ -117,18 +93,32 @@ def main():
     # iterate over the evaluation data
     all_results = []
     for key, data in eval_data.items():
-        category_winners, overall_winner = extract_winner(data["1"])
+        category_winners = {}
+
+        # iterate over the categories
+        for cat, res in data.items():
+            winner_label = extract_winner(res['1'])
+
+            gt_a = res["2"].strip("A: ")
+            if winner_label == 'A':
+                winner = gt_a
+            else:
+                if gt_a == 'vanilla':
+                    winner = 'expts'
+                else:
+                    winner = 'vanilla'
+
+            category_winners[cat] = winner
+
+        # overall winner
+        overall_winner = Counter(category_winners.values()).most_common(1)[0][0]
+
+        # append the overall winner
+        all_results.append(overall_winner)
+
         if overall_winner is None:
             continue
 
-        gt_a = data["2"].strip("A: ")
-        if overall_winner == 'A':
-            all_results.append(gt_a)
-        else:
-            if gt_a == 'vanilla':
-                all_results.append('expts')
-            else:
-                all_results.append('vanilla')
 
    # common output 
     ouput_path = os.path.join(output_dir, f'winner.json')
