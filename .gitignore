@@ -5,3 +5,4 @@ evaluation/__pycache__/
 experiments/legacy/
 evaluation/legacy/
 evaluation/debug.ipynb
+human/examples/metadata.json
