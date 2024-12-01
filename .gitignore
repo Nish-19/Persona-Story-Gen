@@ -4,3 +4,4 @@ experiments/__pycache__/
 evaluation/__pycache__/
 experiments/legacy/
 evaluation/legacy/
+evaluation/debug.ipynb
