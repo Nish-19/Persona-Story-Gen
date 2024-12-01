@@ -5,11 +5,11 @@ Annotation File Path: ```examples/data.json```
 There are 30 annotation examples, each of the form: 
 1. Writing Prompt: Describes the writing prompt for that story 
 2. User Writing Sheet: Analysis of user's story writing skills
-3. Story A and Story B: Two stories that are being compared
+3. Story A and Story B: Two stories that are being evaluated
 
 ## Task 
 
-1. Compare Story A and Story B with the User Writing Sheet for every skill mentioned in the sheet and decide a winner 'A' or 'B' depending on which story you feel more closely follows the User Writing Sheet. 
+1. Evaluate Story A and Story B separately with the User Writing Sheet for every skill mentioned in the sheet by rating on a scale of 1-5 (1 least, 5 highest) based on how closely the story aligns with the User Writing Sheet.
 2. Use the annotation files in ```examples/annotation/annotator_x.csv``` to provide your skill-wise annotation for each of the 30 annotation samples.
 
 ## User Writing Sheet Description
