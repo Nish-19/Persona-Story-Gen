@@ -9,7 +9,7 @@ There are 30 annotation examples, each of the form:
 
 ## Task 
 
-Compare the Story A and Story B with the User Writing Sheet for every skill mentioned in the sheet and decide a winner 'A' or 'B' depending on which story you feel more closely follows the User Writing Sheet. Use the annotation files in ```annotation/annotator_x.csv``` to provide your skill-wise annotation for every skill and every example (30 in total). 
+Compare Story A and Story B with the User Writing Sheet for every skill mentioned in the sheet and decide a winner 'A' or 'B' depending on which story you feel more closely follows the User Writing Sheet. Use the annotation files in ```annotation/annotator_x.csv``` to provide your skill-wise annotation for each of the 30 annotation samples.
 
 ## User Writing Sheet Description
 
