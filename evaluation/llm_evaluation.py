@@ -11,6 +11,8 @@ from prompt_llm_utils import construct_prompt_message, prompt_openai
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--few_shot', type=bool, default=False, help='Few shot')
+    # few shot top k (int)
+    parser.add_argument('--few_shot_top_k', type=int, default=1, help='Few Shot Top K')
     # source
     parser.add_argument('--source', type=str, default='Reddit', help='Source')
     # method choice 
@@ -38,6 +40,8 @@ def main():
 
     # few shot 
     few_shot = args.few_shot
+    # few shot top k
+    few_shot_top_k = args.few_shot_top_k
     # source 
     source = args.source
     # choice
@@ -50,6 +54,11 @@ def main():
         suffix = '_few_shot'
     else:
         suffix = ''
+    
+    if few_shot_top_k == 1:
+        top_k_suffix = ''
+    else:
+        top_k_suffix = f'_{few_shot_top_k}'
 
     # root directories 
     gt_root_dir = f'../datasets/data_splits/data/{source}/test/'
@@ -58,9 +67,9 @@ def main():
     elif choice == 2:
         consider_dir = f'no_schema'
     elif choice == 3:
-        consider_dir = f'schema'
+        consider_dir = f'schema{top_k_suffix}'
     elif choice == 4:
-        consider_dir = f'delta'
+        consider_dir = f'delta{top_k_suffix}'
     expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
 
     # results output directory 

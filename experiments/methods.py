@@ -100,7 +100,7 @@ class StoryGenMethods():
         
         return few_shot_examples, profile_indices
 
-    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, system_instructions='', debug=False, is_profile=False):
+    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, system_instructions='', debug=False, is_profile=False, few_shot_top_k=1):
         '''
         performs story generation given - source, few_shot, source_constraints, output_dir
         '''
@@ -115,7 +115,7 @@ class StoryGenMethods():
             user_instruction = self.construct_user_instruction(example, source)
 
             # construct OpenAI prompt
-            prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints, few_shot_examples)
+            prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints, few_shot_examples, add_at_end=True)
             return prompt
     
 
@@ -198,7 +198,7 @@ class StoryGenMethods():
             
                 # few_shot 
                 if few_shot:
-                    few_shot_examples, _ = self.get_few_shot_examples(profile_data, example, source=source, top_k=1)
+                    few_shot_examples, _ = self.get_few_shot_examples(profile_data, example, source=source, top_k=few_shot_top_k)
                 else:
                     few_shot_examples = None
 
@@ -382,7 +382,7 @@ class StoryGenMethods():
 
         self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = user_profile_output_dir, system_instructions=system_instructions, debug=debug)
     
-    def schema_user_profile(self, source='Reddit', debug=False):
+    def schema_user_profile(self, source='Reddit', debug=False, few_shot_top_k=1):
         '''
         User Profile (Schema)
         '''
@@ -671,7 +671,12 @@ class StoryGenMethods():
     
 
         # NOTE: STEP 4: Generate stories using the user profile generated above
-        story_output_dir = f'{self.output_dir}/schema/{source}'
+        if few_shot_top_k != 1:
+            suffix = f'_{few_shot_top_k}'
+        else:
+            suffix = ''
+
+        story_output_dir = f'{self.output_dir}/schema{suffix}/{source}'
         if not os.path.exists(story_output_dir):
             os.makedirs(story_output_dir)
         
@@ -685,7 +690,7 @@ class StoryGenMethods():
         print(f'Few Shot: True')
         print(f'Source: {source}')
     
-        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
     
     def rule_generator(self, source='Reddit'):
         '''
@@ -780,7 +785,7 @@ class StoryGenMethods():
                 with open(output_file_path, 'w') as f:
                     json.dump(story_rules_response, f, indent=4)
     
-    def personalized_rule_generator(self, source='Reddit', debug=False):
+    def personalized_rule_generator(self, source='Reddit', debug=False, few_shot_top_k=1):
         '''
         generate personalized rules for the stories in the profile set
         '''
@@ -889,7 +894,12 @@ class StoryGenMethods():
                     json.dump(story_rules_response, f, indent=4)
     
         # TODO: Story Generation using the personalized rules
-        story_output_dir = f'{self.output_dir}/delta/{source}'
+        if few_shot_top_k != 1:
+            suffix = f'_{few_shot_top_k}'
+        else:
+            suffix = ''
+
+        story_output_dir = f'{self.output_dir}/delta{suffix}/{source}'
 
         if not os.path.exists(story_output_dir):
             os.makedirs(story_output_dir)
@@ -911,6 +921,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Story Generation Methods')
     # few shot
     parser.add_argument('--few_shot', action='store_true', help='Few Shot Story Generation')
+    # few shot top k (int)
+    parser.add_argument('--few_shot_top_k', type=int, default=1, help='Few Shot Top K')
     # source
     parser.add_argument('--source', type=str, default='Reddit', help='Source of the data')
     # # user profile (no schema) 'store_true'
@@ -932,14 +944,16 @@ def main():
     source = args.source    
     # few shot 
     few_shot = args.few_shot
+    # few shot top k
+    few_shot_top_k = args.few_shot_top_k
+    # few_shot_top_k = 3
     # # method choice
     choice = args.choice
-    # choice = 4
+    # choice = 3
     # is_profile
     is_profile = args.is_profile
     # # extract rules
     extract_rules = args.extract_rules
-    # choice = 3
     # create an instance of the StoryGenMethods class
     story_gen_methods = StoryGenMethods()
 
@@ -955,10 +969,10 @@ def main():
             story_gen_methods.no_schema_user_profile(source=source, debug=args.debug)
         elif choice == 3:
             # User Profile (Schema)
-            story_gen_methods.schema_user_profile(source=source, debug=args.debug)
+            story_gen_methods.schema_user_profile(source=source, debug=args.debug, few_shot_top_k=few_shot_top_k)
         elif choice == 4:
             # Rule Generator
-            story_gen_methods.personalized_rule_generator(source=source)
+            story_gen_methods.personalized_rule_generator(source=source, debug=args.debug, few_shot_top_k=few_shot_top_k)
 
 if __name__ == '__main__':
     main()
