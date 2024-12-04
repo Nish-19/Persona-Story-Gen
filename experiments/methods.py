@@ -148,11 +148,12 @@ class StoryGenMethods():
 
         
         # iterate through each file in the profile directory
-        for ctr, file in tqdm(enumerate(os.listdir(test_dir)), total=len(os.listdir(test_dir)), desc='Story Generation'):
+        for fctr, file in tqdm(enumerate(os.listdir(test_dir)), total=len(os.listdir(test_dir)), desc='Story Generation'):
 
-            # # break after 1 iteration
-            # if ctr > 0:
-            #     break
+            # break after 3 iterations
+            if debug:
+                if fctr > 2:
+                    break
 
             profile_file_path = os.path.join(profile_dir, file)
             test_file_path = os.path.join(test_dir, file)
@@ -186,7 +187,7 @@ class StoryGenMethods():
                 
                 # stop after 2 iterations
                 if debug:
-                    if ictr > 1:
+                    if ictr > 2:
                         break
 
                 # check if the example already exists in the results
@@ -276,6 +277,14 @@ class StoryGenMethods():
 
         # perform story generation
         self.perform_story_generation(source=source, few_shot=few_shot, story_output_dir=output_dir, source_constraints_dir=source_constraints_path, system_instructions=system_instructions, debug=debug, is_profile=is_profile)
+
+    def perform_oracle_rules(self, source='Reddit', debug=False):
+        '''
+        Oracle Rules Story Generation
+        1. generate oracle delta rules for the test set 
+        2. use these rules to generate stories
+        '''
+        pass 
 
     
     def no_schema_user_profile(self, source='Reddit', debug=False):
@@ -692,7 +701,7 @@ class StoryGenMethods():
     
         self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
     
-    def rule_generator(self, source='Reddit'):
+    def rule_generator(self, source='Reddit', is_profile=False, debug=False):
         '''
         generate rules for the stories in the profile set
         '''
@@ -711,13 +720,22 @@ class StoryGenMethods():
 
 
         # ground truth profile directory
-        profile_dir = f'{self.data_split_dir}/{source}/profile'
+        if is_profile:
+            consider_dir = f'{self.data_split_dir}/{source}/profile'
+        else:
+            consider_dir = f'{self.data_split_dir}/{source}/test'
 
         # base story directory 
-        base_story_dir = f'{self.output_dir_profile}/vanilla/{source}'
+        if is_profile:
+            base_story_dir = f'{self.output_dir_profile}/vanilla/{source}'
+        else:
+            base_story_dir = f'{self.output_dir}/vanilla/{source}'
 
         # story rules output directory
-        story_rules_output_dir = f'{self.output_dir_profile}/rules/{source}'
+        if is_profile:
+            story_rules_output_dir = f'{self.output_dir_profile}/rules/{source}'
+        else:
+            story_rules_output_dir = f'{self.output_dir}/oracle_rules/{source}'
         if not os.path.exists(story_rules_output_dir):
             os.makedirs(story_rules_output_dir)
 
@@ -730,11 +748,16 @@ class StoryGenMethods():
             user_constraints = f.read()
         
         # iterate through each file in the profile directory
-        for file in tqdm(os.listdir(profile_dir), desc='Rule Generation', total=len(os.listdir(profile_dir))):
-            profile_file_path = os.path.join(profile_dir, file)
+        for fctr, file in tqdm(enumerate(os.listdir(consider_dir)), desc='Rule Generation', total=len(os.listdir(consider_dir))):
+            if debug:
+                # break after 3 iterations
+                if fctr > 2:
+                    break
+
+            data_file_path = os.path.join(consider_dir, file)
             # profile data
-            with open(profile_file_path, 'r') as f:
-                profile_data = json.load(f)
+            with open(data_file_path, 'r') as f:
+                human_data = json.load(f)
             
             # base story file path
             base_story_file_path = os.path.join(base_story_dir, file)
@@ -757,14 +780,15 @@ class StoryGenMethods():
                 story_rules_response = []
             
             # iterate through each example in the profile data
-            for ectr, example in tqdm(enumerate(profile_data), desc=f'Processing {file}', total=len(profile_data)):
+            for ectr, example in tqdm(enumerate(human_data), desc=f'Processing {file}', total=len(human_data)):
                 # check if the example already exists in the story rules response
                 if ectr < len(story_rules_response):
                     continue
 
-                # # break after 3 iterations
-                # if ectr > 2:
-                #     break
+                # break after 3 iterations
+                if debug:
+                    if ectr > 2:
+                        break
 
                 # writing prompt 
                 writing_prompt = example['writing_prompt']
@@ -787,7 +811,7 @@ class StoryGenMethods():
     
     def personalized_rule_generator(self, source='Reddit', debug=False, few_shot_top_k=1):
         '''
-        generate personalized rules for the stories in the profile set
+        generate personalized rules for the stories in the test set
         '''
         def construct_personalized_story_rules_prompt(system_instructions, writing_prompt, few_shot_examples, user_constraints):
             '''
@@ -916,6 +940,30 @@ class StoryGenMethods():
 
         self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug)
 
+    def perform_oracle(self, source='Reddit', debug=False):
+        '''
+        Oracle Story Generation for the test set
+        '''
+    
+        story_output_dir = f'{self.output_dir}/oracle/{source}'
+        if not os.path.exists(story_output_dir):
+            os.makedirs(story_output_dir)
+        
+        # system instructions
+        system_instructions_path = f'{self.generate_story_user_profile_instructions_dir}/system_prompts/{source}.txt'
+        # read the system instructions
+        with open(system_instructions_path, 'r') as f:
+            system_instructions = f.read()
+        
+        source_constraints_dir = f'{self.output_dir}/oracle_rules/{source}'
+        
+        print('Method: Oracle Story Generation')
+        print(f'Few Shot: True')
+        print(f'Source: {source}')
+    
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = source_constraints_dir, system_instructions=system_instructions, debug=debug)
+
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Story Generation Methods')
@@ -928,7 +976,7 @@ def parse_args():
     # # user profile (no schema) 'store_true'
     # parser.add_argument('--no_schema', action='store_true', help='User Profile (No Schema)')
     # int choice
-    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator')
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. Oracle')
     # is_profile
     parser.add_argument('--is_profile', action='store_true', help='generate on profile data')
     # extract rules
@@ -959,7 +1007,7 @@ def main():
 
     if extract_rules:
         # extract rules
-        story_gen_methods.rule_generator(source=source)
+        story_gen_methods.rule_generator(source=source, is_profile=is_profile, debug=args.debug)
     else:
         if choice == 1:
             # perform Vanilla story generation
@@ -973,6 +1021,9 @@ def main():
         elif choice == 4:
             # Rule Generator
             story_gen_methods.personalized_rule_generator(source=source, debug=args.debug, few_shot_top_k=few_shot_top_k)
+        elif choice == 5:
+            # oracle generator
+            story_gen_methods.perform_oracle(source=source, debug=args.debug)
 
 if __name__ == '__main__':
     main()
