@@ -6,7 +6,7 @@ import os
 import re
 import json
 import argparse
-from collections import Counter 
+from collections import Counter, defaultdict 
 
 def extract_winner(res):
     '''
@@ -37,6 +37,52 @@ def extract_winner(res):
             return None
     else:
         return None
+
+def extract_score(res):
+    '''
+    extract text between the tag <winner></winner>
+    '''
+
+    score_match = re.search(r'<score>(.*?)</score>', res, re.DOTALL)
+    if score_match:
+        score_text = score_match.group(1)
+        # Extract scores for Story A and Story B using regex
+        story_a_score = re.search(r'Story A:\s*(\d+)', score_text)
+        story_b_score = re.search(r'Story B:\s*(\d+)', score_text)
+        
+        if story_a_score and story_b_score:
+            score_a = int(story_a_score.group(1).strip())
+            score_b = int(story_b_score.group(1).strip())
+
+            # if score_a > score_b:
+            #     winner = 'A'
+            # elif score_a < score_b:
+            #     winner = 'B'
+            # else:
+            #     winner = 'Tie'
+        
+            return score_a, score_b
+
+        else:
+            return None, None
+    else:
+        return None, None
+    
+def store_label_count(all_results, output_dir, suffix=''):
+    '''
+    store the label count
+    '''
+    # calculate count
+    labels_count = Counter(all_results)
+
+    # sort the labels count
+    labels_count = dict(sorted(labels_count.items(), key=lambda x: x[1], reverse=True))
+
+    labels_output_path = os.path.join(output_dir, f'winner_stats{suffix}.json')
+    with open(labels_output_path, 'w') as f:
+        json.dump(labels_count, f, indent=4)
+    print(labels_count)
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -108,14 +154,24 @@ def main():
     
     # iterate over the evaluation data
     all_results = []
+    all_results_score = []
     count_None = 0
     tot_count = 0
     for key, data in eval_data.items():
         category_winners = {}
 
         # iterate over the categories
+        tot_score = defaultdict(int)
         for cat, res in data.items():
             tot_count += 1
+
+            # get labels for A and B
+            label_a = res["2"].strip("A: ")
+            if label_a == 'vanilla':
+                label_b = 'expts'
+            else:
+                label_b = 'vanilla'
+
             winner_label = extract_winner(res['1'])
 
             # check if winner_label is None
@@ -124,28 +180,40 @@ def main():
                 # print(key, cat)
                 continue
 
-            gt_a = res["2"].strip("A: ")
+            
+
             if winner_label == 'A':
-                winner = gt_a
+                winner = label_a
             elif winner_label == 'B':
-                if gt_a == 'vanilla':
-                    winner = 'expts'
-                else:
-                    winner = 'vanilla'
+                winner = label_b
             else:                
                 winner = 'Tie'
-            
 
             category_winners[cat] = winner
 
+            # extract scores
+            score_a, score_b = extract_score(res['1'])
+            tot_score[label_a] += score_a
+            tot_score[label_b] += score_b
+
+
         # overall winner
         overall_winner = Counter(category_winners.values()).most_common(1)[0][0]
-
         # append the overall winner
         all_results.append(overall_winner)
 
+        # overall winner score 
+        if tot_score[label_a] > tot_score[label_b]:
+            overall_winner_score = label_a
+        elif tot_score[label_a] < tot_score[label_b]:
+            overall_winner_score = label_b
+        else:
+            overall_winner_score = 'Tie'
+
         if overall_winner is None:
             continue
+    
+        all_results_score.append(overall_winner_score)
     
     # print(f'None count: {count_None}')
     # print(f'Total count: {tot_count}')
@@ -154,17 +222,17 @@ def main():
     ouput_path = os.path.join(output_dir, f'winner.json')
     with open(ouput_path, 'w') as f:
         json.dump(all_results, f, indent=4)
+    
+    # score output
+    ouput_path = os.path.join(output_dir, f'winner_score.json')
+    with open(ouput_path, 'w') as f:
+        json.dump(all_results_score, f, indent=4)
+    
+    # store label count
+    store_label_count(all_results, output_dir)
 
-    # calculate count
-    labels_count = Counter(all_results)
-
-    # sort the labels count
-    labels_count = dict(sorted(labels_count.items(), key=lambda x: x[1], reverse=True))
-
-    labels_output_path = os.path.join(output_dir, 'winner_stats.json')
-    with open(labels_output_path, 'w') as f:
-        json.dump(labels_count, f, indent=4)
-    print(labels_count)
+    # store label count score
+    store_label_count(all_results_score, output_dir, suffix='_score')
 
 
 if __name__ == '__main__':
