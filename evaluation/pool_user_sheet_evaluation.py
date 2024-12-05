@@ -32,8 +32,7 @@ def parse_args():
     # source
     parser.add_argument('--source', type=str, default='Reddit', help='Source')
     # method choice 
-    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema), 3. User Profile (Schema)')
-    # verbose
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')    # verbose
     parser.add_argument('--verbose', type=bool, default=False, help='Verbose')
     # pool method
     parser.add_argument('--pool_choice', type=int, default=1, help='Choice of the method: 1. Standard, 2. Shuffle')
@@ -76,6 +75,9 @@ def main():
         consider_dir = f'schema{top_k_suffix}'
     elif choice == 4:
         consider_dir = f'delta{top_k_suffix}'
+    elif choice == 5:
+        consider_dir = f'delta_schema{top_k_suffix}'
+
 
     llm_eval_name = 'user_sheet'
 

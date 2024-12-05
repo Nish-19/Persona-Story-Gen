@@ -16,7 +16,7 @@ def parse_args():
     # source
     parser.add_argument('--source', type=str, default='Reddit', help='Source')
     # method choice 
-    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema), 3. User Profile (Schema), 4. Personaized Rule Generator')
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
 
@@ -70,6 +70,9 @@ def main():
         consider_dir = f'schema{top_k_suffix}'
     elif choice == 4:
         consider_dir = f'delta{top_k_suffix}'
+    elif choice == 5:
+        consider_dir = f'delta_schema{top_k_suffix}'
+
     expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
 
     # results output directory 
