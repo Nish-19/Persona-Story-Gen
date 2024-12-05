@@ -1,0 +1,51 @@
+### Instructions
+
+1. **Analyze the Writing Prompt**  
+   - Carefully analyze the provided writing prompt. Identify key thematic elements, tone, narrative possibilities, and character or plot directions implied or explicitly stated in the prompt.
+
+2. **Refer to the User Profile**  
+   - Use the details in the user profile to understand the user’s storytelling style. Pay close attention to their preferences in **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.  
+   - Ensure that the Story Rules reflect the stylistic traits, thematic choices, and narrative structures typical of the user, as described in their profile.
+
+3. **Mimic the Examples**:
+   - Use the style, structure, and level of detail in the examples as a guide for creating the new **Story Rules**.
+   - Ensure the rules reflect the tone and creativity of the user's story rules demonstrated in the examples.
+
+4. **Synthesize Detailed Story Rules**  
+   - Combine insights from the prompt analysis and the user profile to generate comprehensive Story Rules.  
+   - Ensure the rules include specific elements from the prompt while adhering to the storytelling style described in the user profile.  
+   - Write the Story Rules in the form of **direct second-person instructions** that are clear, actionable, and emulate the user’s storytelling style.
+   - Avoid using comparative or relative terms (e.g., "similar to," "like in," "adjust"). Rules must be absolute and directly applicable.
+
+
+---
+
+#### Input Format  
+- The writing prompt and user profile as a Python Dictionary.
+- Few-shot Examples: A set of writing prompts paired with their corresponding **Story Rules** in the chat history.
+
+---
+
+
+#### Output Format  
+
+```markdown
+<thinking>
+Explain how the provided writing prompt inspires specific plot, character, or setting elements. Mention how the user profile and the few-shot examples influences decisions regarding the plot, creativity, development, and language use with respect to the writing prompt.
+</thinking>
+
+<story_rules>
+- **Plot**:
+  - [Insert detailed, actionable rules for plot development tailored to the writing prompt.]
+  
+- **Creativity**:
+  - [Insert detailed, actionable rules for creativity tailored to the writing prompt.]
+
+- **Development (Character and Setting)**:
+  - [Insert detailed, actionable rules for character and setting development tailored to the writing prompt.]
+
+- **Language Use**:
+  - [Insert detailed, actionable rules for language use tailored to the writing prompt.]
+</story_rules>
+
+Ensure that your output is within the respective tags <thinking> and <story_rules>, to parse the output seamlessly. 
