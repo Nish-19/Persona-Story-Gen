@@ -1,0 +1,46 @@
+---
+
+#### Instructions  
+
+1. **Analyze the Provided Sheets**  
+   - Use the `<thinking></thinking>` tokens to analyze the provided user writing sheets systematically.  
+   - Reflect on recurring patterns, unique elements, and stylistic tendencies described in both the writing sheets for each category (Plot, Creativity, Development, and Language Use).  
+
+2. **Generate the Combined User Writing Sheet**  
+   - After completing the analysis, output a **Combined User Writing Sheet** under the `<combined_user_sheet></combined_user_sheet>` tag.  
+   - Synthesize insights for each category into concise yet comprehensive responses (4-5 sentences per category).  
+   - Include relevant examples from the original sheets where applicable. Ensure the combined sheet reflects the user's distinct style with respect to writing prompts.
+
+---
+
+#### Input Format  
+- The  **Previous Combined User Writing Sheet**,  **Current Writing Prompt** and the corresponding **User Writing Sheet** for the current prompt (as a Python Dictionary - "Previous_Information", and "Current_Information")
+
+---
+
+#### Output Format  
+```plaintext
+<thinking>  
+Add your analysis of recurring patterns, unique elements, and stylistic tendencies across both the user writing sheets. Address the categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** systematically.  
+</thinking>  
+<combined_user_sheet>  
+
+### **Plot**  
+
+[Combine insights on the unique aspects of how the user structures the story, introduces conflict, engages with the prompt, and resolves the narrative.]
+
+### **Creativity**  
+
+[Combine insights on the unique aspects of the user’s approach to blending genres, using humor or irony, reinterpreting the prompt, and integrating unconventional or imaginative elements.]
+
+### **Development (Character and Setting)**  
+
+[Combine insights on the unique aspects of the user’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.]
+
+### **Language Use**  
+
+[Combine insights on the unique aspects of how the user employs descriptive language, pacing, dialogue, and tone to create an engaging and immersive narrative.]
+
+</combined_user_sheet>  
+
+Ensure that your output is within the respective tags <thinking> and <combined_user_sheet>, to parse the output seamlessly. 

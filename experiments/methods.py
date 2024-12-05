@@ -962,6 +962,247 @@ class StoryGenMethods():
         print(f'Source: {source}')
     
         self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = source_constraints_dir, system_instructions=system_instructions, debug=debug)
+    
+    def delta_user_profile(self, source='Reddit', debug=False, few_shot_top_k=1):
+        '''
+        User Profile (Delta)
+        '''
+
+        def construct_user_profile_prompt(prev_prompt_dict, current_prompt_dict):
+            '''
+            Construct the Prompt for User Profile
+            '''
+
+            # construct the user instruction
+            user_instruction = ''
+            input_prompt_dict = {'Previous_Information': prev_prompt_dict, 'Current_Information': current_prompt_dict}
+            user_instruction += f"{json.dumps(input_prompt_dict, indent=4)}\n\n"
+
+            # construct OpenAI prompt
+            prompt = construct_prompt_message(system_instructions_combine, user_instruction, user_constraints_combine)
+            return prompt
+        
+
+        # def construct_story_rules_prompt(writing_prompt, user_profile): 
+        #     '''
+        #     Construct the Prompt for Story Rules
+        #     '''
+        #     # construct the user instruction
+        #     user_instruction_dict = {'writing_prompt': writing_prompt, 'user_profile': user_profile}
+        #     user_instruction = f"{json.dumps(user_instruction_dict, indent=4)}\n\n"
+
+        #     # construct OpenAI prompt
+        #     prompt = construct_prompt_message(system_instructions_story_rules, user_instruction, user_constraints_story_rules)
+        #     return prompt
+    
+        def extract_writing_sheet(sheet_output, key='combined_user_sheet'):
+            '''
+            extract text between the tags <user_writing_sheet></user_writing_sheet>
+            '''            
+            sheet = re.search(rf'<{key}>(.*?)</{key}>', sheet_output, re.DOTALL).group(1)
+            if not sheet:
+                sheet = sheet_output
+            return sheet
+        
+    
+        print('Method: Schema User Profile')
+        print(f'Source: {source}')
+
+        # user sheets (delta analysis) input directory
+        user_sheets_output_dir = f'{self.output_dir_profile}/rules/{source}'
+        
+        # user profile output directory
+        user_profile_output_dir = f'{self.user_profile_dir}/delta/{source}'
+        if not os.path.exists(user_profile_output_dir):
+            os.makedirs(user_profile_output_dir)
+        
+        # profile directory
+        profile_dir = f'{self.data_split_dir}/{source}/profile'
+        # test directory
+        test_dir = f'{self.data_split_dir}/{source}/test'
+
+        # NOTE: STEP 1: Generate User Profiles using the User Writing Sheets
+
+        # system instructions
+        system_instructions_combine_path = f'{self.user_profile_instructions_dir}/system_prompts/combine_delta.txt'
+        # user instructions
+        user_instructions_combine_path = f'{self.user_profile_instructions_dir}/user_prompts/combine_delta.txt'
+
+        # read the system instructions
+        with open(system_instructions_combine_path, 'r') as f:
+            system_instructions_combine = f.read()
+        
+        # read the user instructions
+        with open(user_instructions_combine_path, 'r') as f:
+            user_constraints_combine = f.read()
+
+        # iterate through each file in the profile directory
+        for fctr, file in tqdm(enumerate(os.listdir(profile_dir)), desc='User Profile (Delta)', total=len(os.listdir(profile_dir))):
+            
+            if debug:
+                # break after 3 iterations
+                if fctr > 2:
+                    break
+
+            profile_file_path = os.path.join(profile_dir, file)
+            # profile data
+            with open(profile_file_path, 'r') as f:
+                profile_data = json.load(f)
+            
+            # output file path
+            output_file_path = os.path.join(user_profile_output_dir, file)
+
+            # check if the output file already exists
+            if os.path.exists(output_file_path):
+                # read the output file
+                with open(output_file_path, 'r') as f:
+                    user_profile_response = json.load(f)
+            else:
+                user_profile_response = []
+            
+            # open user sheet response
+            user_sheet_response_path = os.path.join(user_sheets_output_dir, file)
+            try:
+                with open(user_sheet_response_path, 'r') as f:
+                    user_sheet_response = json.load(f)
+            except Exception as e:
+                continue
+            
+            # iterate through each example in the profile data
+            for ectr, example in tqdm(enumerate(profile_data), desc=f'Processing {file}', total=len(profile_data)):
+                # check if the example already exists in the user sheet response
+                if ectr < len(user_profile_response):
+                    continue
+
+                # break after 3 iterations
+                if debug:
+                    if ectr > 2:
+                        break
+
+                # if ectr == 0 just use the user sheet response
+                if ectr == 0:
+                    user_profile_response.append(user_sheet_response[ectr])
+                else:
+                    # construct the prompt
+                    if ectr == 1:
+                        prev_key = 'thinking'
+                    else:
+                        prev_key = 'combined_user_sheet'
+                    try:
+                        prev_prompt_dict = {'previous_combined_user_sheet': extract_writing_sheet(user_profile_response[ectr - 1], key=prev_key)}
+                        current_prompt_dict = {'current_writing_prompt': example['writing_prompt'], 'current_user_sheet': extract_writing_sheet(user_sheet_response[ectr], key='thinking')}
+                        
+                        # construct the prompt
+                        prompt = construct_user_profile_prompt(prev_prompt_dict, current_prompt_dict)
+                        # call the OpenAI model
+                        response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                    except Exception as e:
+                        response = user_profile_response[ectr - 1]
+    
+                    user_profile_response.append(response)
+
+                # write the results to the output directory
+                with open(output_file_path, 'w') as f:
+                    json.dump(user_profile_response, f, indent=4)
+    
+        # # NOTE: STEP 3: Generate story rules for each writing prompt in the test data
+        # test_dir = f'{self.data_split_dir}/{source}/test'
+
+        # # story rules output directory
+        # story_rules_output_dir = f'{self.story_rules_dir}/schema/{source}'
+        # if not os.path.exists(story_rules_output_dir):
+        #     os.makedirs(story_rules_output_dir)
+        
+        # # system instructions
+        # system_instructions_story_rules_path = f'{self.user_profile_instructions_dir}/system_prompts/rules.txt'
+        # # user instructions
+        # user_instructions_story_rules_path = f'{self.user_profile_instructions_dir}/user_prompts/rules.txt'
+
+        # # read the system instructions
+        # with open(system_instructions_story_rules_path, 'r') as f:
+        #     system_instructions_story_rules = f.read()
+        
+        # # read the user instructions
+        # with open(user_instructions_story_rules_path, 'r') as f:
+        #     user_constraints_story_rules = f.read()
+        
+        # # iterate through each file in the test directory
+        # for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Story Rules (Schema)', total=len(os.listdir(test_dir))):
+
+        #     test_file_path = os.path.join(test_dir, file)
+        #     # test data
+        #     with open(test_file_path, 'r') as f:
+        #         test_data = json.load(f)
+            
+        #     # output file path
+        #     output_file_path = os.path.join(story_rules_output_dir, file)
+
+        #     # check if the output file already exists
+        #     if os.path.exists(output_file_path):
+        #         # read the output file
+        #         with open(output_file_path, 'r') as f:
+        #             story_rules_response = json.load(f)
+        #     else:
+        #         story_rules_response = []
+            
+            
+        #     try:
+        #         # open user profile response
+        #         user_profile_response_path = os.path.join(user_profile_output_dir, file)
+        #         with open(user_profile_response_path, 'r') as f:
+        #             user_profile_response = json.load(f)
+
+        #         user_profile = extract_writing_sheet(user_profile_response[-1], key='combined_user_sheet')
+        #     except Exception as e:
+        #         continue
+            
+        #     # iterate through each example in the test data
+        #     for ectr, example in enumerate(test_data):
+        #         # check if the example already exists in the story rules response
+        #         if ectr < len(story_rules_response):
+        #             continue
+                
+        #         if debug:
+        #             # break after 2 iterations
+        #             if ectr > 1:
+        #                 break
+
+        #         # construct the prompt
+        #         prompt = construct_story_rules_prompt(example['writing_prompt'], user_profile)
+        #         # call the OpenAI model
+        #         try:
+        #             response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+        #         except Exception as e:
+        #             response = None
+        #         story_rules_response.append(response)
+
+        #         # write the results to the output directory
+        #         with open(output_file_path, 'w') as f:
+        #             json.dump(story_rules_response, f, indent=4)
+    
+
+        # # NOTE: STEP 4: Generate stories using the user profile generated above
+        # if few_shot_top_k != 1:
+        #     suffix = f'_{few_shot_top_k}'
+        # else:
+        #     suffix = ''
+
+        # story_output_dir = f'{self.output_dir}/schema{suffix}/{source}'
+        # if not os.path.exists(story_output_dir):
+        #     os.makedirs(story_output_dir)
+        
+        # # system instructions
+        # system_instructions_path = f'{self.generate_story_user_profile_instructions_dir}/system_prompts/{source}.txt'
+        # # read the system instructions
+        # with open(system_instructions_path, 'r') as f:
+        #     system_instructions = f.read()
+        
+        # print('Method: User Profile (Schema) Story Generation')
+        # print(f'Few Shot: True')
+        # print(f'Source: {source}')
+    
+        # self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
+
 
 
 
@@ -976,7 +1217,7 @@ def parse_args():
     # # user profile (no schema) 'store_true'
     # parser.add_argument('--no_schema', action='store_true', help='User Profile (No Schema)')
     # int choice
-    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. Oracle')
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
     # is_profile
     parser.add_argument('--is_profile', action='store_true', help='generate on profile data')
     # extract rules
@@ -1006,7 +1247,7 @@ def main():
     story_gen_methods = StoryGenMethods()
 
     if extract_rules:
-        # extract rules
+        # extract delta rules
         story_gen_methods.rule_generator(source=source, is_profile=is_profile, debug=args.debug)
     else:
         if choice == 1:
@@ -1022,6 +1263,9 @@ def main():
             # Rule Generator
             story_gen_methods.personalized_rule_generator(source=source, debug=args.debug, few_shot_top_k=few_shot_top_k)
         elif choice == 5:
+            # User Profile (Delta)
+            story_gen_methods.delta_user_profile(source=source, debug=args.debug, few_shot_top_k=few_shot_top_k)
+        elif choice == 6:
             # oracle generator
             story_gen_methods.perform_oracle(source=source, debug=args.debug)
 
