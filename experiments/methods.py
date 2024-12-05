@@ -150,10 +150,10 @@ class StoryGenMethods():
         # iterate through each file in the profile directory
         for fctr, file in tqdm(enumerate(os.listdir(test_dir)), total=len(os.listdir(test_dir)), desc='Story Generation'):
 
-            # break after 3 iterations
-            if debug:
-                if fctr > 2:
-                    break
+            # # break after 3 iterations
+            # if debug:
+            #     if fctr > 2:
+            #         break
 
             profile_file_path = os.path.join(profile_dir, file)
             test_file_path = os.path.join(test_dir, file)
@@ -1005,7 +1005,7 @@ class StoryGenMethods():
             return sheet
         
     
-        print('Method: Schema User Profile')
+        print('Method: Delta User Profile')
         print(f'Source: {source}')
 
         # user sheets (delta analysis) input directory
@@ -1039,10 +1039,10 @@ class StoryGenMethods():
         # iterate through each file in the profile directory
         for fctr, file in tqdm(enumerate(os.listdir(profile_dir)), desc='User Profile (Delta)', total=len(os.listdir(profile_dir))):
             
-            if debug:
-                # break after 3 iterations
-                if fctr > 2:
-                    break
+            # if debug:
+            #     # break after 3 iterations
+            #     if fctr > 2:
+            #         break
 
             profile_file_path = os.path.join(profile_dir, file)
             # profile data
