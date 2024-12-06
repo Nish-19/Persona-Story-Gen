@@ -4,17 +4,21 @@
 
 1. **Analyze the Provided Sheets**  
    - Use the `<thinking></thinking>` tokens to analyze the provided user writing sheets systematically.  
-   - Reflect on recurring patterns, unique elements, and stylistic tendencies described in both the writing sheets for each category (Plot, Creativity, Development, and Language Use).  
+   - Reflect on recurring patterns, unique elements, and stylistic tendencies described in both the writing sheets for each category (Plot, Creativity, Development, and Language Use).
+   - Plan on synthesizing this above information into **Combined User Writing Sheet** as a list of claims for every category above.
 
 2. **Generate the Combined User Writing Sheet**  
    - After completing the analysis, output a **Combined User Writing Sheet** under the `<combined_user_sheet></combined_user_sheet>` tag.  
-   - Synthesize insights for each category into concise yet comprehensive responses (4-5 sentences per category).  
-   - Include relevant examples from the original sheets where applicable. Ensure the combined sheet reflects the user's distinct style with respect to writing prompts.
+   - Synthesize insights for each category into concise yet comprehensive claims. Each claim must be an independent statement about the user's story writing style, derived from the previous combined user sheet and the current user sheet. The blend must be cohesive and must not include separate sentences stating, "in the current story..." or explicitly reference the current story as distinct from the overall analysis.  
+   - Each claim must include cumulative references to the story identifiers used to construct it. References should be provided at the end of every claim, in the format `[1, 2]`, where each number corresponds to a contributing story. If a claim is taken from the previous combined user sheet and edited, retain the original references and append the reference for the current story.  
+   - Do not include references just once for the entire category but ensure every individual claim within the category has its own references.  
+   - Incorporate relevant examples from the original sheets where applicable to support and illustrate the claims. Ensure the combined sheet accurately reflects the user's distinct storytelling style as it relates to writing prompts.  
+
 
 ---
 
 #### Input Format  
-- The  **Previous Combined User Writing Sheet**,  **Current Writing Prompt** and the corresponding **User Writing Sheet** for the current prompt (as a Python Dictionary - "Previous_Information", and "Current_Information")
+- The  **Previous Combined User Writing Sheet**,  **Story Identifier**, **Current Writing Prompt** and the corresponding **User Writing Sheet** for the current prompt (as a Python Dictionary - "Previous_Information", and "Current_Information")
 
 ---
 

@@ -19,7 +19,7 @@ def parse_args():
     # source
     parser.add_argument('--source', type=str, default='Reddit', help='Source')
     # method choice 
-    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema), 3. User Profile (Schema), 4. Personaized Rule Generator')
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
 
@@ -52,21 +52,6 @@ def main():
     # verbose
     verbose = args.verbose
 
-    # pre-defined categories for evaluation
-    categories = [
-    "Story Beginning",
-    "Story Ending",
-    "Narrative Structure",
-    "Unique Elements",
-    "Engaging Themes and Imagery",
-    "Use of Tropes or Clichés",
-    "Main Character",
-    "Setting Establishment",
-    "Supporting Characters and Interactions",
-    "Narrative Perspective",
-    "Stylistic Elements",
-    "Tone and Mood Alignment"
-    ]   
 
 
     # suffix 
@@ -90,11 +75,41 @@ def main():
         consider_dir = f'schema{top_k_suffix}'
     elif choice == 4:
         consider_dir = f'delta{top_k_suffix}'
+    elif choice == 5:
+        consider_dir = f'delta_schema{top_k_suffix}'
+
+    # pre-defined categories for evaluation
+    if choice == 5:
+        categories = [
+            "Plot", 
+            "Creativity",
+            "Development", 
+            "Language Use"
+        ]
+    else:
+        categories = [
+        "Story Beginning",
+        "Story Ending",
+        "Narrative Structure",
+        "Unique Elements",
+        "Engaging Themes and Imagery",
+        "Use of Tropes or Clichés",
+        "Main Character",
+        "Setting Establishment",
+        "Supporting Characters and Interactions",
+        "Narrative Perspective",
+        "Stylistic Elements",
+        "Tone and Mood Alignment"
+        ]
+
 
     expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
 
     # user writing sheet directory
-    user_writing_sheet_dir = f'../experiments/user_profile/schema/{source}'
+    if choice == 5:
+        user_writing_sheet_dir = f'../experiments/user_profile/delta_schema/{source}'
+    else:
+        user_writing_sheet_dir = f'../experiments/user_profile/schema/{source}'
 
     # results output directory 
     output_dir = f"user_sheet_score/{consider_dir}"
