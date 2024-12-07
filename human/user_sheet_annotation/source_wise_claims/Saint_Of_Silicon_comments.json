@@ -1,11 +1,15 @@
 {
-    "1": [
+    "6": [
         [
             "The user crafts complex, multi-layered narratives that often involve significant revelations or dramatic overthrows, such as the downfall of divine beings or the rise of AI children.",
             "Plot"
         ],
         [
             "Their stories are driven by long-term conspiracies or intricate processes, culminating in dramatic conclusions with moral or ethical implications.",
+            "Plot"
+        ],
+        [
+            "Narratives conclude with a mix of caution and relief, highlighting narrowly avoided disasters and positive outcomes.",
             "Plot"
         ],
         [
@@ -17,7 +21,27 @@
             "Creativity"
         ],
         [
+            "They creatively reinterpret prompts, exploring themes of power and freedom through rebellion against divine beings.",
+            "Creativity"
+        ],
+        [
+            "The narrative includes a variety of alien interactions and divine realms, showcasing a diverse and imaginative portrayal of civilizations.",
+            "Creativity"
+        ],
+        [
+            "The user develops characters through deep internal journeys, focusing on strategic cunning and growing disillusionment.",
+            "Development (Character and Setting)"
+        ],
+        [
             "Characters often serve to advance the narrative, with a focus on their roles within the broader story, such as the introspective last genie or the unified AI children.",
+            "Development (Character and Setting)"
+        ],
+        [
+            "Settings are vast and cosmic, involving divine realms and the machinations of gods, providing rich context for the events.",
+            "Development (Character and Setting)"
+        ],
+        [
+            "The setting is expanded to include detailed descriptions of alien technologies and societal structures, enhancing the narrative's depth.",
             "Development (Character and Setting)"
         ],
         [
@@ -65,20 +89,6 @@
             "Language Use"
         ]
     ],
-    "4": [
-        [
-            "Narratives conclude with a mix of caution and relief, highlighting narrowly avoided disasters and positive outcomes.",
-            "Plot"
-        ],
-        [
-            "The narrative includes a variety of alien interactions and divine realms, showcasing a diverse and imaginative portrayal of civilizations.",
-            "Creativity"
-        ],
-        [
-            "The setting is expanded to include detailed descriptions of alien technologies and societal structures, enhancing the narrative's depth.",
-            "Development (Character and Setting)"
-        ]
-    ],
     "7": [
         [
             "The user employs an episodic structure, with each segment building on the previous one, creating a sense of continuous adventure and escalation.",
@@ -91,20 +101,6 @@
         [
             "Descriptive, action-oriented language conveys the intensity and urgency of the characters' adventures, suitable for high-fantasy narratives.",
             "Language Use"
-        ]
-    ],
-    "6": [
-        [
-            "They creatively reinterpret prompts, exploring themes of power and freedom through rebellion against divine beings.",
-            "Creativity"
-        ],
-        [
-            "The user develops characters through deep internal journeys, focusing on strategic cunning and growing disillusionment.",
-            "Development (Character and Setting)"
-        ],
-        [
-            "Settings are vast and cosmic, involving divine realms and the machinations of gods, providing rich context for the events.",
-            "Development (Character and Setting)"
         ]
     ]
 }

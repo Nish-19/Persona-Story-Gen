@@ -3,6 +3,7 @@ examples for the user_sheet_annotation module
 '''
 
 import os
+import pandas as pd
 import re
 import json 
 from ast import literal_eval
@@ -68,17 +69,25 @@ def organize_user_sheet(user_sheet):
     
     return category_dict
 
-def get_source_wise_claims(category_dict):
+def get_source_wise_claims(category_dict, user_profile_list):
     '''
-    organize claims based on sources
+    organize claims based on sources using the user_profile_list
     '''
     source_wise_claims = defaultdict(list)
 
     for cat, claims in category_dict.items():
         for claim_info in claims: 
-            sources = claim_info['sources']
-            # get the minimum source number
-            min_source = min(sources)
+            # sources = claim_info['sources']
+            # # get the minimum source number
+            # min_source = min(sources)
+
+            claim = claim_info['statement']
+            # search for the claim in the user_profile_list
+            for uctr, user_profile in enumerate(user_profile_list):
+                if claim in user_profile:
+                    break
+            min_source = uctr + 1
+
             # update the sources with the minimum source number
             source_wise_claims[min_source].append((claim_info['statement'], cat))
 
@@ -90,6 +99,64 @@ def get_source_wise_claims(category_dict):
     source_wise_claims = dict(sorted(source_wise_claims.items(), key=lambda x: len(x[1]), reverse=True))
 
     return source_wise_claims
+
+def dump_annotation_sample(source_wise_claims, file):
+    '''
+    construct annotation data sample
+    '''
+    # consider top 3 sources
+    top_sources = list(source_wise_claims.keys())[:3]
+
+    # profile story 
+    profile_story_path = f'../../datasets/data_splits/data/Reddit/profile/{file}'
+    with open(profile_story_path, 'r') as f:
+        profile_story = json.load(f)
+    
+    # output annotation dir 
+    annotation_dir = 'annotation_data'
+    if not os.path.exists(annotation_dir):
+        os.makedirs(annotation_dir)
+    
+    # annotation file dir 
+    annotation_file_dir = f'{annotation_dir}/{file.split('.')[0]}'
+    if not os.path.exists(annotation_file_dir):
+        os.makedirs(annotation_file_dir)
+    
+    rows = []
+
+    # iterate over top sources
+    for source in top_sources:
+        # get source wp and story 
+        source_story = (
+            profile_story[source-1]["story"]
+            .encode("latin1", errors="ignore")  # Treat as Latin-1, ignoring invalid bytes
+            .decode("utf-8", errors="ignore")  # Decode to UTF-8, ignoring undecodable bytes
+        )
+
+        source_wp = profile_story[source-1]["writing_prompt"]
+        claims = source_wise_claims[source]
+
+        # iterate over claims
+        for claim in claims:
+            rows.append({
+                "source": source,
+                "category": claim[1],
+                "claim": claim[0],
+                "coherence": '',
+                "consistency": '',
+                "comments": '',
+
+            })
+        
+        # write source wp and story to a file
+        source_info = f"#### Writing Prompt ####\n{source_wp}\n\n\n#### Story ####\n{source_story}"
+        with open(f'{annotation_file_dir}/{source}.txt', 'w') as f:
+            f.write(source_info)
+    
+    # write annotation data to a csv file
+    df = pd.DataFrame(rows)
+    df.to_csv(f'{annotation_file_dir}/annotation_data.csv', index=False)
+
 
 
 def main():
@@ -114,9 +181,11 @@ def main():
             with open(f'{organize_sheet_dir}/{file}', 'w') as f:
                 json.dump(category_dict, f, indent=4)
             # source wise claims
-            source_wise_claims = get_source_wise_claims(category_dict)
+            source_wise_claims = get_source_wise_claims(category_dict, user_profile_list)
             with open(f'{source_wise_claims_dir}/{file}', 'w') as f:
                 json.dump(source_wise_claims, f, indent=4)
+            # construct annotation data sample
+            dump_annotation_sample(source_wise_claims, file)
 
 
 if __name__ == '__main__':

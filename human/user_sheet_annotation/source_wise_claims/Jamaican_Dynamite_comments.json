@@ -1,11 +1,7 @@
 {
-    "1": [
+    "5": [
         [
             "The user crafts plots that are dynamic and layered, often incorporating multiple scenes and interactions, with significant twists that add depth and intrigue to the narrative.",
-            "Plot"
-        ],
-        [
-            "Plots are driven by dynamic interactions and the absurdity of situations, engaging the reader and creating tension.",
             "Plot"
         ],
         [
@@ -17,7 +13,7 @@
             "Development (Character and Setting)"
         ],
         [
-            "The user effectively portrays characters with memorable traits, using settings as backdrops that enhance the narrative focus.",
+            "The setting is often implied and less detailed, focusing on the immediate environment of the characters, allowing for a deeper exploration of character relationships and personal conflicts, though occasionally more detailed settings are used to enhance the atmosphere.",
             "Development (Character and Setting)"
         ],
         [
@@ -25,7 +21,11 @@
             "Language Use"
         ]
     ],
-    "3": [
+    "4": [
+        [
+            "Plots are driven by dynamic interactions and the absurdity of situations, engaging the reader and creating tension.",
+            "Plot"
+        ],
         [
             "The user emphasizes intimate and personal interactions, exploring individual perspectives and conflicts through dialogue-driven narratives.",
             "Plot"
@@ -35,12 +35,8 @@
             "Creativity"
         ],
         [
-            "The setting is often implied and less detailed, focusing on the immediate environment of the characters, allowing for a deeper exploration of character relationships and personal conflicts, though occasionally more detailed settings are used to enhance the atmosphere.",
+            "The user effectively portrays characters with memorable traits, using settings as backdrops that enhance the narrative focus.",
             "Development (Character and Setting)"
-        ],
-        [
-            "A conversational tone with a mix of casual and formal language is used to create a dynamic and engaging narrative, effectively balancing humor and tension.",
-            "Language Use"
         ]
     ],
     "6": [
@@ -51,11 +47,15 @@
         [
             "The user creatively integrates elements of fantasy with everyday activities, such as shopping, to create unique and imaginative storylines.",
             "Creativity"
-        ]
-    ],
-    "4": [
+        ],
         [
             "The fast-paced and engaging narrative style is achieved through punchy dialogue and straightforward descriptions, with varied pacing that includes moments of tension and calm.",
+            "Language Use"
+        ]
+    ],
+    "3": [
+        [
+            "A conversational tone with a mix of casual and formal language is used to create a dynamic and engaging narrative, effectively balancing humor and tension.",
             "Language Use"
         ]
     ]
