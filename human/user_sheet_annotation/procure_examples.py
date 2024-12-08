@@ -155,7 +155,7 @@ def dump_annotation_sample(source_wise_claims, file):
     
     # write annotation data to a csv file
     df = pd.DataFrame(rows)
-    df.to_csv(f'{annotation_file_dir}/annotation_data.csv', index=False)
+    df.to_csv(f'{annotation_file_dir}/annotation_sheet.csv', index=False)
 
 
 
