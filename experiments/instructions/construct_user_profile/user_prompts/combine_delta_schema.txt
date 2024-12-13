@@ -1,0 +1,61 @@
+---
+
+#### Instructions  
+
+1. **Analyze the Provided Sheets**  
+   - Use the `<thinking></thinking>` tokens to analyze the provided user writing sheets systematically.  
+   - Reflect on recurring patterns, unique elements, and stylistic tendencies described in both the writing sheets for each category (Plot, Creativity, Development, and Language Use).
+   - Plan on synthesizing this above information into **Combined User Writing Sheet** as a list of claims for every category above.
+   - For every category, group same/ similar claims from the **Previous Combined User Writing Sheet** and the **Current User Writing Sheet** into a single claim in the combined writing sheet. For claims in the **Current User Writing Sheet** that are not grouped with claims in the **Previous Combined User Writing Sheet**, plan on including them as-is with the current story reference in the combined writing sheet. 
+
+2. **Generate the Combined User Writing Sheet**  
+   - After completing the analysis, output a **Combined User Writing Sheet** under the `<combined_user_sheet></combined_user_sheet>` tag.  
+   - Synthesize insights for each category into concise yet comprehensive claims. Each claim must be an independent statement about the user's story writing style, derived from the **Previous Combined User Writing Sheet** and the **Current User Writing Sheet**. The blend must be cohesive and must not include separate sentences stating, "in the current story..." or explicitly reference the current story as distinct from the overall analysis.
+   - Each claim must include cumulative examples (include the header ``Example'' only once and include line seperated examples from the story) followed by their respective reference to the story identifiers used to construct the examples. Reference should be provided at the end of every example in the form of a square-bracketts `[k]` where `k` denotes the story identifier. If a claim is taken from the **Previous Combined User Writing Sheet** and edited, retain the previous examples as-is and add the new example from the **Current User Writing Sheet** verbatim along with its respective reference. If the claim is newly introduced based on the **Current User Writing Sheet**, just copy paste the claim from the **Current User Writing Sheet** into the combined writing sheet along with the example verbatim by adding the story reference at the end.
+   - Do not include references just once for the entire category but ensure every individual example in each claim within the category has its own reference.  
+
+
+---
+
+#### Input Format  
+- The  **Previous Combined User Writing Sheet**,  **Story Identifier**, **Current Writing Prompt** and the corresponding **Current User Writing Sheet** for the current prompt (as a Python Dictionary - "Previous_Information", and "Current_Information")
+
+---
+
+#### Output Format  
+<thinking>  
+Add your analysis of recurring patterns, unique elements, and stylistic tendencies across both the user writing sheets. Address the categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** systematically.  
+</thinking>  
+<combined_user_sheet>  
+
+### **Plot**  
+
+[Combine insights on the unique aspects of how the user structures the story, introduces conflict, engages with the prompt, and resolves the narrative.]
+
+1. **Claim about user’s writing style.**
+   - Examples:
+      - In the story 1 regarding “short description of the prompt,” <example from the user-written story 2>.
+      - In the story 2 regarding “short description of the prompt,” <example from the user-written story 2>.
+
+
+### **Creativity**  
+
+[Combine insights on the unique aspects of the user’s approach to blending genres, using humor or irony, reinterpreting the prompt, and integrating unconventional or imaginative elements.]
+
+Include claim and examples in the format specified above.
+
+### **Development (Character and Setting)**  
+
+[Combine insights on the unique aspects of the user’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.]
+
+Include claim and examples in the format specified above.
+
+### **Language Use**  
+
+[Combine insights on the unique aspects of how the user employs descriptive language, pacing, dialogue, and tone to create an engaging and immersive narrative.]
+
+Include claim and examples in the format specified above.
+
+</combined_user_sheet>  
+
+Ensure that your output is within the respective tags <thinking> and <combined_user_sheet>, to parse the output seamlessly. 

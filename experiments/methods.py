@@ -1297,18 +1297,88 @@ class StoryGenMethods():
             prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints)
             return prompt
 
+        def construct_user_profile_prompt(prev_prompt_dict, current_prompt_dict):
+            '''
+            Construct the Prompt for User Profile
+            '''
+
+            # construct the user instruction
+            user_instruction = ''
+            input_prompt_dict = {'Previous_Information': prev_prompt_dict, 'Current_Information': current_prompt_dict}
+            user_instruction += f"{json.dumps(input_prompt_dict, indent=4)}\n\n"
+
+            # construct OpenAI prompt
+            prompt = construct_prompt_message(system_instructions_combine, user_instruction, user_constraints_combine)
+            return prompt
+
+        def extract_writing_sheet(sheet_output, key='combined_user_sheet'):
+            '''
+            extract text between the tags <user_writing_sheet></user_writing_sheet>
+            '''            
+            sheet = re.search(rf'<{key}>(.*?)</{key}>', sheet_output, re.DOTALL).group(1)
+            if not sheet:
+                sheet = sheet_output
+            return sheet    
+
+    
+        def add_references(user_sheet_response, reference_num='1'):
+            '''
+            Add references after every "Example" under each category in the user sheet response.
+            '''
+            # Extract text between the tags <writing_style></writing_style>
+            user_sheet = re.search(r'<writing_style>(.*?)</writing_style>', user_sheet_response, re.DOTALL).group(1)
+
+            # Keys to extract
+            categories = ["### Plot", "### Creativity", "### Development (Character and Setting)", "### Language Use"]
+
+            # Dictionary to hold category and its corresponding content
+            category_content = {}
+            start_idx = 0
+
+            # Extract content for each category
+            for i, category in enumerate(categories):
+                start_idx = user_sheet.find(category, start_idx)
+                if start_idx == -1:
+                    continue  # If category is not found, skip
+                end_idx = user_sheet.find(categories[i + 1], start_idx) if i + 1 < len(categories) else len(user_sheet)
+                content = user_sheet[start_idx + len(category):end_idx].strip()  # Extract content after category
+
+                category_content[category] = content
+
+            # Process each category's content
+            new_sheet = ""
+            for category, content in category_content.items():
+                # Add category
+                new_sheet += f"{category}\n"
+                
+                # Process lines within the category
+                lines = content.split("\n")
+                for line in lines:
+                    if "Example:" in line:
+                        # Add reference [1] after the example
+                        line = re.sub(r'(Example:.*?)(\n|$)', fr'\1 [{reference_num}]\2', line)
+                    new_sheet += f"{line}\n"
+
+            # Add between <writing_style> tokens
+            user_sheet_references = f'<writing_style>{new_sheet}</writing_style>'
+            
+            return user_sheet_references
+
+        print('Method: Delta User Profile')
+        print(f'Source: {source}')
 
 
+        # NOTE: STEP 1: Generate User Sheets
         # ground truth profile directory
-        consider_dir = f'{self.data_split_dir}/{source}/profile'
+        profile_dir = f'{self.data_split_dir}/{source}/profile'
 
         # base story directory 
         base_story_dir = f'{self.output_dir_profile}/vanilla/{source}'
 
         # story rules output directory
-        story_rules_output_dir = f'{self.output_dir_profile}/delta_schema/{source}'
-        if not os.path.exists(story_rules_output_dir):
-            os.makedirs(story_rules_output_dir)
+        user_sheets_output_dir = f'{self.output_dir_profile}/delta_schema/{source}'
+        if not os.path.exists(user_sheets_output_dir):
+            os.makedirs(user_sheets_output_dir)
 
         # system instructions
         with open(f"{self.user_profile_instructions_dir}/system_prompts/delta_schema.txt", 'r') as f:
@@ -1319,13 +1389,13 @@ class StoryGenMethods():
             user_constraints = f.read()
         
         # iterate through each file in the profile directory
-        for fctr, file in tqdm(enumerate(os.listdir(consider_dir)), desc='Delta Schema User Sheets', total=len(os.listdir(consider_dir))):
+        for fctr, file in tqdm(enumerate(os.listdir(profile_dir)), desc='Delta Schema User Sheets', total=len(os.listdir(profile_dir))):
             if debug:
                 # break after 3 iterations
                 if fctr > 2:
                     break
 
-            data_file_path = os.path.join(consider_dir, file)
+            data_file_path = os.path.join(profile_dir, file)
             # profile data
             with open(data_file_path, 'r') as f:
                 human_data = json.load(f)
@@ -1340,7 +1410,7 @@ class StoryGenMethods():
                 continue
             
             # output file path
-            output_file_path = os.path.join(story_rules_output_dir, file)
+            output_file_path = os.path.join(user_sheets_output_dir, file)
 
             # check if the output file already exists
             if os.path.exists(output_file_path):
@@ -1380,7 +1450,95 @@ class StoryGenMethods():
                 with open(output_file_path, 'w') as f:
                     json.dump(user_sheet_response, f, indent=4)
 
+        # NOTE: STEP 2: Generate User Profile by aggregating the User Sheets
 
+        # user profile output directory
+        user_profile_output_dir = f'{self.user_profile_dir}/delta_schema/{source}'
+        if not os.path.exists(user_profile_output_dir):
+            os.makedirs(user_profile_output_dir)
+
+        # system instructions
+        system_instructions_combine_path = f'{self.user_profile_instructions_dir}/system_prompts/combine_delta_schema.txt'
+        # user instructions
+        user_instructions_combine_path = f'{self.user_profile_instructions_dir}/user_prompts/combine_delta_schema.txt'
+
+        # read the system instructions
+        with open(system_instructions_combine_path, 'r') as f:
+            system_instructions_combine = f.read()
+        
+        # read the user instructions
+        with open(user_instructions_combine_path, 'r') as f:
+            user_constraints_combine = f.read()
+
+        # iterate through each file in the profile directory
+        for fctr, file in tqdm(enumerate(os.listdir(profile_dir)), desc='User Profile (Delta)', total=len(os.listdir(profile_dir))):
+            
+            if debug:
+                # break after 3 iterations
+                if fctr > 2:
+                    break
+
+            profile_file_path = os.path.join(profile_dir, file)
+            # profile data
+            with open(profile_file_path, 'r') as f:
+                profile_data = json.load(f)
+            
+            # output file path
+            output_file_path = os.path.join(user_profile_output_dir, file)
+
+            # check if the output file already exists
+            if os.path.exists(output_file_path):
+                # read the output file
+                with open(output_file_path, 'r') as f:
+                    user_profile_response = json.load(f)
+            else:
+                user_profile_response = []
+            
+            # open user sheet response
+            user_sheet_response_path = os.path.join(user_sheets_output_dir, file)
+            try:
+                with open(user_sheet_response_path, 'r') as f:
+                    user_sheet_response = json.load(f)
+            except Exception as e:
+                continue
+            
+            # iterate through each example in the profile data
+            for ectr, example in tqdm(enumerate(profile_data), desc=f'Processing {file}', total=len(profile_data)):
+                # check if the example already exists in the user sheet response
+                if ectr < len(user_profile_response):
+                    continue
+
+                # break after 3 iterations
+                if debug:
+                    if ectr > 2:
+                        break
+
+                # if ectr == 0 just use the user sheet response
+                if ectr == 0:
+                    user_profile_response.append(add_references(user_sheet_response[ectr]))
+                else:
+                    # construct the prompt
+                    if ectr == 1:
+                        prev_key = 'writing_style'
+                    else:
+                        prev_key = 'combined_user_sheet'
+                    try:
+                        prev_prompt_dict = {'previous_combined_user_sheet': extract_writing_sheet(user_profile_response[ectr - 1], key=prev_key)}
+                        current_prompt_dict = {'Story Identifier': ectr+1, 'current_writing_prompt': example['writing_prompt'], 
+                                               'current_user_sheet': add_references(user_sheet_response[ectr], reference_num=str(ectr+1))}
+                        
+                        # construct the prompt
+                        prompt = construct_user_profile_prompt(prev_prompt_dict, current_prompt_dict)
+                        # call the OpenAI model
+                        response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                    except Exception as e:
+                        response = user_profile_response[ectr - 1]
+    
+                    user_profile_response.append(response)
+
+                # write the results to the output directory
+                with open(output_file_path, 'w') as f:
+                    json.dump(user_profile_response, f, indent=4)
 
 
 
