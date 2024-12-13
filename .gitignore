@@ -8,3 +8,5 @@ evaluation/debug.ipynb
 human/examples/metadata.json
 human/user_sheet_annotation/source_wise_claims/
 human/user_sheet_annotation/clean_user_sheet
+human/user_sheet_annotation/organize_sheet.ipynb
+human/user_sheet_annotation/temp_user_sheet.txt
