@@ -7,7 +7,7 @@
 ## Output Format
 1. First use the <thinking></thinking> tokens to think deeply about how the User-Written Story differs from the Base Story. Also think of a short descriptive phrase summarizing the writing prompt (e.g., “the story regarding ‘child soldiers baiting summoners’”).
 2. Next, output your analysis in the <writing_style></writing_style> tokens. Your analysis must be structured into four categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**. For each category:
-i. Provide **independent claims** about the user’s writing behavior. These should reflect general writing tendencies without referencing specific story details or using terms like “ground-truth story” or “base story.”
+i. Provide **independent claims** about the user’s writing behavior. These should reflect general writing tendencies without referencing specific story details or using terms like "User-Written Story" and "Base story".
 ii. Support each claim with a **contextualized example** from the user-written story. Use the short descriptive phrase summarizing the writing prompt (obtained earlier in the <thinking> tokens) to contextualize the example. Ensure that examples are either short excerpts from the user-written story or concise summaries of the relevant story excerpts tied to the writing prompt.
 
 ## Guidelines for Claims
