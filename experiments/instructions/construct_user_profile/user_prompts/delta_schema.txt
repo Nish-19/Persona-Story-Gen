@@ -31,7 +31,7 @@ Analyze the user’s approach to blending genres, using humor or irony, reinterp
 Examine the user’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.
 
 ### Language Use
-Assess how the user employs descriptive language, pacing, dialogue, rhetorical devices, figures of speech, and tone to create an engaging and immersive narrative.
+Assess how the user employs descriptive language, pacing, dialogue, rhetorical devices, figures of speech, tone, and narrative perspective to create an engaging and immersive narrative.
 
 ## Special Instructions
 1. Always **think** of a short descriptive phrase summarizing the writing prompt to frame the examples.
