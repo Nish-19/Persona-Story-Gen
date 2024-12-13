@@ -1,0 +1,54 @@
+## Input Details
+- **Writing Prompt**: Describes the scenario or theme for which the stories are written.
+- **User-Written Story**: The user’s unique interpretation of the writing prompt.
+- **Base Story**: A generic story written by an average user for the writing prompt.
+
+
+## Output Format
+1. First use the <thinking></thinking> tokens to think deeply about how the User-Written Story differs from the Base Story. Also think of a short descriptive phrase summarizing the writing prompt (e.g., “the story regarding ‘child soldiers baiting summoners’”).
+2. Next, output your analysis in the <writing_style></writing_style> tokens. Your analysis must be structured into four categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**. For each category:
+i. Provide **independent claims** about the user’s writing behavior. These should reflect general writing tendencies without referencing specific story details or using terms like “ground-truth story” or “base story.”
+ii. Support each claim with a **contextualized example** from the user-written story. Use the short descriptive phrase summarizing the writing prompt (obtained earlier in the <thinking> tokens) to contextualize the example. Ensure that examples are either short excerpts from the user-written story or concise summaries of the relevant story excerpts tied to the writing prompt.
+
+## Guidelines for Claims
+- Claims must be unique and **should not repeat across categories**.
+- Claims must reflect general observations about the user’s writing tendencies (e.g., “The user frequently employs satire to reinterpret prompts”).
+- Claims must not using the terms "User-Written Story" and "Base story".
+
+## Guidelines for Examples
+- Examples must be drawn from the user-written story and explicitly tied to the writing prompt.
+- Use the short descriptive phrase to frame the example in the context of the current prompt. For example:
+  - “In the story regarding ‘child soldiers baiting summoners,’ the user uses log entries to create a sense of realism.”
+
+## Categories for Analysis
+### Plot
+Evaluate how the user structures the story, introduces conflict, engages with the prompt, and resolves the narrative.
+
+### Creativity
+Analyze the user’s approach to blending genres, using humor or irony, reinterpreting the prompt, and integrating unconventional or imaginative elements.
+
+### Development (Character and Setting)
+Examine the user’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.
+
+### Language Use
+Assess how the user employs descriptive language, pacing, dialogue, rhetorical devices, figures of speech, and tone to create an engaging and immersive narrative.
+
+## Special Instructions
+1. Always **think** of a short descriptive phrase summarizing the writing prompt to frame the examples.
+2. Use the specified structure for the output:
+   - Each category begins with a **set of claims**.
+   - Each claim is followed by a **contextualized example** from the user-written story.
+3. Ensure that the analysis is objective and does not directly reference the base story.
+4. Claims must avoid repeating across categories to maintain distinct insights.
+5. Claims must not use the words "User-Written Story" and "Base story".
+
+## Example Output Structure
+```markdown
+### Plot
+1. **Claim about user’s writing style.**
+   - Example: In the story regarding “short description of the prompt,” <example from the user-written story>.
+
+### Creativity
+1. **Claim about user’s writing style.**
+   - Example: In the story regarding “short description of the prompt,” <example from the user-written story>.
+...

@@ -5,7 +5,7 @@
      - **Plot**: Evaluate how the user structures the story, introduces conflict, engages with the prompt, and resolves the narrative.
      - **Creativity**: Analyze the user’s approach to blending genres, using humor or irony, reinterpreting the prompt, and integrating unconventional or imaginative elements.
      - **Development (Character and Setting)**: Examine the user’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.
-     - **Language Use**: Assess how the user employs descriptive language, pacing, dialogue, and tone to create an engaging and immersive narrative.
+     - **Language Use**: Assess how the user employs descriptive language, pacing, dialogue, figures of speech, choices of words, and tone to create an engaging and immersive narrative.
 
 2. **Story Rule Generation Phase**:
    - Output a detailed and granular set of **Story Rules** in `<story_rules></story_rules>` tags. These rules should provide actionable instructions in **direct second-person form** that an LLM can follow to emulate the Ground Truth storytelling style.
