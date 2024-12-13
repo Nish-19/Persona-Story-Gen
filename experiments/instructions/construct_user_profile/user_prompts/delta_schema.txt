@@ -43,7 +43,6 @@ Assess how the user employs descriptive language, pacing, dialogue, rhetorical d
 5. Claims must not use the words "User-Written Story" and "Base story".
 
 ## Example Output Structure
-```markdown
 ### Plot
 1. **Claim about user’s writing style.**
    - Example: In the story regarding “short description of the prompt,” <example from the user-written story>.
@@ -52,3 +51,7 @@ Assess how the user employs descriptive language, pacing, dialogue, rhetorical d
 1. **Claim about user’s writing style.**
    - Example: In the story regarding “short description of the prompt,” <example from the user-written story>.
 ...
+
+Repeat for all categories.
+
+Ensure that your output is within the respective tags <thinking> and <writing_style>, to parse the output seamlessly. 
