@@ -18,29 +18,15 @@ def extract_writing_sheet(sheet_output, key='combined_user_sheet'):
         sheet = sheet_output
     return sheet    
 
-# def organize_user_sheet(user_sheet):
-#     '''
-#     get individual statements and sources from the user sheet
-#     '''
-#     # Extract sentences and sources
-#     pattern = r"- (.+?)\s\[(\d+(?:, \d+)*)\]"
-#     matches = re.findall(pattern, user_sheet)
-
-#     # Prepare output
-#     output = [{"statement": match[0].strip(), "sources": f"[{match[1]}]"} for match in matches]
-
-#     # Print or use the output
-#     for item in output:
-#         print(f"Statement: {item['statement']}\nSources: {item['sources']}\n")
-
 def organize_user_sheet(user_sheet):
     '''
-    category-wise organization of user sheet
+    Category-wise organization of user sheet with statement and example combined.
     '''
 
     # Extract headers and content
     category_pattern = r"### \*\*(.+?)\*\*"  # Matches the category headers
-    content_pattern = r"- (.+?)\s\[(\d+(?:, \d+)*)\]"  # Matches the sentences and sources
+    statement_pattern = r"\d+\. \*\*(.+?)\*\*"  # Matches the numbered statements
+    example_pattern = r"- Example: (.+?) \[(\d+(?:, \d+)*)\]"  # Matches the examples and sources
 
     categories = re.findall(category_pattern, user_sheet)  # Extract headers
     category_dict = {category: [] for category in categories}  # Initialize dictionary for each category
@@ -48,15 +34,20 @@ def organize_user_sheet(user_sheet):
     # Split the user_sheet into sections based on categories
     sections = re.split(category_pattern, user_sheet)
 
-    # Iterate through sections and extract sentences and sources
+    # Iterate through sections and extract statements and examples
     for i in range(1, len(sections), 2):  # Skip irrelevant parts
         category = sections[i].strip()  # Current category
         content = sections[i + 1]  # Content for the category
-        matches = re.findall(content_pattern, content)  # Extract sentences and sources
-        for match in matches:
+
+        # Match statements and corresponding examples
+        statements = re.findall(statement_pattern, content)
+        examples = re.findall(example_pattern, content)
+
+        for statement, (example, sources) in zip(statements, examples):
             category_dict[category].append({
-                "statement": match[0].strip(),
-                "sources": literal_eval(f"[{match[1]}]")
+                "statement": statement.strip(),
+                "example": example.strip(),
+                "sources": literal_eval(f"[{sources}]")
             })
 
     # # Output the grouped dictionary
@@ -64,14 +55,15 @@ def organize_user_sheet(user_sheet):
     #     print(f"Category: {category}")
     #     for item in items:
     #         print(f"  Statement: {item['statement']}")
+    #         print(f"  Example: {item['example']}")
     #         print(f"  Sources: {item['sources']}")
     #     print()
-    
+
     return category_dict
 
-def get_source_wise_claims(category_dict, user_profile_list):
+def get_source_wise_claims(category_dict):
     '''
-    organize claims based on sources using the user_profile_list
+    organize claims based on sources
     '''
     source_wise_claims = defaultdict(list)
 
@@ -82,23 +74,17 @@ def get_source_wise_claims(category_dict, user_profile_list):
             # min_source = min(sources)
 
             claim = claim_info['statement']
-            # search for the claim in the user_profile_list
-            for uctr, user_profile in enumerate(user_profile_list):
-                if claim in user_profile:
-                    break
-            min_source = uctr + 1
+            example = claim_info['example']
+            source = int(claim_info['sources'][0])
 
-            # update the sources with the minimum source number
-            source_wise_claims[min_source].append((claim_info['statement'], cat))
-
-            # # iterate over all sources
-            # for source in sources:
-            #     source_wise_claims[source].append((claim_info['statement'], cat))
+            # append to the source_wise_claims
+            source_wise_claims[source].append((claim_info['statement'], claim_info['example'], cat))
     
     # sort source_wise_claims based on length of claims
     source_wise_claims = dict(sorted(source_wise_claims.items(), key=lambda x: len(x[1]), reverse=True))
 
     return source_wise_claims
+
 
 def dump_annotation_sample(source_wise_claims, file):
     '''
@@ -140,8 +126,9 @@ def dump_annotation_sample(source_wise_claims, file):
         for claim in claims:
             rows.append({
                 "source": source,
-                "category": claim[1],
+                "category": claim[2],
                 "claim": claim[0],
+                "example": claim[1],
                 "coherence": '',
                 "consistency": '',
                 "comments": '',
@@ -181,7 +168,7 @@ def main():
             with open(f'{organize_sheet_dir}/{file}', 'w') as f:
                 json.dump(category_dict, f, indent=4)
             # source wise claims
-            source_wise_claims = get_source_wise_claims(category_dict, user_profile_list)
+            source_wise_claims = get_source_wise_claims(category_dict)
             with open(f'{source_wise_claims_dir}/{file}', 'w') as f:
                 json.dump(source_wise_claims, f, indent=4)
             # construct annotation data sample
