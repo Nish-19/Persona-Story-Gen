@@ -8,6 +8,7 @@ import re
 import json 
 from ast import literal_eval
 from collections import defaultdict
+import argparse
 
 def extract_writing_sheet(sheet_output, key='combined_user_sheet'):
     '''
@@ -61,6 +62,7 @@ def organize_user_sheet(user_sheet):
 
     return category_dict
 
+
 def get_source_wise_claims(category_dict):
     '''
     organize claims based on sources
@@ -86,7 +88,7 @@ def get_source_wise_claims(category_dict):
     return source_wise_claims
 
 
-def dump_annotation_sample(source_wise_claims, file):
+def dump_annotation_sample(source_wise_claims, file, source='Reddit'):
     '''
     construct annotation data sample
     '''
@@ -94,12 +96,12 @@ def dump_annotation_sample(source_wise_claims, file):
     top_sources = list(source_wise_claims.keys())[:3]
 
     # profile story 
-    profile_story_path = f'../../datasets/data_splits/data/Reddit/profile/{file}'
+    profile_story_path = f'../../datasets/data_splits/data/{source}/profile/{file}'
     with open(profile_story_path, 'r') as f:
         profile_story = json.load(f)
     
     # output annotation dir 
-    annotation_dir = 'annotation_data'
+    annotation_dir = f'annotation_data/{source}'
     if not os.path.exists(annotation_dir):
         os.makedirs(annotation_dir)
     
@@ -112,6 +114,10 @@ def dump_annotation_sample(source_wise_claims, file):
 
     # iterate over top sources
     for source in top_sources:
+        # number of claims should be atleast 3
+        if len(source_wise_claims[source]) < 3:
+            continue
+
         # get source wp and story 
         source_story = (
             profile_story[source-1]["story"]
@@ -130,7 +136,8 @@ def dump_annotation_sample(source_wise_claims, file):
                 "claim": claim[0],
                 "example": claim[1],
                 "coherence": '',
-                "consistency": '',
+                "groundedness": '',
+                "evidence": '',
                 "comments": '',
 
             })
@@ -144,16 +151,29 @@ def dump_annotation_sample(source_wise_claims, file):
     df = pd.DataFrame(rows)
     df.to_csv(f'{annotation_file_dir}/annotation_sheet.csv', index=False)
 
-
+def parse_args():
+    '''
+    Parse command line arguments
+    '''
+    parser = argparse.ArgumentParser(description='Extract examples for annotation')
+    parser.add_argument('--source', type=str, default='Reddit', help='Source: Reddit, AO3, Storium, narrativemagazine, newyorker')
+    args = parser.parse_args()
+    return args
 
 def main():
-    user_sheet_dir = '../../experiments/user_profile/delta_schema/Reddit/'
+    # parse arguments
+    args = parse_args()
 
-    organize_sheet_dir = 'clean_user_sheet'
+    source = args.source
+    print('Source:', source)
+
+    user_sheet_dir = f'../../experiments/user_profile/delta_schema/{source}/'
+
+    organize_sheet_dir = f'clean_user_sheet/{source}'
     if not os.path.exists(organize_sheet_dir):
         os.makedirs(organize_sheet_dir)
     
-    source_wise_claims_dir = 'source_wise_claims'
+    source_wise_claims_dir = f'source_wise_claims/{source}'
     if not os.path.exists(source_wise_claims_dir):
         os.makedirs(source_wise_claims_dir)
 
@@ -163,7 +183,13 @@ def main():
             user_sheet_path = os.path.join(user_sheet_dir, file)
             with open(user_sheet_path, 'r') as f:
                 user_profile_list = json.load(f)
-            user_sheet = extract_writing_sheet(user_profile_list[-1], 'combined_user_sheet')
+            if len(user_profile_list) == 0:
+                continue
+            elif len(user_profile_list) == 1:
+                key = 'writing_style'
+            else:
+                key = 'combined_user_sheet'
+            user_sheet = extract_writing_sheet(user_profile_list[-1], key)
             category_dict = organize_user_sheet(user_sheet)
             with open(f'{organize_sheet_dir}/{file}', 'w') as f:
                 json.dump(category_dict, f, indent=4)
@@ -172,7 +198,7 @@ def main():
             with open(f'{source_wise_claims_dir}/{file}', 'w') as f:
                 json.dump(source_wise_claims, f, indent=4)
             # construct annotation data sample
-            dump_annotation_sample(source_wise_claims, file)
+            dump_annotation_sample(source_wise_claims, file, source)
 
 
 if __name__ == '__main__':
