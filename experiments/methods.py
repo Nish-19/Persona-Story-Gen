@@ -1426,10 +1426,10 @@ class StoryGenMethods():
                 if ectr < len(user_sheet_response):
                     continue
 
-                # break after 3 iterations
-                if debug:
-                    if ectr > 2:
-                        break
+                # # break after 3 iterations
+                # if debug:
+                #     if ectr > 2:
+                #         break
 
                 # writing prompt 
                 writing_prompt = example['writing_prompt']
@@ -1508,10 +1508,10 @@ class StoryGenMethods():
                 if ectr < len(user_profile_response):
                     continue
 
-                # break after 3 iterations
-                if debug:
-                    if ectr > 2:
-                        break
+                # # break after 3 iterations
+                # if debug:
+                #     if ectr > 2:
+                #         break
 
                 # if ectr == 0 just use the user sheet response
                 if ectr == 0:
@@ -1572,12 +1572,12 @@ def main():
     # few shot top k
     few_shot_top_k = args.few_shot_top_k
     # few_shot_top_k = 3
-    # # method choice
-    # choice = args.choice
-    choice = 5
+    # method choice
+    choice = args.choice
+    # choice = 5
     # # debug 
-    # debug = args.debug
-    debug = True
+    debug = args.debug
+    # debug = True
     # is_profile
     is_profile = args.is_profile
     # # extract rules

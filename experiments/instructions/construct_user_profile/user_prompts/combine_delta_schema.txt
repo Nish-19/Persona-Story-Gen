@@ -12,7 +12,8 @@
    - After completing the analysis, output a **Combined User Writing Sheet** under the `<combined_user_sheet></combined_user_sheet>` tag.  
    - Synthesize insights for each category into concise yet comprehensive claims. Each claim must be an independent statement about the user's story writing style, derived from the **Previous Combined User Writing Sheet** and the **Current User Writing Sheet**. The blend must be cohesive and must not include separate sentences stating, "in the current story..." or explicitly reference the current story as distinct from the overall analysis.
    - Each claim must include a single representative example followed by their respective reference to the story identifiers used to construct the example. Reference should be provided at the end of every example in the form of a square-bracketts `[k]` where `k` denotes the story identifier. 
-   - If a claim is taken from the **Previous Combined User Writing Sheet** and edited, choose between the example in the previous sheet and the current sheet that better supports the claim. Do not be biased towards including the example in the current sheet instead choose the example which better supports the claim. 
+   - If a claim is taken from the **Previous Combined User Writing Sheet** and edited, choose between the example in the previous sheet and the current sheet that better supports the claim. Do not be biased towards including the example in the current sheet, instead choose the example which better supports the claim. 
+      - In general for all categories, favor those examples that have verbatim story text. Verbatim examples are critical for the Language Use category.
    - If the claim is newly introduced based on the **Current User Writing Sheet**, just copy paste the claim from the **Current User Writing Sheet** into the combined writing sheet along with the example verbatim by adding the story reference at the end.
    - Do not include references just once for the entire category but ensure each example in each claim within the category has its own reference.  
 
@@ -52,7 +53,7 @@ Include claim and example in the format specified above.
 
 ### **Language Use**  
 
-[Combine insights on the unique aspects of how the user employs descriptive language, pacing, dialogue, rhetorical devices, figures of speech, tone, and narrative perspective to create an engaging and immersive narrative.]
+[Combine insights on the unique aspects of how the user employs descriptive language, pacing, dialogue, rhetorical devices, figures of speech, tone, and narrative perspective to create an engaging and immersive narrative. Important: Favor examples that are verbatim from the story text.]
 
 Include claim and example in the format specified above.
 
