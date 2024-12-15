@@ -24,34 +24,32 @@ def organize_user_sheet(user_sheet):
     Category-wise organization of user sheet with statement and example combined.
     '''
 
-    # Extract headers and content
-    category_pattern = r"### \*\*(.+?)\*\*"  # Matches the category headers
+    # Simplified category pattern to match all category headers
+    category_pattern = r"###\s*(.*?)\s*(?:$|\n)"  # Matches headers like "### Plot" or "### Creativity"
     statement_pattern = r"\d+\.\s+(.+?)\n"  # Matches the numbered statements
     example_pattern = r"- Example: (.+?) \[(\d+(?:, \d+)*)\]"  # Matches the examples and sources
 
     categories = re.findall(category_pattern, user_sheet)  # Extract headers
-    category_dict = {category: [] for category in categories}  # Initialize dictionary for each category
+    category_dict = {}
 
     # Split the user_sheet into sections based on categories
     sections = re.split(category_pattern, user_sheet)
 
     # Iterate through sections and extract statements and examples
     for i in range(1, len(sections), 2):  # Skip irrelevant parts
-        category = sections[i].strip()  # Current category
+        category = sections[i].strip().strip("*")  # Current category
         content = sections[i + 1]  # Content for the category
+        if category not in category_dict:
+            category_dict[category] = []
 
         # Match statements and corresponding examples
         statements = re.findall(statement_pattern, content)
         examples = re.findall(example_pattern, content)
 
-        # clean statements 
-        statements = [statements.strip('**') for statements in statements]
-        statements = [statements.strip('\"') for statements in statements]
-
         for statement, (example, sources) in zip(statements, examples):
             category_dict[category].append({
-                "statement": statement.strip(),  # Capture the full statement
-                "example": example.strip(),
+                "statement": statement.strip().strip('"').strip("*"),  # Explicitly strip surrounding quotes
+                "example": example.strip().strip("*"),
                 "sources": literal_eval(f"[{sources}]")
             })
 
@@ -65,7 +63,6 @@ def organize_user_sheet(user_sheet):
     #     print()
 
     return category_dict
-
 
 def get_source_wise_claims(category_dict):
     '''
@@ -172,7 +169,7 @@ def main():
     args = parse_args()
 
     source = args.source
-    source = 'Storium'
+    # source = 'Storium'
     threshold = args.threshold
 
     print('Source:', source)
