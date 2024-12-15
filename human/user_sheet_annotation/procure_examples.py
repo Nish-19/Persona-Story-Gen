@@ -26,7 +26,7 @@ def organize_user_sheet(user_sheet):
 
     # Extract headers and content
     category_pattern = r"### \*\*(.+?)\*\*"  # Matches the category headers
-    statement_pattern = r"\d+\. \*\*(.+?)\*\*"  # Matches the numbered statements
+    statement_pattern = r"\d+\.\s+(.+?)\n"  # Matches the numbered statements
     example_pattern = r"- Example: (.+?) \[(\d+(?:, \d+)*)\]"  # Matches the examples and sources
 
     categories = re.findall(category_pattern, user_sheet)  # Extract headers
@@ -44,9 +44,13 @@ def organize_user_sheet(user_sheet):
         statements = re.findall(statement_pattern, content)
         examples = re.findall(example_pattern, content)
 
+        # clean statements 
+        statements = [statements.strip('**') for statements in statements]
+        statements = [statements.strip('\"') for statements in statements]
+
         for statement, (example, sources) in zip(statements, examples):
             category_dict[category].append({
-                "statement": statement.strip(),
+                "statement": statement.strip(),  # Capture the full statement
                 "example": example.strip(),
                 "sources": literal_eval(f"[{sources}]")
             })
@@ -168,6 +172,7 @@ def main():
     args = parse_args()
 
     source = args.source
+    source = 'Storium'
     threshold = args.threshold
 
     print('Source:', source)
@@ -185,6 +190,7 @@ def main():
 
     # iterate over all users 
     for file in os.listdir(user_sheet_dir):
+        
         if file.endswith('.json'):
             user_sheet_path = os.path.join(user_sheet_dir, file)
             with open(user_sheet_path, 'r') as f:
@@ -205,7 +211,6 @@ def main():
                 json.dump(source_wise_claims, f, indent=4)
             # construct annotation data sample
             dump_annotation_sample(source_wise_claims, file, source, threshold)
-
 
 if __name__ == '__main__':
     main()
