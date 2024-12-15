@@ -39,6 +39,7 @@
    - Each claim includes its respective example along with a story reference in the form `[k]`, where `k` corresponds to the story identifier.  
    - Each claim includes exactly one example and not more.  
    - Verbose or overly specific claims are refined into broader insights if they occur repeatedly across stories.  
+   - Duplicate and contradictory claims are not included in the final sheet to ensure clarity and consistency in the analysis.  
 
 5. **Perform a Final Review:**  
    - Cross-check merged claims to ensure that no meaningful information or unique stylistic insight has been lost during the merging process.  
