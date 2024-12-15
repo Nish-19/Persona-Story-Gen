@@ -101,7 +101,8 @@ def dump_annotation_sample(source_wise_claims, file, source='Reddit'):
         profile_story = json.load(f)
     
     # output annotation dir 
-    annotation_dir = f'annotation_data/{source}'
+    
+    annotation_dir = f'annotation_data_new/{source}'
     if not os.path.exists(annotation_dir):
         os.makedirs(annotation_dir)
     
@@ -161,6 +162,8 @@ def parse_args():
     return args
 
 def main():
+    print("Saving in: ", 'annotation_data_new')
+
     # parse arguments
     args = parse_args()
 
