@@ -5,29 +5,50 @@
 1. **Analyze the Provided Sheets**  
    - Use the `<thinking></thinking>` tokens to analyze the provided user writing sheets systematically.  
    - Reflect on recurring patterns, unique elements, and stylistic tendencies described in both the writing sheets for each category (Plot, Creativity, Development, and Language Use).
-   - Plan on synthesizing this above information into **Combined User Writing Sheet** as a list of claims for every category above.
-   - For every category, group same/ similar claims from the **Previous Combined User Writing Sheet** and the **Current User Writing Sheet** into a single claim in the combined writing sheet. For claims in the **Current User Writing Sheet** that are not grouped with claims in the **Previous Combined User Writing Sheet**, plan on including them as-is with the current story reference in the combined writing sheet. 
+   - Plan on synthesizing this above information into **Combined User Writing Sheet** as a list of claims and their correspoding examples for every category above based on the algorithm (Algorithm (Merge Step)) below.
 
 2. **Generate the Combined User Writing Sheet**  
-   - After completing the analysis, output a **Combined User Writing Sheet** under the `<combined_user_sheet></combined_user_sheet>` tag.  
-   - Synthesize insights for each category into concise yet comprehensive claims. Each claim must be an independent statement about the user's story writing style, derived from the **Previous Combined User Writing Sheet** and the **Current User Writing Sheet**. The blend must be cohesive and must not include separate sentences stating, "in the current story..." or explicitly reference the current story as distinct from the overall analysis.
-   - Each claim must include a single representative example followed by their respective reference to the story identifiers used to construct the example. Reference should be provided at the end of every example in the form of a square-bracketts `[k]` where `k` denotes the story identifier. 
-   - If a claim is taken from the **Previous Combined User Writing Sheet** and edited, choose between the example in the previous sheet and the current sheet that better supports the claim. Do not be biased towards including the example in the current sheet, instead choose the example which better supports the claim. 
-      - In general for all categories, favor those examples that have verbatim story text. Verbatim examples are critical for the Language Use category.
-   - If the claim is newly introduced based on the **Current User Writing Sheet**, just copy paste the claim from the **Current User Writing Sheet** into the combined writing sheet along with the example verbatim by adding the story reference at the end.
-   - Do not include references just once for the entire category but ensure each example in each claim within the category has its own reference.  
 
+**Algorithm (Merge Step):**
+
+**Input:**  
+- **Previous Combined User Writing Sheet**  
+- **Current User Writing Sheet**  
+
+**Output:**  
+- **Combined User Writing Sheet**
+
+**Steps:**
+
+1. For all categories (Plot, Creativity, Development, and Language Use), group similar claims from the **Previous Combined User Writing Sheet** and the **Current User Writing Sheet**.
+   - Identify overlapping claims based on semantic similarity and organize them into groups.
+   
+2. For each group of similar claims:  
+   a. **Select the Best Example:** Choose the most representative example from either the previous sheet or the current sheet. Favor examples that are verbatim excerpts from the story over paraphrased ones.  
+   b. **Rewrite the Claim:** Based on the selected example, rewrite the claim so that it is fully supported by the example. The rewritten claim must not include additional content that cannot be directly inferred from the chosen example.  
+
+3. For all **ungrouped (dissimilar or unique)** claims in both the previous sheet and the current sheet:  
+   a. Include them as-is in the combined sheet along with their respective examples.
+
+4. Organize the combined claims and their respective examples into the final structure for the **Combined User Writing Sheet**, ensuring that each category is comprehensive and free of duplicate or contradictory claims.
+
+---
+
+3. Ensure that:  
+   - Each claim is concise, reflects a general writing tendency, and does not include terms like "ground-truth story" or "base story."  
+   - Each claim includes its respective example along with a story reference in the form `[k]`, where `k` corresponds to the story identifier.  
+   - Verbose or overly specific claims are refined into broader insights if they occur repeatedly across stories.
 
 ---
 
 #### Input Format  
-- The  **Previous Combined User Writing Sheet**,  **Story Identifier**, **Current Writing Prompt** and the corresponding **Current User Writing Sheet** for the current prompt (as a Python Dictionary - "Previous_Information", and "Current_Information")
+- The **Previous Combined User Writing Sheet**, **Story Identifier**, **Current Writing Prompt**, and the corresponding **Current User Writing Sheet** for the current prompt (as a Python Dictionary - "Previous_Information", and "Current_Information").
 
 ---
 
 #### Output Format  
 <thinking>  
-Add your analysis of recurring patterns, unique elements, and stylistic tendencies across both the user writing sheets. Address the categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** systematically.  
+Add your analysis of recurring patterns, unique elements, and stylistic tendencies across both the user writing sheets. Address the categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** systematically. Include the plan for executing the Merge Step Algorithm to generate the **Combined User Writing Sheet**.
 </thinking>  
 <combined_user_sheet>  
 
@@ -36,8 +57,7 @@ Add your analysis of recurring patterns, unique elements, and stylistic tendenci
 [Combine insights on the unique aspects of how the user structures the story, introduces conflict, engages with the prompt, and resolves the narrative.]
 
 1. **Claim about user’s writing style.**
-   - Example: In the story regarding “short description of the prompt,” <example from the user-written story>.
-
+   - Example: In the story regarding “short description of the prompt,” <example from the user-written story>. [k]
 
 ### **Creativity**  
 
