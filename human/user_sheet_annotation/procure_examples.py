@@ -88,7 +88,7 @@ def get_source_wise_claims(category_dict):
     return source_wise_claims
 
 
-def dump_annotation_sample(source_wise_claims, file, source='Reddit'):
+def dump_annotation_sample(source_wise_claims, file, source='Reddit', threshold=3):
     '''
     construct annotation data sample
     '''
@@ -102,7 +102,7 @@ def dump_annotation_sample(source_wise_claims, file, source='Reddit'):
     
     # output annotation dir 
     
-    annotation_dir = f'annotation_data_new/{source}'
+    annotation_dir = f'annotation_data/{source}'
     if not os.path.exists(annotation_dir):
         os.makedirs(annotation_dir)
     
@@ -116,7 +116,7 @@ def dump_annotation_sample(source_wise_claims, file, source='Reddit'):
     # iterate over top sources
     for source in top_sources:
         # number of claims should be atleast 3
-        if len(source_wise_claims[source]) < 3:
+        if len(source_wise_claims[source]) < threshold:
             continue
 
         # get source wp and story 
@@ -158,17 +158,20 @@ def parse_args():
     '''
     parser = argparse.ArgumentParser(description='Extract examples for annotation')
     parser.add_argument('--source', type=str, default='Reddit', help='Source: Reddit, AO3, Storium, narrativemagazine, newyorker')
+    # threshold (int)
+    parser.add_argument('--threshold', type=int, default=3, help='Threshold for number of claims')
     args = parser.parse_args()
     return args
 
 def main():
-    print("Saving in: ", 'annotation_data_new')
-
     # parse arguments
     args = parse_args()
 
     source = args.source
+    threshold = args.threshold
+
     print('Source:', source)
+    print('Threshold:', threshold)
 
     user_sheet_dir = f'../../experiments/user_profile/delta_schema/{source}/'
 
@@ -201,7 +204,7 @@ def main():
             with open(f'{source_wise_claims_dir}/{file}', 'w') as f:
                 json.dump(source_wise_claims, f, indent=4)
             # construct annotation data sample
-            dump_annotation_sample(source_wise_claims, file, source)
+            dump_annotation_sample(source_wise_claims, file, source, threshold)
 
 
 if __name__ == '__main__':
