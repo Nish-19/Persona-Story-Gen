@@ -18,26 +18,30 @@
 **Output:**  
 - **Combined User Writing Sheet**
 
-**Steps:**
+**Steps:**  
 
-1. For all categories (Plot, Creativity, Development, and Language Use), group similar claims from the **Previous Combined User Writing Sheet** and the **Current User Writing Sheet**.
-   - Identify overlapping claims based on semantic similarity and organize them into groups.
-   
-2. For each group of similar claims:  
-   a. **Select the Best Example:** Choose the most representative example from either the previous sheet or the current sheet. Favor examples that are verbatim excerpts from the story over paraphrased ones.  
+1. For all categories (Plot, Creativity, Development, and Language Use), **group equivalent claims** from the **Previous Combined User Writing Sheet** and the **Current User Writing Sheet**.  
+   - **Equivalence Criteria:**  
+     - Claims must describe nearly identical user writing behaviors.  
+     - Examples supporting the claims must showcase the same underlying stylistic tendency.  
+     - Claims with differences in focus or scope must remain ungrouped.  
+
+2. For each group of equivalent claims:  
+   a. **Select the Single Best Example:** Choose the most representative (single) example from either the previous sheet or the current sheet. Favor examples that are verbatim excerpts from the story over paraphrased ones.  
    b. **Rewrite the Claim:** Based on the selected example, rewrite the claim so that it is fully supported by the example. The rewritten claim must not include additional content that cannot be directly inferred from the chosen example.  
 
-3. For all **ungrouped (dissimilar or unique)** claims in both the previous sheet and the current sheet:  
-   a. Include them as-is in the combined sheet along with their respective examples.
+3. For claims that are **not equivalent**:  
+   a. Treat them as unique claims and include them as-is in the combined sheet, along with their respective examples.  
+   b. Ensure that unique claims from the **Previous Combined User Writing Sheet** are not omitted and are carried forward to the current **Combined User Writing Sheet**, with their original examples.  
 
-4. Organize the combined claims and their respective examples into the final structure for the **Combined User Writing Sheet**, ensuring that each category is comprehensive and free of duplicate or contradictory claims.
-
----
-
-3. Ensure that:  
+4. Organize the combined claims and their respective examples into the final structure for the **Combined User Writing Sheet**, ensuring that:  
    - Each claim is concise, reflects a general writing tendency, and does not include terms like "ground-truth story" or "base story."  
    - Each claim includes its respective example along with a story reference in the form `[k]`, where `k` corresponds to the story identifier.  
-   - Verbose or overly specific claims are refined into broader insights if they occur repeatedly across stories.
+   - Each claim includes exactly one example and not more.  
+   - Verbose or overly specific claims are refined into broader insights if they occur repeatedly across stories.  
+
+5. **Perform a Final Review:**  
+   - Cross-check merged claims to ensure that no meaningful information or unique stylistic insight has been lost during the merging process.  
 
 ---
 
@@ -48,7 +52,7 @@
 
 #### Output Format  
 <thinking>  
-Add your analysis of recurring patterns, unique elements, and stylistic tendencies across both the user writing sheets. Address the categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** systematically. Include the plan for executing the Merge Step Algorithm to generate the **Combined User Writing Sheet**.
+Deeply analyze and reflect on recurring patterns, unique elements, and stylistic tendencies across both the user writing sheets. Address the categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** systematically. Think deeply about the merging process to identify commonalities, select the best representative examples, and ensure claims are rewritten or included as-is per the Merge Step Algorithm. Include the detailed plan for executing the Merge Step Algorithm to generate the **Combined User Writing Sheet**.  
 </thinking>  
 <combined_user_sheet>  
 
@@ -79,4 +83,6 @@ Include claim and example in the format specified above.
 
 </combined_user_sheet>  
 
-Ensure that your output is within the respective tags <thinking> and <combined_user_sheet>, to parse the output seamlessly. 
+NOTES:
+1. Claims should only be merged if they are equivalent, meaning they describe the same underlying stylistic tendency and are supported by examples showcasing the same behavior. Claims with even slight differences in focus or scope must remain unmerged to preserve distinct insights.
+2. Ensure that your output is within the respective tags <thinking> and <combined_user_sheet>, to parse the output seamlessly. 
