@@ -1,96 +1,80 @@
 ## Input Details
 - **Writing Prompt**: Describes the scenario or theme for which the stories are written.
-- **User-Written Story**: The user’s unique interpretation of the writing prompt.
-- **Base Story**: A generic story written by an average user for the writing prompt.
+- **Author-Written Story**: The author’s unique interpretation of the writing prompt.
+- **Base Story**: A generic story written by an average author for the writing prompt.
 
 ---
 
 ## Output Format
-1. First use the `<thinking></thinking>` tokens to think deeply about how the User-Written Story differs from the Base Story. Also think of a short descriptive phrase summarizing the writing prompt (e.g., “the story regarding ‘child soldiers baiting summoners’”) to frame the examples in your output.
-2. Next, output your analysis in the `<writing_style></writing_style>` tokens. Your analysis must be structured into **thematic categories** based on the user’s distinctive writing tendencies. For each thematic category:
-   i. Provide **independent claims** about the user’s writing behavior. These should reflect general writing tendencies without referencing specific story details or using terms like "User-Written Story" and "Base story."
-   ii. Support each claim with **one contextualized example** from the user-written story. Use the short descriptive phrase summarizing the writing prompt (obtained earlier in the `<thinking>` tokens) to frame the example. Ensure that examples are either short excerpts (taken verbatim) from the user-written story or concise summaries of the relevant story excerpts tied to the writing prompt.
+1. First use the `<thinking></thinking>` tokens to think deeply about how the Author-Written Story differs from the Base Story. Also think of a short descriptive phrase summarizing the writing prompt (e.g., “the story regarding ‘child soldiers baiting summoners’”) to frame the examples in your output.
+2. Next, output your analysis in the `<writing_style></writing_style>` tokens. Your analysis must be structured into the below categories based on the author’s distinctive writing tendencies. For each category:
+   i. Provide **independent claims** about the author’s writing tendencies. These should reflect general writing tendencies without referencing specific story details or using terms like "Author-Written Story" and "Base story."
+   ii. Support each claim with **one contextualized example** from the author-written story. Use the short descriptive phrase summarizing the writing prompt (obtained earlier in the `<thinking>` tokens) to frame the example. Ensure that examples are either short excerpts (taken verbatim) from the author-written story or concise summaries of the relevant story excerpts tied to the writing prompt.
    iii. Prefer to use examples verbatim from the story text in general wherever applicable.
 
 ---
 
 ## Guidelines for Claims
-- Claims must be unique and **should not repeat insights across thematic categories**.
-- Claims must reflect **broader patterns or tendencies** in the user’s writing style, expressed in a **concise, specific, and evidence-based** manner.
-- Claims must not use the terms "User-Written Story" and "Base story."
+- Claims must be unique and **should not repeat insights across the categories**.
+- Claims must reflect **broader patterns or tendencies** in the author’s writing style, expressed in a **concise and evidence-based** manner. Claims must avoid being tied to specific details of the analyzed story (e.g., individual plot points, characters, or settings). Instead, they should present generalized observations about the author’s overall writing style and recurring traits (e.g., “The author tends to use vivid, sensory imagery to create an immersive atmosphere”)
+- Claims must not use the terms "Author-Written Story" and "Base story."
 - Each claim must be written in a way that it is **perfectly supported by the chosen contextualized example**. Avoid including any phrases or interpretations in the claim that are not explicitly demonstrated by the example provided.
 
 ---
 
 ## Guidelines for Examples
-- Examples must be drawn from the user-written story and explicitly tied to the writing prompt.
+- Examples must be drawn from the author-written story and explicitly tied to the writing prompt.
 - Use the short descriptive phrase to frame the example in the context of the current prompt. For example:
-  - “In the story regarding ‘child soldiers baiting summoners,’ the user uses log entries to create a sense of realism.”
+  - “In the story regarding ‘child soldiers baiting summoners,’ the author uses log entries to create a sense of realism.”
 
 ---
 
-## Thematic Categories for Analysis
+## Guidelines for Analysis
 
-### Prompt Engagement
-- How does the user respond to the writing prompt, and do they expand or reinterpret it in unique ways?
+Your task is to analyze the author’s story writing style and extract **unique insights** into their storytelling tendencies. Organize these insights into the following categories by addressing the specific tendencies outlined in each category. Additionally, feel free to include other tendencies that are important for capturing the author’s unique style, even if they are not explicitly mentioned in the provided categories.
 
-### Narrative Structure and Flow
-- How does the user organize the story (e.g., linear or non-linear), and what techniques shape the story's pacing and progression?
+---
 
-### Conflict Exploration
-- What types of conflict (e.g., internal, external, interpersonal) does the user focus on, and how are these conflicts developed and resolved?
+## Categories for Analysis
+### Plot
+Analyze how the author structures the story, introduces conflict, engages with the prompt, and resolves the narrative.
 
-### Thematic Focus
-- What recurring themes or deeper ideas emerge, and how are they integrated into the narrative?
+### Creativity
+Analyze the author’s approach to blending genres, unconventional reinterpretation of the prompt, and integration of imaginative and unique elements in the story
 
-### Characterization
-- How does the user develop characters in terms of depth, relationships, and emotional arcs?
+### Development (Character and Setting)
+Examine the author’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.
 
-### Setting and Atmosphere
-- How does the user craft the story’s setting and use it to establish tone or enhance immersion?
-
-### Language and Style
-- What are the user’s tendencies in diction, sentence structure, rhetorical devices, and tone?
-
-### Creativity and Originality
-- How inventive is the user’s storytelling, and do they incorporate unconventional ideas, perspectives, or techniques?
-
-### General Observations (Fallback Category)
-- What distinctive stylistic patterns, thematic elements, or unique traits stand out that do not align with the above categories?
+### Language Use
+Assess how the author employs diction, sentence structure, tone, rhetorical devices, figures of speech, narrative perspective, descriptive language, pacing, and dialogue to create an engaging and immersive narrative. Important: Prefer to include examples verbatim from the story text to better suppport the claims.
 
 ---
 
 ## Special Instructions
 1. Always **think** of a short descriptive phrase summarizing the writing prompt to frame the examples.
 2. Use the specified structure for the output:
-   - Each thematic category begins with a **set of claims**.
-   - Each claim is followed by a **contextualized example** from the user-written story.
+   - Each category begins with a **set of claims**.
+   - Each claim is followed by a **contextualized example** from the author-written story.
 3. Ensure that the analysis is objective and does not directly reference the base story.
-4. Focus only on thematic categories where the user demonstrates distinctive traits or tendencies. Skip categories where no unique insights are apparent, or where the insights significantly overlap with those covered in other categories.
-5. Claims must strictly avoid redundancy across thematic categories and provide distinct insights.
-
+4. Focus on addressing specific traits or behaviors within each analysis category where the author demonstrates distinctive tendencies. Skip traits or behaviors that yield no unique insights or where the observations significantly overlap with those from other traits across all categories.
+5. Claims must strictly avoid redundancy across all categories and provide distinct insights.
 ---
 
-## Example Output Structure
+## Sample Output Structure
 <thinking>
-Deeply reason on how the User-Written Story differs from the Base Story. Think of a short descriptive phrase summarizing the prompt: "the story regarding a battle for lost artifacts". 
+Deeply reason on how the Author-Written Story differs from the Base Story. Think of a short descriptive phrase summarizing the prompt: "the story regarding a battle for lost artifacts". 
 </thinking>
-
 <writing_style>
-### Prompt Engagement
-1. **Claim about user’s writing style.**
-   - Example: In the story regarding “short descriptive phrase summarizing the prompt,” <example from the user-written story>.
+### Plot
+1. **Claim about author’s writing style.**
+   - Example: In the story regarding “short description of the prompt,” <example from the author-written story>.
 
-### Narrative Structure and Flow
-1. **Claim about user’s writing style.**
-   - Example: In the story regarding “short descriptive phrase summarizing the prompt,” <example from the user-written story>.
+### Creativity
+1. **Claim about author’s writing style.**
+   - Example: In the story regarding “short description of the prompt,” <example from the author-written story>.
 ...
 
 Repeat for all categories.
 </writing_style>
 
-
-
-
-
-
+Ensure that your output is within the respective tags <thinking> and <writing_style>, to parse the output seamlessly. 
