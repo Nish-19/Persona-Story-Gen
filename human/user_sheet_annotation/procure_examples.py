@@ -10,7 +10,7 @@ from ast import literal_eval
 from collections import defaultdict
 import argparse
 
-def extract_writing_sheet(sheet_output, key='combined_user_sheet'):
+def extract_writing_sheet(sheet_output, key='combined_author_sheet'):
     '''
     extract text between the tags <user_writing_sheet></user_writing_sheet>
     '''            
@@ -197,7 +197,7 @@ def main():
             elif len(user_profile_list) == 1:
                 key = 'writing_style'
             else:
-                key = 'combined_user_sheet'
+                key = 'combined_author_sheet'
             user_sheet = extract_writing_sheet(user_profile_list[-1], key)
             category_dict = organize_user_sheet(user_sheet)
             with open(f'{organize_sheet_dir}/{file}', 'w') as f:
