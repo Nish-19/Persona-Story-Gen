@@ -1290,7 +1290,7 @@ class StoryGenMethods():
             Construct the Rule Extractor Prompt
             '''
             # construct the user instruction
-            user_instruction_dict = {'Writing Prompt': writing_prompt, 'User-Written Story': profile_story, 'Base Story': base_story}
+            user_instruction_dict = {'Writing Prompt': writing_prompt, 'Author-Written Story': profile_story, 'Base Story': base_story}
             user_instruction = f"{json.dumps(user_instruction_dict, indent=4)}\n\n"
 
             # construct OpenAI prompt
@@ -1311,7 +1311,7 @@ class StoryGenMethods():
             prompt = construct_prompt_message(system_instructions_combine, user_instruction, user_constraints_combine)
             return prompt
 
-        def extract_writing_sheet(sheet_output, key='combined_user_sheet'):
+        def extract_writing_sheet(sheet_output, key='combined_author_sheet'):
             '''
             extract text between the tags <user_writing_sheet></user_writing_sheet>
             '''            
@@ -1521,11 +1521,11 @@ class StoryGenMethods():
                     if ectr == 1:
                         prev_key = 'writing_style'
                     else:
-                        prev_key = 'combined_user_sheet'
+                        prev_key = 'combined_author_sheet'
                     try:
-                        prev_prompt_dict = {'previous_combined_user_sheet': extract_writing_sheet(user_profile_response[ectr - 1], key=prev_key)}
+                        prev_prompt_dict = {'previous_combined_author_sheet': extract_writing_sheet(user_profile_response[ectr - 1], key=prev_key)}
                         current_prompt_dict = {'Story Identifier': ectr+1, 'current_writing_prompt': example['writing_prompt'], 
-                                               'current_user_sheet': add_references(user_sheet_response[ectr], reference_num=str(ectr+1))}
+                                               'current_author_sheet': add_references(user_sheet_response[ectr], reference_num=str(ectr+1))}
                         
                         # construct the prompt
                         prompt = construct_user_profile_prompt(prev_prompt_dict, current_prompt_dict)
