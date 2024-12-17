@@ -122,14 +122,21 @@ def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_thres
 
         # get story wp and story 
         story_wp = profile_story[story-1]["writing_prompt"]
-        story_story = (
+        story_text = (
             profile_story[story-1]["story"]
             .encode("latin1", errors="ignore")  # Treat as Latin-1, ignoring invalid bytes
             .decode("utf-8", errors="ignore")  # Decode to UTF-8, ignoring undecodable bytes
         )
 
+        # Normalize carriage returns and literal `\n` first
+        story_text = story_text.replace('\r', '')  # Remove carriage returns
+        story_text = story_text.replace('\\n', '\n')  # Replace escaped \n with actual newlines
+
+        # Clean the story_text by replacing multiple newlines with a single newline
+        story_text = re.sub(r'\n+', '\n', story_text).strip()
+        
         # write story wp and story to a file
-        story_info = f"#### Writing Prompt ####\n{story_wp}\n\n\n#### Story ####\n{story_story}"
+        story_info = f"#### Writing Prompt ####\n{story_wp}\n\n\n#### Story ####\n{story_text}"
         with open(f'{annotation_file_dir}/{story}.txt', 'w') as f:
             f.write(story_info)
 
@@ -154,7 +161,7 @@ def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_thres
                     "user": f"{source}_{file}",
                     "story_id": story,
                     "writing_prompt": story_wp,
-                    "story": story_story,
+                    "story": story_text,
                     "claim": claim[0],
                     "examples": claim[1]
                 })
