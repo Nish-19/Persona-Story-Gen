@@ -64,11 +64,11 @@ def organize_user_sheet(user_sheet):
 
     return category_dict
 
-def get_source_wise_claims(category_dict):
+def get_story_wise_claims(category_dict):
     '''
     organize claims based on sources
     '''
-    source_wise_claims = defaultdict(list)
+    story_wise_claims = defaultdict(list)
 
     for cat, claims in category_dict.items():
         for claim_info in claims: 
@@ -80,21 +80,21 @@ def get_source_wise_claims(category_dict):
             example = claim_info['example']
             source = int(claim_info['sources'][0])
 
-            # append to the source_wise_claims
-            source_wise_claims[source].append((claim_info['statement'], claim_info['example'], cat))
+            # append to the story_wise_claims
+            story_wise_claims[source].append((claim_info['statement'], claim_info['example'], cat))
     
-    # sort source_wise_claims based on length of claims
-    source_wise_claims = dict(sorted(source_wise_claims.items(), key=lambda x: len(x[1]), reverse=True))
+    # sort story_wise_claims based on length of claims
+    story_wise_claims = dict(sorted(story_wise_claims.items(), key=lambda x: len(x[1]), reverse=True))
 
-    return source_wise_claims
+    return story_wise_claims
 
 
-def dump_annotation_sample(source_wise_claims, file, source='Reddit', threshold=3):
+def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_threshold=3, story_threshold=3, labelstudio_rows=None):
     '''
     construct annotation data sample
     '''
-    # consider top 3 sources
-    top_sources = list(source_wise_claims.keys())[:3]
+    # consider top 3 storys
+    top_stories = list(story_wise_claims.keys())[:story_threshold]
 
     # profile story 
     profile_story_path = f'../../datasets/data_splits/data/{source}/profile/{file}'
@@ -114,53 +114,89 @@ def dump_annotation_sample(source_wise_claims, file, source='Reddit', threshold=
     
     rows = []
 
-    # iterate over top sources
-    for source in top_sources:
+    # iterate over top storys
+    for story in top_stories:
         # number of claims should be atleast 3
-        if len(source_wise_claims[source]) < threshold:
+        if len(story_wise_claims[story]) < claim_threshold:
             continue
 
-        # get source wp and story 
-        source_story = (
-            profile_story[source-1]["story"]
+        # get story wp and story 
+        story_wp = profile_story[story-1]["writing_prompt"]
+        story_story = (
+            profile_story[story-1]["story"]
             .encode("latin1", errors="ignore")  # Treat as Latin-1, ignoring invalid bytes
             .decode("utf-8", errors="ignore")  # Decode to UTF-8, ignoring undecodable bytes
         )
 
-        source_wp = profile_story[source-1]["writing_prompt"]
-        claims = source_wise_claims[source]
+        # write story wp and story to a file
+        story_info = f"#### Writing Prompt ####\n{story_wp}\n\n\n#### Story ####\n{story_story}"
+        with open(f'{annotation_file_dir}/{story}.txt', 'w') as f:
+            f.write(story_info)
 
+        claims = story_wise_claims[story]
         # iterate over claims
         for claim in claims:
             rows.append({
-                "source": source,
+                "story_id": story,
                 "category": claim[2],
                 "claim": claim[0],
                 "example": claim[1],
                 "coherence": '',
-                "groundedness": '',
+                "grounding": '',
                 "evidence": '',
                 "comments": '',
 
             })
-        
-        # write source wp and story to a file
-        source_info = f"#### Writing Prompt ####\n{source_wp}\n\n\n#### Story ####\n{source_story}"
-        with open(f'{annotation_file_dir}/{source}.txt', 'w') as f:
-            f.write(source_info)
+
+            # TODO: write to labelstudio format
+            if labelstudio_rows is not None:
+                labelstudio_rows.append({
+                    "user": f"{source}_{file}",
+                    "story_id": story,
+                    "writing_prompt": story_wp,
+                    "story": story_story,
+                    "claim": claim[0],
+                    "examples": claim[1]
+                })
+
     
     # write annotation data to a csv file
     df = pd.DataFrame(rows)
     df.to_csv(f'{annotation_file_dir}/annotation_sheet.csv', index=False)
+
+def calculate_stats(labelstudio_rows):
+    '''
+    calculate statistics for labelstudio format
+    '''
+    # unique prompts
+    prompts = set()
+    # unique stories
+    stories = set()
+    # unique users 
+    users = set()
+    for row in labelstudio_rows:
+        prompts.add(row['writing_prompt'])
+        stories.add(row['story'])
+        users.add(row['user'])
+    
+    print('\n\n### LabelStudio Statistics ###\n')
+    print('Unique users:', len(users))
+    print('Unique prompts:', len(prompts))
+    print('Unique stories:', len(stories))
+    print('Total claims:', len(labelstudio_rows))
+    
 
 def parse_args():
     '''
     Parse command line arguments
     '''
     parser = argparse.ArgumentParser(description='Extract examples for annotation')
-    parser.add_argument('--source', type=str, default='Reddit', help='Source: Reddit, AO3, Storium, narrativemagazine, newyorker')
-    # threshold (int)
-    parser.add_argument('--threshold', type=int, default=3, help='Threshold for number of claims')
+    # parser.add_argument('--source', type=str, default='Reddit', help='Source: Reddit, AO3, Storium, narrativemagazine, newyorker')
+    # claim_threshold (int)
+    parser.add_argument('--claim_threshold', type=int, default=3, help='claim_threshold for minimum number of claims per story')
+    parser.add_argument('--story_threshold', type=int, default=3, help='story_threshold for maximum number of stories per user')
+    # store true if you want to dump labelstudio format
+    parser.add_argument('--labelstudio', action='store_true', help='store true if you want to dump labelstudio format')
     args = parser.parse_args()
     return args
 
@@ -168,46 +204,64 @@ def main():
     # parse arguments
     args = parse_args()
 
-    source = args.source
-    # source = 'Storium'
-    threshold = args.threshold
+    claim_threshold = args.claim_threshold
+    story_threshold = args.story_threshold
+    labelstudio = args.labelstudio
 
-    print('Source:', source)
-    print('Threshold:', threshold)
+    if labelstudio:
+        labelstudio_rows = []
+    else:
+        labelstudio_rows = None
 
-    user_sheet_dir = f'../../experiments/user_profile/delta_schema/{source}/'
+    print('claim_threshold:', claim_threshold)
+    print('story_threshold:', story_threshold)
 
-    organize_sheet_dir = f'clean_user_sheet/{source}'
-    if not os.path.exists(organize_sheet_dir):
-        os.makedirs(organize_sheet_dir)
-    
-    source_wise_claims_dir = f'source_wise_claims/{source}'
-    if not os.path.exists(source_wise_claims_dir):
-        os.makedirs(source_wise_claims_dir)
+    sources = ['Reddit', 'AO3', 'Storium', 'narrativemagazine', 'newyorker']
 
-    # iterate over all users 
-    for file in os.listdir(user_sheet_dir):
+    # iterate over all sources
+    for source in sources:
+        print(f'Processing {source}...')
+        user_sheet_dir = f'../../experiments/user_profile/delta_schema/{source}/'
+
+        organize_sheet_dir = f'clean_user_sheet/{source}'
+        if not os.path.exists(organize_sheet_dir):
+            os.makedirs(organize_sheet_dir)
         
-        if file.endswith('.json'):
-            user_sheet_path = os.path.join(user_sheet_dir, file)
-            with open(user_sheet_path, 'r') as f:
-                user_profile_list = json.load(f)
-            if len(user_profile_list) == 0:
-                continue
-            elif len(user_profile_list) == 1:
-                key = 'writing_style'
-            else:
-                key = 'combined_author_sheet'
-            user_sheet = extract_writing_sheet(user_profile_list[-1], key)
-            category_dict = organize_user_sheet(user_sheet)
-            with open(f'{organize_sheet_dir}/{file}', 'w') as f:
-                json.dump(category_dict, f, indent=4)
-            # source wise claims
-            source_wise_claims = get_source_wise_claims(category_dict)
-            with open(f'{source_wise_claims_dir}/{file}', 'w') as f:
-                json.dump(source_wise_claims, f, indent=4)
-            # construct annotation data sample
-            dump_annotation_sample(source_wise_claims, file, source, threshold)
+        # story_wise_claims_dir = f'story_wise_claims/{source}'
+        # if not os.path.exists(story_wise_claims_dir):
+        #     os.makedirs(story_wise_claims_dir)
+
+        # iterate over all users 
+        for file in os.listdir(user_sheet_dir):
+            
+            if file.endswith('.json'):
+                user_sheet_path = os.path.join(user_sheet_dir, file)
+                with open(user_sheet_path, 'r') as f:
+                    user_profile_list = json.load(f)
+                if len(user_profile_list) == 0:
+                    continue
+                elif len(user_profile_list) == 1:
+                    key = 'writing_style'
+                else:
+                    key = 'combined_author_sheet'
+                user_sheet = extract_writing_sheet(user_profile_list[-1], key)
+                category_dict = organize_user_sheet(user_sheet)
+                with open(f'{organize_sheet_dir}/{file}', 'w') as f:
+                    json.dump(category_dict, f, indent=4)
+                # source wise claims
+                story_wise_claims = get_story_wise_claims(category_dict)
+                # with open(f'{story_wise_claims_dir}/{file}', 'w') as f:
+                #     json.dump(story_wise_claims, f, indent=4)
+                # construct annotation data sample
+                dump_annotation_sample(story_wise_claims, file, source, claim_threshold, story_threshold, labelstudio_rows)
+    
+    # calculate statistics for labelstudio format
+    calculate_stats(labelstudio_rows)
+    
+    if labelstudio:
+        # write to labelstudio format
+        df = pd.DataFrame(labelstudio_rows)
+        df.to_csv('annotation_data/labelstudio_format.csv', index=False)
 
 if __name__ == '__main__':
     main()
