@@ -9,6 +9,8 @@ import json
 from ast import literal_eval
 from collections import defaultdict
 import argparse
+import unicodedata
+
 
 def extract_writing_sheet(sheet_output, key='combined_author_sheet'):
     '''
@@ -88,6 +90,23 @@ def get_story_wise_claims(category_dict):
 
     return story_wise_claims
 
+def decode_unicode_escapes(text):
+    return text.encode('utf-8').decode('unicode_escape')
+
+def clean_text(text):
+    """
+    Clean up the text to make it readable by:
+    1. Replacing Unicode characters with ASCII equivalents.
+    2. Removing stray or problematic characters.
+    """
+    # Normalize text to decompose Unicode characters (e.g., é -> e)
+    normalized_text = unicodedata.normalize("NFKD", text)
+    
+    # Encode to ASCII, ignoring characters that can't be converted
+    ascii_text = normalized_text.encode("ascii", "ignore").decode("ascii")
+    
+    return ascii_text
+
 
 def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_threshold=3, story_threshold=3, labelstudio_rows=None):
     '''
@@ -122,16 +141,20 @@ def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_thres
 
         # get story wp and story 
         story_wp = profile_story[story-1]["writing_prompt"]
-        story_text = (
-            profile_story[story-1]["story"]
-            .encode("latin1", errors="ignore")  # Treat as Latin-1, ignoring invalid bytes
-            .decode("utf-8", errors="ignore")  # Decode to UTF-8, ignoring undecodable bytes
-        )
+        # story_text = (
+        #     profile_story[story-1]["story"]
+        #     .encode("latin1", errors="ignore")  # Treat as Latin-1, ignoring invalid bytes
+        #     .decode("utf-8", errors="ignore")  # Decode to UTF-8, ignoring undecodable bytes
+        # )
+
+        # story_text = clean_text(profile_story[story-1]["story"])
+
+        story_text = profile_story[story-1]["story"]
 
         # Normalize carriage returns and literal `\n` first
         story_text = story_text.replace('\r', '')  # Remove carriage returns
+        story_text = re.sub(r'[ \t]*\n[ \t]*', '\n', story_text)  # Normalize spaces around newlines
         story_text = story_text.replace('\\n', '\n')  # Replace escaped \n with actual newlines
-
         # Clean the story_text by replacing multiple newlines with a single newline
         story_text = re.sub(r'\n+', '\n', story_text).strip()
         
@@ -268,7 +291,11 @@ def main():
     if labelstudio:
         # write to labelstudio format
         df = pd.DataFrame(labelstudio_rows)
-        df.to_csv('annotation_data/labelstudio_format.csv', index=False)
+        df.to_csv('annotation_data/labelstudio_format.csv', index=False, encoding='utf-8')
+
+        # save as JSON
+        with open('annotation_data/labelstudio_format.json', 'w', encoding='utf-8') as f:
+            json.dump(labelstudio_rows, f, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
     main()
