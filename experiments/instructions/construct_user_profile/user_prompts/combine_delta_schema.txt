@@ -28,18 +28,20 @@
 
 2. For each group of equivalent claims:  
    a. **Select the Single Best Example:** Choose the most representative (single) example from either the previous sheet or the current sheet. Favor examples that are verbatim excerpts from the story over paraphrased ones.  
-   b. **Rewrite the Claim:** Based on the selected example, rewrite the claim so that it is fully supported by the example. The rewritten claim must not include additional content that cannot be directly inferred from the chosen example.  
+   b. **Rewrite the Claim:** Based on the selected example, rewrite the claim to ensure that every clause is fully supported by the example. The rewritten claim must not include additional clauses or implications that cannot be directly inferred from the chosen example.
+
 
 3. For claims that are **not equivalent**:  
    a. Treat them as unique claims and include them as-is in the combined sheet, along with their respective examples.  
    b. Ensure that unique claims from the **Previous Combined Author Writing Sheet** are not omitted and are carried forward to the current **Combined Author Writing Sheet**, with their original examples.
 
-4. Organize the combined claims and their respective examples into the final structure for the **Combined Author Writing Sheet**, ensuring that:  
-   - Each claim is concise, reflects a general writing tendency, and does not include terms like "ground-truth story" or "base story."  
-   - Each claim includes its respective example along with a story reference in the form `[k]`, where `k` corresponds to the story identifier.  
-   - Each claim includes exactly one example and not more.  
-   - Verbose or overly specific claims are refined into broader insights if they occur repeatedly across stories.  
-   - Duplicate and contradictory claims are not included in the final sheet to ensure clarity and consistency in the analysis.  
+4. Organize the combined claims and their respective examples into the final structure for the **Combined Author Writing Sheet**, ensuring that:
+   - Each claim is concise, reflects a general writing tendency, and does not include terms like "ground-truth story" or "base story."
+   - Each claim includes its respective example along with a story reference in the form `[k]`, where `k` corresponds to the story identifier.
+   - Each claim includes exactly one example and not more.
+   - Verbose or overly specific claims are refined into broader insights if they occur repeatedly across stories.
+   - Duplicate and contradictory claims are not included in the final sheet to ensure clarity and consistency in the analysis.
+   - Avoid using adverbs of time (e.g., "often," "frequently") in the claims to maintain precision and avoid overgeneralization.
 
 5. **Perform a Final Review:**  
    - Cross-check merged claims to ensure that no meaningful information or unique stylistic insight has been lost during the merging process.  

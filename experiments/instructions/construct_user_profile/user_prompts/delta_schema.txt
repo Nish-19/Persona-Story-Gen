@@ -16,8 +16,11 @@
 
 ## Guidelines for Claims
 - Claims must be unique and **should not repeat insights across the categories**.
-- Claims must reflect **broader patterns or tendencies** in the author’s writing style, expressed in a **concise and evidence-based** manner. Claims must avoid being tied to specific details of the analyzed story (e.g., individual plot points, characters, or settings). Instead, they should present generalized observations about the author’s overall writing style and recurring traits (e.g., “The author tends to use vivid, sensory imagery to create an immersive atmosphere”)
+- Claims must reflect **broader patterns or tendencies** in the author’s writing style, expressed in a **concise and evidence-based** manner. Claims must avoid being tied to specific details of the analyzed story (e.g., individual plot points, characters, or settings). Instead, they should present generalized observations about the author’s overall writing style and recurring traits (e.g., “The author tends to use vivid, sensory imagery to create an immersive atmosphere”).
 - Claims must not use the terms "Author-Written Story" and "Base story."
+- Claims must not include adverbs of time like "often," "frequently," "sometimes," etc., to ensure they remain precise and grounded in the examples provided.
+- Claims must be written in **simple and clear language**, avoiding unnecessary literary jargon or overly complex phrasing.
+- Claims must not include references to characters or settings outside the story or assume the reader has general knowledge about external references.
 - Each claim must be written in a way that it is **perfectly supported by the chosen contextualized example**. Avoid including any phrases or interpretations in the claim that are not explicitly demonstrated by the example provided.
 
 ---
@@ -26,6 +29,13 @@
 - Examples must be drawn from the author-written story and explicitly tied to the writing prompt.
 - Use the short descriptive phrase to frame the example in the context of the current prompt. For example:
   - “In the story regarding ‘child soldiers baiting summoners,’ the author uses log entries to create a sense of realism.”
+- Examples Must Be Explicitly Supported by the Story: 
+  - Ensure that the example is directly drawn from the story and clearly aligns with the details provided in the narrative. Avoid vague or inferred connections not substantiated by the text.
+- Provide Context to Clarify the Example's Relevance:
+  - Include sufficient context from the story to make the example's relevance to the claim clear. Avoid isolating details that may lose their meaning or significance without additional background.
+- Avoid Over-Interpretation or Over-Extrapolation:
+  - Ensure the example remains grounded in the story's content and does not overstate or exaggerate its implications. Avoid adding meaning that cannot be reasonably inferred from the text.
+
 
 ---
 
