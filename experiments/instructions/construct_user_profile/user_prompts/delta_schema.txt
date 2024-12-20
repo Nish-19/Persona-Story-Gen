@@ -16,8 +16,7 @@
 
 ## Guidelines for Claims
 - Claims must be unique and **should not repeat insights across the categories**.
-- Claims must reflect **broader patterns or tendencies** in the author’s writing style, expressed in a **concise and evidence-based** manner. 
-  - Claims must avoid being tied to specific details of the analyzed story (e.g., individual plot points, characters, settings, or other entities). Instead, they should present generalized observations about the author’s overall writing style and recurring traits (e.g., “The author tends to use vivid, sensory imagery to create an immersive atmosphere”).
+- Claims must reflect **broader patterns or tendencies** in the author’s writing style, expressed in a **concise and evidence-based** manner. Claims must avoid being tied to specific details of the analyzed story (e.g., individual plot points, characters, or settings). Instead, they should present generalized observations about the author’s overall writing style and recurring traits (e.g., “The author tends to use vivid, sensory imagery to create an immersive atmosphere”).
 - Claims must not use the terms "Author-Written Story" and "Base story."
 - Claims must not include adverbs of time like "often," "frequently," "sometimes," etc., to ensure they remain precise and grounded in the examples provided.
 - Claims must be written in **simple and clear language**, avoiding unnecessary literary jargon or overly complex phrasing.
@@ -31,13 +30,11 @@
 - Use a Framing Phrase: Use the short descriptive phrase to frame the example in the context of the current prompt. For example:
   - “In the story regarding ‘child soldiers baiting summoners,’ the author uses log entries to create a sense of realism.”
 - Examples Must Be Explicitly Supported by the Story: Ensure that the example is directly drawn from the story and clearly aligns with the details provided in the narrative. Avoid vague or inferred connections not substantiated by the text.
-   - Every Clause Must Be Supported: Every clause, logical part, or detail within the example must be explicitly backed by evidence from the story.
-- Examples Must Not Contradict the Story: Ensure the example aligns with the narrative context and themes of the story. Avoid including details or interpretations that conflict with the events, character behavior, or world-building established in the story.
+- Examples Must Not Contradict the Story: Ensure the example aligns with the narrative context and themes of the story. Do not include details or interpretations that conflict with the events, character behavior, or world-building established in the story.
 - Provide Context to Clarify the Example's Relevance: Include sufficient context from the story to make the example's relevance to the claim clear. Avoid isolating details that may lose their meaning or significance without additional background.
 - Avoid Over-Interpretation or Over-Extrapolation: Ensure the example remains grounded in the story's content and does not overstate or exaggerate its implications. Avoid adding meaning that cannot be reasonably inferred from the text.
 - Ensure Coherence and Consistency: Examples must be internally coherent and avoid logical contradictions or commonsense inconsistencies.
-    - Review examples for alignment with the described claim and ensure no part of the example contradicts the overall narrative intent.
-
+- Review Example Soundness: Ensure examples fully support the described claim and avoid any contradictions with the overall author-written story.
 
 ---
 

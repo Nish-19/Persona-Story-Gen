@@ -157,6 +157,9 @@ def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_thres
         story_text = story_text.replace('\\n', '\n')  # Replace escaped \n with actual newlines
         # Clean the story_text by replacing multiple newlines with a single newline
         story_text = re.sub(r'\n+', '\n', story_text).strip()
+        # remove escape characters 
+        story_text = story_text.replace('\\\"', '\"')
+        story_text = story_text.replace('\\\\', '\\')
         
         # write story wp and story to a file
         story_info = f"#### Writing Prompt ####\n{story_wp}\n\n\n#### Story ####\n{story_text}"

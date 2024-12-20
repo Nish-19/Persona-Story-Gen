@@ -6,6 +6,8 @@
    - Use the `<thinking></thinking>` tokens to analyze the provided author writing sheets systematically.  
    - Reflect on recurring patterns, unique elements, and stylistic tendencies described in both the writing sheets for each category (Plot, Creativity, Development, and Language Use).
    - Plan on synthesizing this above information into **Combined Author Writing Sheet** as a list of claims and their correspoding examples for every category above based on the algorithm (Algorithm (Merge Step)) below.
+      - Plan on merging the equivalent claims by carefully following the instructions mentioned in the algorithm.
+      - Plan on including the ungrouped unique claims from both the **Current Author Writing Sheet** and the **Previous Combined Author Writing Sheet** into the new **Combined Author Writing Sheet**. 
 
 2. **Generate the Combined Author Writing Sheet**  
 
@@ -44,7 +46,8 @@
    - Avoid using adverbs of time (e.g., "often," "frequently") in the claims to maintain precision and avoid overgeneralization.
 
 5. **Perform a Final Review:**  
-   - Cross-check merged claims to ensure that no meaningful information or unique stylistic insight has been lost during the merging process.  
+   - Cross-check merged claims to ensure that no meaningful information or unique stylistic insight has been lost during the merging process. 
+   - Double-check that ungrouped unique claims from both the **Current Author Writing Sheet** and the **Previous Combined Author Writing Sheet** are included in the **Combined Author Writing Sheet** so as to not omit critical information.
 
 ---
 
