@@ -29,7 +29,7 @@ def organize_user_sheet(user_sheet):
     # Simplified category pattern to match all category headers
     category_pattern = r"###\s*(.*?)\s*(?:$|\n)"  # Matches headers like "### Plot" or "### Creativity"
     statement_pattern = r"\d+\.\s+(.+?)\n"  # Matches the numbered statements
-    example_pattern = r"- Example: (.+?) \[(\d+(?:, \d+)*)\]"  # Matches the examples and sources
+    example_pattern = r"- Evidence: (.+?) \[(\d+(?:, \d+)*)\]"  # Matches the examples and sources
 
     categories = re.findall(category_pattern, user_sheet)  # Extract headers
     category_dict = {}
@@ -173,10 +173,9 @@ def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_thres
                 "story_id": story,
                 "category": claim[2],
                 "claim": claim[0],
-                "example": claim[1],
-                "coherence": '',
-                "grounding": '',
-                "evidence": '',
+                "evidence": claim[1],
+                "infer": '',
+                "support": '',
                 "comments": '',
 
             })
@@ -189,7 +188,7 @@ def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_thres
                     "writing_prompt": story_wp,
                     "story": story_text,
                     "claim": claim[0],
-                    "examples": claim[1]
+                    "evidence": claim[1]
                 })
 
     

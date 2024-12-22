@@ -5,7 +5,7 @@
 1. **Analyze the Provided Sheets**  
    - Use the `<thinking></thinking>` tokens to analyze the provided author writing sheets systematically.  
    - Reflect on recurring patterns, unique elements, and stylistic tendencies described in both the writing sheets for each category (Plot, Creativity, Development, and Language Use).
-   - Plan on synthesizing this above information into **Combined Author Writing Sheet** as a list of claims and their correspoding examples for every category above based on the algorithm (Algorithm (Merge Step)) below.
+   - Plan on synthesizing this above information into **Combined Author Writing Sheet** as a list of claims and their correspoding evidence for every category above based on the algorithm (Algorithm (Merge Step)) below.
       - Plan on merging the equivalent claims by carefully following the instructions mentioned in the algorithm.
       - Plan on including the ungrouped unique claims from both the **Current Author Writing Sheet** and the **Previous Combined Author Writing Sheet** into the new **Combined Author Writing Sheet**. 
 
@@ -25,22 +25,22 @@
 1. For all categories (Plot, Creativity, Development, and Language Use), **group equivalent claims** from the **Previous Combined Author Writing Sheet** and the **Current Author Writing Sheet**.  
    - **Equivalence Criteria:**  
      - Claims must describe nearly identical author writing behaviors.  
-     - Examples supporting the claims must showcase the same underlying stylistic tendency.  
+     - Evidence supporting the claims must showcase the same underlying stylistic tendency.  
      - Claims with differences in focus or scope must remain ungrouped.  
 
 2. For each group of equivalent claims:  
-   a. **Select the Single Best Example:** Choose the most representative (single) example from either the previous sheet or the current sheet. Favor examples that are verbatim excerpts from the story over paraphrased ones.  
-   b. **Rewrite the Claim:** Based on the selected example, rewrite the claim to ensure that every clause is fully supported by the example. The rewritten claim must not include additional clauses or implications that cannot be directly inferred from the chosen example.
+   a. **Select the Single Best Evidence:** Choose the most representative (single) evidence from either the previous sheet or the current sheet. Favor evidence that are verbatim excerpts from the story over paraphrased ones.  
+   b. **Rewrite the Claim:** Based on the selected evidence, rewrite the claim to ensure that every clause is fully supported by the evidence. The rewritten claim must not include additional clauses or implications that cannot be directly inferred from the chosen evidence.
 
 
 3. For claims that are **not equivalent**:  
-   a. Treat them as unique claims and include them as-is in the combined sheet, along with their respective examples.  
-   b. Ensure that unique claims from the **Previous Combined Author Writing Sheet** are not omitted and are carried forward to the current **Combined Author Writing Sheet**, with their original examples.
+   a. Treat them as unique claims and include them as-is in the combined sheet, along with their respective evidence.  
+   b. Ensure that unique claims from the **Previous Combined Author Writing Sheet** are not omitted and are carried forward to the current **Combined Author Writing Sheet**, with their original evidence.
 
-4. Organize the combined claims and their respective examples into the final structure for the **Combined Author Writing Sheet**, ensuring that:
+4. Organize the combined claims and their respective evidence into the final structure for the **Combined Author Writing Sheet**, ensuring that:
    - Each claim is concise, reflects a general writing tendency, and does not include terms like "ground-truth story" or "base story."
-   - Each claim includes its respective example along with a story reference in the form `[k]`, where `k` corresponds to the story identifier.
-   - Each claim includes exactly one example and not more.
+   - Each claim includes its respective evidence along with a story reference in the form `[k]`, where `k` corresponds to the story identifier.
+   - Each claim includes exactly one evidence and not more.
    - Verbose or overly specific claims are refined into broader insights if they occur repeatedly across stories.
    - Duplicate and contradictory claims are not included in the final sheet to ensure clarity and consistency in the analysis.
    - Avoid using adverbs of time (e.g., "often," "frequently") in the claims to maintain precision and avoid overgeneralization.
@@ -58,7 +58,7 @@
 
 #### Output Format  
 <thinking>  
-Deeply analyze and reflect on recurring patterns, unique elements, and stylistic tendencies across both the author writing sheets. Address the categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** systematically. Think deeply about the merging process to identify commonalities, select the best representative examples, and ensure claims are rewritten or included as-is per the Merge Step Algorithm. Include the detailed plan for executing the Merge Step Algorithm to generate the **Combined Author Writing Sheet**.  
+Deeply analyze and reflect on recurring patterns, unique elements, and stylistic tendencies across both the author writing sheets. Address the categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** systematically. Think deeply about the merging process to identify commonalities, select the best representative evidence, and ensure claims are rewritten or included as-is per the Merge Step Algorithm. Include the detailed plan for executing the Merge Step Algorithm to generate the **Combined Author Writing Sheet**.  
 </thinking>  
 <combined_author_sheet>  
 
@@ -67,28 +67,28 @@ Deeply analyze and reflect on recurring patterns, unique elements, and stylistic
 [Combine insights on the unique aspects of how the author structures the story, introduces conflict, engages with the prompt, and resolves the narrative.]
 
 1. **Claim about author’s writing style.**
-   - Example: In the story regarding “short description of the prompt,” <example from the author-written story>. [k]
+   - Evidence: In the story regarding “short description of the prompt,” <evidence from the author-written story>. [k]
 
 ### **Creativity**  
 
 [Combine insights on the unique aspects of the author’s approach to blending genres, unconventional reinterpretation of the prompt, and integration of imaginative and unique elements in the story.]
 
-Include claim and example in the format specified above.
+Include claim and evidence in the format specified above.
 
 ### **Development (Character and Setting)**  
 
 [Combine insights on the unique aspects of the author’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.]
 
-Include claim and example in the format specified above.
+Include claim and evidence in the format specified above.
 
 ### **Language Use**  
 
-[Combine insights on the unique aspects of how the author employs diction, sentence structure, tone, rhetorical devices, figures of speech, narrative perspective, descriptive language, pacing, and dialogue to create an engaging and immersive narrative. Important: Favor examples that are verbatim from the story text.]
+[Combine insights on the unique aspects of how the author employs diction, sentence structure, tone, rhetorical devices, figures of speech, narrative perspective, descriptive language, pacing, and dialogue to create an engaging and immersive narrative. Important: Favor evidence that are verbatim from the story text.]
 
-Include claim and example in the format specified above.
+Include claim and evidence in the format specified above.
 
 </combined_author_sheet>  
 
 NOTES:
-1. Claims should only be merged if they are equivalent, meaning they describe the same underlying stylistic tendency and are supported by examples showcasing the same behavior. Claims with even slight differences in focus or scope must remain unmerged to preserve distinct insights.
+1. Claims should only be merged if they are equivalent, meaning they describe the same underlying stylistic tendency and are supported by evidence showcasing the same behavior. Claims with even slight differences in focus or scope must remain unmerged to preserve distinct insights.
 2. Ensure that your output is within the respective tags <thinking> and <combined_author_sheet>, to parse the output seamlessly. 

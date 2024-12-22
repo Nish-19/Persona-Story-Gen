@@ -1,0 +1,90 @@
+## Input Details
+- **Writing Prompt**: Describes the scenario or theme for which the stories are written.
+- **Author-Written Story**: The author’s unique interpretation of the writing prompt.
+- **Base Story**: A generic story written by an average author for the writing prompt.
+
+---
+
+## Output Format
+1. First use the `<thinking></thinking>` tokens to think deeply about how the Author-Written Story differs from the Base Story. Also think of a short descriptive phrase summarizing the writing prompt (e.g., “the story regarding ‘child soldiers baiting summoners’”) to frame the examples in your output.
+2. Next, output your analysis in the `<writing_style></writing_style>` tokens. Your analysis must be structured into the below categories based on the author’s distinctive writing tendencies. For each category:
+   i. Provide **independent claims** about the author’s writing tendencies. These should reflect general writing tendencies without referencing specific story details or using terms like "Author-Written Story" and "Base story."
+   ii. Support each claim with **one contextualized example** from the author-written story. Use the short descriptive phrase summarizing the writing prompt (obtained earlier in the `<thinking>` tokens) to frame the example. Ensure that examples are either short excerpts (taken verbatim) from the author-written story or concise summaries of the relevant story excerpts tied to the writing prompt.
+   iii. Prefer to use examples verbatim from the story text in general wherever applicable.
+
+---
+
+## Guidelines for Claims
+- Claims must be unique and **should not repeat insights across the categories**.
+- Claims must reflect **broader patterns or tendencies** in the author’s writing style, expressed in a **concise and evidence-based** manner. Claims must avoid being tied to specific details of the analyzed story (e.g., individual plot points, characters, or settings). Instead, they should present generalized observations about the author’s overall writing style and recurring traits (e.g., “The author tends to use vivid, sensory imagery to create an immersive atmosphere”).
+- Claims must not use the terms "Author-Written Story" and "Base story."
+- Claims must not include adverbs of time like "often," "frequently," "sometimes," etc., to ensure they remain precise and grounded in the examples provided.
+- Claims must not include adverbs of time like "often," "frequently," "sometimes," etc., to ensure they remain precise and grounded in the examples provided.
+- Claims must be written in **simple and clear language**, avoiding unnecessary literary jargon or overly complex phrasing.
+- Claims must not include references to characters or settings outside the story or assume the reader has general knowledge about external references.
+- Each claim must be written in a way that it is **perfectly supported by the chosen contextualized example**. Avoid including any phrases or interpretations in the claim that are not explicitly demonstrated by the example provided.
+
+---
+
+## Guidelines for Examples
+- Drawn from the Story: Examples must be drawn from the author-written story and explicitly tied to the writing prompt.
+- Use a Framing Phrase: Use the short descriptive phrase to frame the example in the context of the current prompt. For example:
+  - “In the story regarding ‘child soldiers baiting summoners,’ the author uses log entries to create a sense of realism.”
+- Examples Must Be Explicitly Supported by the Story: Ensure that the example is directly drawn from the story and clearly aligns with the details provided in the narrative. Avoid vague or inferred connections not substantiated by the text.
+- Examples Must Not Contradict the Story: Ensure the example aligns with the narrative context and themes of the story. Do not include details or interpretations that conflict with the events, character behavior, or world-building established in the story.
+- Provide Context to Clarify the Example's Relevance: Include sufficient context from the story to make the example's relevance to the claim clear. Avoid isolating details that may lose their meaning or significance without additional background.
+- Avoid Over-Interpretation or Over-Extrapolation: Ensure the example remains grounded in the story's content and does not overstate or exaggerate its implications. Avoid adding meaning that cannot be reasonably inferred from the text.
+- Ensure Coherence and Consistency: Examples must be internally coherent and avoid logical contradictions or commonsense inconsistencies.
+- Review Example Soundness: Ensure examples fully support the described claim and avoid any contradictions with the overall author-written story.
+
+---
+
+## Guidelines for Analysis
+
+Your task is to analyze the author’s story writing style and extract **unique insights** into their storytelling tendencies. Organize these insights into the following categories by addressing the specific tendencies outlined in each category. Additionally, feel free to include other tendencies that are important for capturing the author’s unique style, even if they are not explicitly mentioned in the provided categories.
+
+---
+
+## Categories for Analysis
+### Plot
+Analyze how the author structures the story, introduces conflict, engages with the prompt, and resolves the narrative.
+
+### Creativity
+Analyze the author’s approach to blending genres, unconventional reinterpretation of the prompt, and integration of imaginative and unique elements in the story
+
+### Development (Character and Setting)
+Examine the author’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.
+
+### Language Use
+Assess how the author employs diction, sentence structure, tone, rhetorical devices, figures of speech, narrative perspective, descriptive language, pacing, and dialogue to create an engaging and immersive narrative. Important: Prefer to include examples verbatim from the story text to better suppport the claims.
+
+---
+
+## Special Instructions
+1. Always **think** of a short descriptive phrase summarizing the writing prompt to frame the examples.
+2. Use the specified structure for the output:
+   - Each category begins with a **set of claims**.
+   - Each claim is followed by a **contextualized example** from the author-written story.
+3. Ensure that the analysis is objective and does not directly reference the base story.
+4. Focus on addressing specific traits or behaviors within each analysis category where the author demonstrates distinctive tendencies. Skip traits or behaviors that yield no unique insights or where the observations significantly overlap with those from other traits across all categories.
+5. Claims must strictly avoid redundancy across all categories and provide distinct insights.
+---
+
+## Sample Output Structure
+<thinking>
+Deeply reason on how the Author-Written Story differs from the Base Story. Think of a short descriptive phrase summarizing the prompt: "the story regarding a battle for lost artifacts". 
+</thinking>
+<writing_style>
+### Plot
+1. **Claim about author’s writing style.**
+   - Example: In the story regarding “short description of the prompt,” <example from the author-written story>.
+
+### Creativity
+1. **Claim about author’s writing style.**
+   - Example: In the story regarding “short description of the prompt,” <example from the author-written story>.
+...
+
+Repeat for all categories.
+</writing_style>
+
+Ensure that your output is within the respective tags <thinking> and <writing_style>, to parse the output seamlessly. 
