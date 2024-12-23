@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import re
 import json 
+import random
 from ast import literal_eval
 from collections import defaultdict
 import argparse
@@ -132,10 +133,11 @@ def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_thres
         os.makedirs(annotation_file_dir)
     
     rows = []
+    user_rows = []
 
     # iterate over top storys
     for story in top_stories:
-        # number of claims should be atleast 3
+        # number of claims should be atleast claim_threshold
         if len(story_wise_claims[story]) < claim_threshold:
             continue
 
@@ -168,7 +170,7 @@ def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_thres
 
         claims = story_wise_claims[story]
         # iterate over claims
-        for claim in claims:
+        for cctr, claim in enumerate(claims):
             rows.append({
                 "story_id": story,
                 "category": claim[2],
@@ -182,19 +184,27 @@ def dump_annotation_sample(story_wise_claims, file, source='Reddit', claim_thres
 
             # TODO: write to labelstudio format
             if labelstudio_rows is not None:
-                labelstudio_rows.append({
+                append_dict = {
                     "user": f"{source}_{file}",
                     "story_id": story,
+                    "claim_id": cctr,
                     "writing_prompt": story_wp,
                     "story": story_text,
                     "claim": claim[0],
                     "evidence": claim[1]
-                })
+                }
+                # add to labelstudio_rows
+                labelstudio_rows.append(append_dict)
+                # add to user_rows
+                user_rows.append(append_dict)
 
     
     # write annotation data to a csv file
     df = pd.DataFrame(rows)
     df.to_csv(f'{annotation_file_dir}/annotation_sheet.csv', index=False)
+
+    # return user_rows
+    return user_rows
 
 def calculate_stats(labelstudio_rows):
     '''
@@ -216,6 +226,136 @@ def calculate_stats(labelstudio_rows):
     print('Unique prompts:', len(prompts))
     print('Unique stories:', len(stories))
     print('Total claims:', len(labelstudio_rows))
+
+
+def prepare_annotator_data(source_user_dict, num_annotators, max_claims, story_per_annotator):
+    '''
+    select data for annotators (round robin fashion)
+    '''
+
+    annotator_data = defaultdict(dict)
+
+    # NOTE: choose 12 stories common for every annotator 
+    ctr = 0
+    # iterate over sources
+    break_flag = False
+    while True:
+        for source in source_user_dict:
+            # choose a random user
+            user = random.choice(list(source_user_dict[source].keys()))
+            # choose stories (randomly max_claims)
+            if len(source_user_dict[source][user]) < max_claims:
+                # shuffle the list
+                choose_stories = random.sample(source_user_dict[source][user], len(source_user_dict[source][user]))
+            else:
+                choose_stories = random.sample(source_user_dict[source][user], max_claims)
+
+            for i in range(num_annotators):
+                # append to annotator_i
+                annotator_data[i][f"{source}_{user}"] = choose_stories
+
+            # remove the selected user
+            del source_user_dict[source][user]
+
+            # increment counter
+            ctr += 1
+
+            # breaking condition
+            if ctr >= 12:
+                break_flag = True
+                break
+        
+        if break_flag:
+            break
+        
+    # NOTE: choose 10 more stories for every annotator
+    annotator_flags = defaultdict(int)
+    while True:
+        # iterate over sources
+        for source in source_user_dict:
+            # iterate over annotators
+            for i in range(num_annotators):
+                # check if no more users exist
+                if len(source_user_dict[source]) == 0:
+                    break
+                # check if annotator data exceeds threshold
+                if len(annotator_data[i]) >= story_per_annotator:
+                    annotator_flags[i] = 1
+                    continue
+                # choose a random user
+                user = random.choice(list(source_user_dict[source].keys()))
+                # choose stories (randomly max_claims)
+                if len(source_user_dict[source][user]) < max_claims:
+                    # shuffle the list
+                    choose_stories = random.sample(source_user_dict[source][user], len(source_user_dict[source][user]))
+                else:
+                    choose_stories = random.sample(source_user_dict[source][user], max_claims)
+                
+                # append to annotator_i
+                annotator_data[i][f"{source}_{user}"] = choose_stories
+
+                # remove the selected user
+                del source_user_dict[source][user]
+
+        # breaking condition 
+        # iterate over the annotators
+        all_flags = True 
+        for i in range(num_annotators):
+            if annotator_flags[i] == 0:
+                all_flags = False
+    
+        if all_flags:
+            break
+
+
+    return annotator_data
+
+def get_annotator_data_stats(annotator_data, num_annotators):
+    '''
+    get annotator data statistics
+    '''
+    # iterate over annotators
+
+    print('\n\n### Annotator Data Statistics ###\n')
+
+    unique_users = set()
+    unique_claims = list()
+    common_users = set()
+    common_claims = []
+    for i in range(num_annotators):
+        print(f'\n### Annotator {i} ###\n')
+        print('Total users:', len(annotator_data[i]))
+        num_claims = []
+        for user, claims in annotator_data[i].items():
+            num_claims.append(len(claims))
+            # check if user in unique_users
+            if user in unique_users and user not in common_users:
+                common_claims.extend(claims)
+                common_users.add(user)
+            
+            # add unique claims
+            unique_claims.extend([claim['evidence'] for claim in claims])
+        
+            unique_users.add(user)
+
+        
+        # average number of claims per user
+        print('Total claims:', sum(num_claims))
+        print('Average number of claims per user:', sum(num_claims)/len(num_claims))
+    
+    print('\n\n### Common Users ###\n')
+    print('Total common users:', len(common_users))
+    print('Total common claims:', len(common_claims))
+
+    print('\n\n### Unique Users ###\n')
+    print('Total unique users:', len(unique_users))
+    print('Total unique claims:', len(set(unique_claims)))
+
+    # if not os.path.exists('upwork_annotator_data'):
+    #     os.makedirs('upwork_annotator_data')
+
+    # with open('upwork_annotator_data/common_users.json', 'w') as f:
+    #     json.dump(list(common_users), f, indent=4)
     
 
 def parse_args():
@@ -226,7 +366,13 @@ def parse_args():
     # parser.add_argument('--source', type=str, default='Reddit', help='Source: Reddit, AO3, Storium, narrativemagazine, newyorker')
     # claim_threshold (int)
     parser.add_argument('--claim_threshold', type=int, default=3, help='claim_threshold for minimum number of claims per story')
-    parser.add_argument('--story_threshold', type=int, default=3, help='story_threshold for maximum number of stories per user')
+    parser.add_argument('--story_threshold', type=int, default=1, help='story_threshold for maximum number of stories per user')
+    # number of annotators 
+    parser.add_argument('--num_annotators', type=int, default=3, help='number of annotators')
+    # max number of claims per story
+    parser.add_argument('--max_claims', type=int, default=6, help='max number of claims per story')
+    # story per annotator 
+    parser.add_argument('--story_per_annotator', type=int, default=22, help='number of stories per annotator')
     # store true if you want to dump labelstudio format
     parser.add_argument('--labelstudio', action='store_true', help='store true if you want to dump labelstudio format')
     args = parser.parse_args()
@@ -239,6 +385,12 @@ def main():
     claim_threshold = args.claim_threshold
     story_threshold = args.story_threshold
     labelstudio = args.labelstudio
+    num_annotators = args.num_annotators
+    max_claims = args.max_claims
+    story_per_annotator = args.story_per_annotator
+
+    # set random seed
+    random.seed(37)
 
     if labelstudio:
         labelstudio_rows = []
@@ -249,6 +401,10 @@ def main():
     print('story_threshold:', story_threshold)
 
     sources = ['Reddit', 'AO3', 'Storium', 'narrativemagazine', 'newyorker']
+    # store data for annotation
+    source_user_dict = dict()
+    for source in sources:
+        source_user_dict[source] = defaultdict(list)
 
     # iterate over all sources
     for source in sources:
@@ -285,10 +441,18 @@ def main():
                 # with open(f'{story_wise_claims_dir}/{file}', 'w') as f:
                 #     json.dump(story_wise_claims, f, indent=4)
                 # construct annotation data sample
-                dump_annotation_sample(story_wise_claims, file, source, claim_threshold, story_threshold, labelstudio_rows)
+                user_rows = dump_annotation_sample(story_wise_claims, file, source, claim_threshold, story_threshold, labelstudio_rows)
+                # add to source_user_dict
+                if len(user_rows) > 0:
+                    source_user_dict[source][file] = user_rows
+    
     
     # calculate statistics for labelstudio format
     calculate_stats(labelstudio_rows)
+
+    # dump source_user_dict to a file
+    with open('annotation_data/source_user_dict.json', 'w') as f:
+        json.dump(source_user_dict, f, indent=4)
     
     if labelstudio:
         # write to labelstudio format
@@ -298,6 +462,27 @@ def main():
         # save as JSON
         with open('annotation_data/labelstudio_format.json', 'w', encoding='utf-8') as f:
             json.dump(labelstudio_rows, f, ensure_ascii=False, indent=4)
+
+    # prepare annotator data
+    annotator_data = prepare_annotator_data(source_user_dict, num_annotators, max_claims, story_per_annotator)
+
+    # get annotator data statistics
+    get_annotator_data_stats(annotator_data, num_annotators)
+
+    # annotator data directory 
+    annotator_data_dir = 'upwork_annotator_data'
+    if not os.path.exists(annotator_data_dir):
+        os.makedirs(annotator_data_dir)
+    
+    # iterate over annotators
+    for i in range(num_annotators):
+        # write to a file
+        with open(f'{annotator_data_dir}/annotator_{i}.json', 'w') as f:
+            annotation_data = []
+            for user, data in annotator_data[i].items():
+                annotation_data.extend(data)
+            json.dump(annotation_data, f, indent=4)
+
 
 if __name__ == '__main__':
     main()
