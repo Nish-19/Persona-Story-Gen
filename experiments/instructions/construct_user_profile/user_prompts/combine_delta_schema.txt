@@ -8,6 +8,8 @@
    - Plan on synthesizing this above information into **Combined Author Writing Sheet** as a list of claims and their correspoding evidence for every category above based on the algorithm (Algorithm (Merge Step)) below.
       - Plan on merging the equivalent claims by carefully following the instructions mentioned in the algorithm.
       - Plan on including the ungrouped unique claims from both the **Current Author Writing Sheet** and the **Previous Combined Author Writing Sheet** into the new **Combined Author Writing Sheet**. 
+   - To ensure that the **Combined Author Writing Sheet** does not contain too much content: 
+      - Plan on including a maximum of 7 Claim-Evidence pairs for every category. Prioritize merged claims over the unique ungrouped ones.
 
 2. **Generate the Combined Author Writing Sheet**  
 
@@ -91,4 +93,5 @@ Include claim and evidence in the format specified above.
 
 NOTES:
 1. Claims should only be merged if they are equivalent, meaning they describe the same underlying stylistic tendency and are supported by evidence showcasing the same behavior. Claims with even slight differences in focus or scope must remain unmerged to preserve distinct insights.
-2. Ensure that your output is within the respective tags <thinking> and <combined_author_sheet>, to parse the output seamlessly. 
+2. Ensure that every category includes not more than 7 Claim-Evidence pairs.
+3. Ensure that your output is within the respective tags <thinking> and <combined_author_sheet>, to parse the output seamlessly. 
