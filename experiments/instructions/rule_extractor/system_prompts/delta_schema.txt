@@ -1,0 +1,1 @@
+TODO: write prompt to generate story rules given a Writing Prompt and Author Writing Sheet (need to pay attention to all categories, as well as both Claim and Evidence for each category). Story rules should include verbatim language examples to guide the LLM with the user's specific lingo. 
