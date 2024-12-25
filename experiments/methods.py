@@ -141,7 +141,7 @@ class StoryGenMethods():
         # NOTE: Edit the system instructions
         # 1. Mention source constraints
         # if source_constraints:
-        system_instructions += ' Be sure to adhere to the ## Story Rules provided, as they define the specific elements of the writing style you are expected to mimic.'
+        system_instructions += ' Be sure to adhere to the ## Story Rules provided, as they define the specific elements of the writing style you are expected to mimic. Ensure to carefully follow all the Story Rules without missing any details to ensure the generated story is consistent with the user\'s story writing style.'
         # 2. Mention few shot demonstrations (chat history)
         if few_shot:
             system_instructions += ' Also, follow the patterns and examples demonstrated in the provided few-shot chat history, as they illustrate the tone, style, and structure of the desired writing style of your story.'
