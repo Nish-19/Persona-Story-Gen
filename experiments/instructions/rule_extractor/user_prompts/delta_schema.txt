@@ -1,46 +1,47 @@
-#### Constraints
-1. **Mimic the Author Writing Sheet**:
-   - Use the style, structure, and level of detail in the Evidence while also following the Claims of the Author Writing Sheet as a guide for creating the **Story Rules**.
-   - The rules must include concrete/ specific examples tailored to the Writing Prompt inspired by the examples in the Evidence. These examples include particular story writing style and usage of language like specific dialouges, descriptive language, etc. 
+### Constraints
+1. **Mimic the Author Writing Style**:
+   - Ensure that the rules align closely with the unique storytelling style described in the Author Writing Sheet.
+   - Draw inspiration from the Evidence provided, using its style, structure, and level of detail as a template for constructing tailored Story Rules.
+   - Include examples that reflect specific storytelling elements, such as plot structuring, creative approaches, methods for character and setting development, and language use, while tailoring them to the Writing Prompt.
 
 2. **Categorical Organization**:
-   - Structure the rules under the following categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** following the Author Writing Sheet.
+   - Structure the Story Rules under the following categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**, mirroring the Author Writing Sheet.
 
 3. **Alignment with Writing Prompt**:
-   - Tailor the rules specifically to the Writing Prompt, incorporating the Writing Prompt's themes, tone, and narrative potential.
+   - Ensure that all Story Rules are explicitly tailored to the Writing Prompt, incorporating its narrative themes and potential. The examples and stylistic elements must feel natural and relevant to the Writing Prompt.
 
-4. **Independent Rules**:
-   - Write the rules as standalone, actionable instructions in the second person.
-   - Avoid using comparative or relative terms (e.g., "similar to," "like in," "adjust"). Rules must be absolute and directly applicable.
+4. **Independent and Actionable Rules**:
+   - Write rules as standalone, second-person instructions that a language model can directly follow.
+   - Avoid vague or comparative terms (e.g., "similar to," "like in"). Make each rule absolute and specific.
 
-5. **Comprehensive Detailing**:
-   - Cover all narrative aspects (e.g., pacing, humor, character dynamics) relevant to the prompt and the Author Writing Sheet.
-   - Ensure the rules provide granular and actionable guidance.
-
----
-
-#### Input Format
-1. **Author Writing Sheet**: Set of Claim-Evidence pairs about an author's unique story writing style given the previous stories written by them. The Sheet is organized in the form of four categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.
-2. **Writing Prompt**: A single writing prompt for which you will generate the **Story Rules**.
+5. **Comprehensive and Granular**:
+   - Provide thorough guidance that captures all critical aspects of storytelling, such as pacing, tone, humor, dialogue, character dynamics, and setting descriptions.
+   - Use examples that are rich in detail and tied closely to the Writing Prompt to illustrate the rules effectively.
 
 ---
 
-#### Output Format
-<thinking>
-Analyze the Author Writing Sheet for all four categories thoroughly to infer patterns and key elements. Use this analysis to determine how to craft the **Story Rules** for the Writing Prompt. Emphasize on taking inspiration from the Evidence to capture the detailed story writing style of the author to construct detailed **Story Rules** that incorporate the Evidence.
-</thinking>
+### Input Format
+1. **Author Writing Sheet**: A set of Claim-Evidence pairs describing the author’s unique writing style, organized under the categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.
+2. **Writing Prompt**: A single writing prompt for which you will generate tailored **Story Rules**.
+
+---
+
+### Output Format
+<thinking>  
+Analyze the Author Writing Sheet for all four categories in depth to infer patterns, unique traits, and key elements of the author’s storytelling style. Reflect on how these elements can be adapted to suit the Writing Prompt. Use this analysis to craft **Story Rules** enriched with tailored examples inspired by the Evidence, ensuring alignment with both the Writing Prompt and the Author Writing Sheet.  
+</thinking>  
 <story_rules>
 - **Plot**:
-  - [Insert detailed, actionable rules for plot development tailored to the Writing Prompt including concrete examples taken from the Author Writing Sheet.]
-  
+  - [Insert detailed, actionable rules for plot development tailored to the Writing Prompt, including concrete examples inspired by the Author Writing Sheet.]
+
 - **Creativity**:
-  - [Insert detailed, actionable rules for creativity tailored to the Writing Prompt including concrete examples taken from the Author Writing Sheet.]
+  - [Insert detailed, actionable rules for creativity tailored to the Writing Prompt, including concrete examples inspired by the Author Writing Sheet.]
 
 - **Development (Character and Setting)**:
-  - [Insert detailed, actionable rules for character and setting development tailored to the Writing Prompt including concrete examples taken from the Author Writing Sheet.]
+  - [Insert detailed, actionable rules for character and setting development tailored to the Writing Prompt, including concrete examples inspired by the Author Writing Sheet.]
 
 - **Language Use**:
-  - [Insert detailed, actionable rules for language use tailored to the Writing Prompt including concrete examples taken from the Author Writing Sheet.]
+  - [Insert detailed, actionable rules for language use tailored to the Writing Prompt, including concrete examples inspired by the Author Writing Sheet.]
 </story_rules>
 
-Follow the exact output format specified above and output both the <thinking> and the <story_rules> tags to facilitate seamless parsing. 
+Follow the exact output format, using both the `<thinking>` and `<story_rules>` tags for seamless parsing. Ensure the Story Rules are actionable, rich in detail, and fully aligned with both the Writing Prompt and the Author Writing Sheet.
