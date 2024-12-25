@@ -1,7 +1,7 @@
 #### Constraints
 1. **Mimic the Author Writing Sheet**:
    - Use the style, structure, and level of detail in the Evidence while also following the Claims of the Author Writing Sheet as a guide for creating the **Story Rules**.
-   - Ensure the rules reflect the unique story writing style of the author demonstrated in the Author Writing Sheet.
+   - The rules must include concrete/ specific examples tailored to the Writing Prompt inspired by the examples in the Evidence. These examples include particular story writing style and usage of language like specific dialouges, descriptive language, etc. 
 
 2. **Categorical Organization**:
    - Structure the rules under the following categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** following the Author Writing Sheet.
@@ -31,16 +31,16 @@ Analyze the Author Writing Sheet for all four categories thoroughly to infer pat
 </thinking>
 <story_rules>
 - **Plot**:
-  - [Insert detailed, actionable rules for plot development tailored to the Writing Prompt.]
+  - [Insert detailed, actionable rules for plot development tailored to the Writing Prompt including concrete examples taken from the Author Writing Sheet.]
   
 - **Creativity**:
-  - [Insert detailed, actionable rules for creativity tailored to the Writing Prompt.]
+  - [Insert detailed, actionable rules for creativity tailored to the Writing Prompt including concrete examples taken from the Author Writing Sheet.]
 
 - **Development (Character and Setting)**:
-  - [Insert detailed, actionable rules for character and setting development tailored to the Writing Prompt.]
+  - [Insert detailed, actionable rules for character and setting development tailored to the Writing Prompt including concrete examples taken from the Author Writing Sheet.]
 
 - **Language Use**:
-  - [Insert detailed, actionable rules for language use tailored to the Writing Prompt.]
+  - [Insert detailed, actionable rules for language use tailored to the Writing Prompt including concrete examples taken from the Author Writing Sheet.]
 </story_rules>
 
 Follow the exact output format specified above and output both the <thinking> and the <story_rules> tags to facilitate seamless parsing. 
