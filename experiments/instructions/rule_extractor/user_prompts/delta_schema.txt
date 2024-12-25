@@ -1,1 +1,46 @@
-TODO: write prompt to generate story rules given a Writing Prompt and Author Writing Sheet (need to pay attention to all categories, as well as both Claim and Evidence for each category). Story rules should include verbatim language examples to guide the LLM with the user's specific lingo. 
+#### Constraints
+1. **Mimic the Author Writing Sheet**:
+   - Use the style, structure, and level of detail in the Evidence while also following the Claims of the Author Writing Sheet as a guide for creating the **Story Rules**.
+   - Ensure the rules reflect the unique story writing style of the author demonstrated in the Author Writing Sheet.
+
+2. **Categorical Organization**:
+   - Structure the rules under the following categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** following the Author Writing Sheet.
+
+3. **Alignment with Writing Prompt**:
+   - Tailor the rules specifically to the Writing Prompt, incorporating the Writing Prompt's themes, tone, and narrative potential.
+
+4. **Independent Rules**:
+   - Write the rules as standalone, actionable instructions in the second person.
+   - Avoid using comparative or relative terms (e.g., "similar to," "like in," "adjust"). Rules must be absolute and directly applicable.
+
+5. **Comprehensive Detailing**:
+   - Cover all narrative aspects (e.g., pacing, humor, character dynamics) relevant to the prompt and the Author Writing Sheet.
+   - Ensure the rules provide granular and actionable guidance.
+
+---
+
+#### Input Format
+1. **Author Writing Sheet**: Set of Claim-Evidence pairs about an author's unique story writing style given the previous stories written by them. The Sheet is organized in the form of four categories **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.
+2. **Writing Prompt**: A single writing prompt for which you will generate the **Story Rules**.
+
+---
+
+#### Output Format
+<thinking>
+Analyze the Author Writing Sheet for all four categories thoroughly to infer patterns and key elements. Use this analysis to determine how to craft the **Story Rules** for the Writing Prompt. Emphasize on taking inspiration from the Evidence to capture the detailed story writing style of the author to construct detailed **Story Rules** that incorporate the Evidence.
+</thinking>
+<story_rules>
+- **Plot**:
+  - [Insert detailed, actionable rules for plot development tailored to the Writing Prompt.]
+  
+- **Creativity**:
+  - [Insert detailed, actionable rules for creativity tailored to the Writing Prompt.]
+
+- **Development (Character and Setting)**:
+  - [Insert detailed, actionable rules for character and setting development tailored to the Writing Prompt.]
+
+- **Language Use**:
+  - [Insert detailed, actionable rules for language use tailored to the Writing Prompt.]
+</story_rules>
+
+Follow the exact output format specified above and output both the <thinking> and the <story_rules> tags to facilitate seamless parsing. 
