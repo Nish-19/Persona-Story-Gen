@@ -150,10 +150,10 @@ class StoryGenMethods():
         # iterate through each file in the profile directory
         for fctr, file in tqdm(enumerate(os.listdir(test_dir)), total=len(os.listdir(test_dir)), desc='Story Generation'):
 
-            # # break after 3 iterations
-            # if debug:
-            #     if fctr > 2:
-            #         break
+            # break after 3 iterations
+            if debug:
+                if fctr > 2:
+                    break
 
             profile_file_path = os.path.join(profile_dir, file)
             test_file_path = os.path.join(test_dir, file)
@@ -1600,7 +1600,6 @@ class StoryGenMethods():
             else:
                 story_rules_response = []
             
-            
             try:
                 # open user profile response
                 user_profile_response_path = os.path.join(user_profile_output_dir, file)
@@ -1634,6 +1633,29 @@ class StoryGenMethods():
                 # write the results to the output directory
                 with open(output_file_path, 'w') as f:
                     json.dump(story_rules_response, f, indent=4)
+
+        # NOTE: STEP 4: Generate stories using the user profile generated above
+        if few_shot_top_k != 1:
+            suffix = f'_{few_shot_top_k}'
+        else:
+            suffix = ''
+
+        story_output_dir = f'{self.output_dir}/delta_schema/{source}'
+        if not os.path.exists(story_output_dir):
+            os.makedirs(story_output_dir)
+        
+        # system instructions
+        system_instructions_path = f'{self.generate_story_user_profile_instructions_dir}/system_prompts/{source}.txt'
+        # read the system instructions
+        with open(system_instructions_path, 'r') as f:
+            system_instructions = f.read()
+        
+        print('Method: Delta Schema Story Generation')
+        print(f'Few Shot: True')
+        print(f'Source: {source}')
+    
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
+
 
 
 
