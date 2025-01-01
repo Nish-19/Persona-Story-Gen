@@ -47,3 +47,17 @@ def prompt_openai(prompt_messages, max_tokens=2000, temperature=1.0, top_p=1.0):
             max_tokens=max_tokens,
         )
     return completion.choices[0].message.content
+
+
+def prompt_llama(prompt_messages, max_tokens=2000, temperature=1.0, top_p=1.0):
+    client = OpenAI(base_url="http://127.0.0.1:30000/v1", api_key="None")
+
+    response = client.chat.completions.create(
+            model="meta-llama/Meta-Llama-3.1-8B-Instruct",
+            messages=prompt_messages,
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,
+        )
+
+    return response.choices[0].message.content
