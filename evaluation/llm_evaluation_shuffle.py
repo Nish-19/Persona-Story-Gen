@@ -3,11 +3,12 @@ Use LLMs for pair-wise comparison of the methods (random shuffle)
 '''
 
 import os
+import sys
 import json
 import argparse
 from tqdm import tqdm
 import random
-from prompt_llm_utils import construct_prompt_message, prompt_openai, prompt_llama
+from prompt_llm_utils import construct_prompt_message, prompt_openai, prompt_llama, prompt_llama_router
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -24,12 +25,15 @@ def parse_args():
 
     return parser.parse_args()
 
-def construct_compare_prompt_message(gt_wp, gt_story, story_a, story_b, system_prompt, user_constraints):
+def construct_compare_prompt_message(gt_wp, gt_story, story_a, story_b, system_prompt, user_constraints, cat, cat_value):
     '''
     construct prompt for pair-wise comparison
     '''
     input_dict = {'Writing Prompt': gt_wp, 'Human-Written Story': gt_story, 'Assistant A': story_a, 'Assistant B': story_b}
     user_instruction = f"{json.dumps(input_dict)}"
+
+    # NOTE: Replace <Fill Here> in user_instruction with cat values
+    user_constraints = user_constraints.replace('<Fill Here>', f"{cat}: {cat_value}")
 
     prompt = construct_prompt_message(system_prompt, user_instruction, user_constraints)
 
@@ -98,6 +102,7 @@ def main():
     # read prompts 
     system_prompt_path = 'instructions/system_prompt/compare.txt'
     user_constraints_path = 'instructions/user_prompt/compare.txt'
+    categories_path = 'instructions/user_prompt/compare_categories.json'
 
     # read the system prompt
     with open(system_prompt_path, 'r') as f:
@@ -106,6 +111,10 @@ def main():
     # read the user constraints
     with open(user_constraints_path, 'r') as f:
         user_constraints = f.read()
+    
+    # read the categories
+    with open(categories_path, 'r') as f:
+        categories_data = json.load(f)
 
     pairs = []
     # iterate over files in the ground truth directory
@@ -155,34 +164,39 @@ def main():
     
     print(f"Using {consider_dir} method")
     print(f"Consider {len(pairs)} pairs for comparison")
+
+    categories = ['Plot', 'Creativity', 'Development (Character and Setting)', 'Language Use']
     
     # iterate over the pairs
     for pair in tqdm(pairs, desc='Pair-wise Evaluation', total=len(pairs)):
         identifier, gt_wp, gt_story, vanilla_story, expts_story = pair
+        cat_dict = {}
+        for cat in categories:
+            # generate random number (0 or 1)
+            random_number = random.randint(0, 1)
+            if random_number == 0:
+
+                prompt = construct_compare_prompt_message(gt_wp, gt_story, vanilla_story, expts_story, system_prompt, user_constraints, cat, categories_data[cat])
+                # prompt the OpenAI model
+                response = prompt_openai(prompt)
+                # response = prompt_llama_router(prompt)
+                response_dict = {1: response, 2: 'A: vanilla'} 
+            else:
+                # reverse the order of the stories
+                prompt = construct_compare_prompt_message(gt_wp, gt_story, expts_story, vanilla_story, system_prompt, user_constraints, cat, categories_data[cat])
+                # prompt the OpenAI model
+                response = prompt_openai(prompt)
+                # response = prompt_llama_router(prompt)
+                response_dict = {1: response, 2: 'A: expts'}
+            
+            cat_dict[cat] = response_dict
+
+            # add the responses to the list
+            all_responses[identifier] = cat_dict
         
-        # generate random number (0 or 1)
-        random_number = random.randint(0, 1)
-        if random_number == 0:
-
-            prompt = construct_compare_prompt_message(gt_wp, gt_story, vanilla_story, expts_story, system_prompt, user_constraints)
-            # prompt the OpenAI model
-            # response = prompt_openai(prompt)
-            response = prompt_llama(prompt)
-            response_dict = {1: response, 2: 'A: vanilla'} 
-        else:
-            # reverse the order of the stories
-            prompt = construct_compare_prompt_message(gt_wp, gt_story, expts_story, vanilla_story, system_prompt, user_constraints)
-            # prompt the OpenAI model
-            # response = prompt_openai(prompt)
-            response = prompt_llama(prompt)
-            response_dict = {1: response, 2: 'A: expts'}
-
-        # add the responses to the list
-        all_responses[identifier] = response_dict
-    
-        # write the responses to a file
-        with open(output_file, 'w') as f:
-            json.dump(all_responses, f, indent=4)
+            # write the responses to a file
+            with open(output_file, 'w') as f:
+                json.dump(all_responses, f, indent=4)
         
 
 if __name__ == '__main__':

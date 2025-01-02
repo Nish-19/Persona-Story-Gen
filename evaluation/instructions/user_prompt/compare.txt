@@ -2,7 +2,7 @@
 
 - **Impartiality**: Avoid any position biases; ensure that the order in which the stories are presented does not influence your decision.  
 - **Length**: Do not allow the length of the responses to influence your evaluation.  
-- **Objectivity**: Be objective and focus solely on similarity to the human-written story and adherence to the writing prompt.  
+- **Objectivity**: Be objective and focus solely on similarity to the human-written story. 
 - **Winner Selection**: You must always select a winner, based on the story that most closely matches the human-written reference.  
 
 ---
@@ -14,31 +14,24 @@
 You will receive (as a Python Dictionary):  
 1. A **Writing Prompt** that all stories are based on.  
 2. A **Human-Written Story** (reference) written in response to the writing prompt.  
-3. Two **candidate stories** (**Assistant A** and **Assistant B**).  
+3. Two **Assistant stories** (**Assistant A** and **Assistant B**).  
 
 Your task is to:  
-1. Compare each candidate story against the human-written reference, analyzing them based on the specified storytelling aspects and adherence to the writing prompt.  
-2. Determine which candidate's story is more aligned with the reference story and writing prompt.  
+1. Compare each Assistant story against the human-written reference, analyzing them based on the specified storytelling aspects and adherence to the writing prompt.  
+2. Determine which Assistant's story is more aligned with the reference story and writing prompt.  
 
-### Evaluation Aspects  
+### Evaluation Aspect  
 
-1. **Plot**: Assess whether the candidate stories follow a similar structure, progression, and coherence to the human-written story. Evaluate the clarity of the beginning, middle, and end, as well as the logical flow of events.  
-2. **Creativity**: Evaluate the originality and alignment of ideas, themes, and imagery with the human-written story and prompt. Check if tropes or creative elements are used in a way that mirrors the human-written style.  
-3. **Character and Setting Development**: Consider how well the candidate stories develop their characters and settings, including depth, detail, and consistency with the human-written story and prompt.  
-4. **Language Use**: Judge the effectiveness of sentence structure, tone, and stylistic choices. Evaluate whether the language aligns with the human-written story’s tone, mood, and overall style.  
+<Fill Here>
 
 ### Output Format  
 
 <evaluation>  
-<!-- Provide a detailed analysis of each candidate story compared to the human-written story and prompt. For each aspect (Plot, Creativity, Character and Setting Development, Language Use), discuss the strengths and weaknesses of each candidate in relation to the human-written story and writing prompt. Clearly explain the reasoning for your decision. -->  
+<!-- Provide a detailed analysis of each Assistant story compared to the human-written story for the Evaluation Aspect. Discuss the strengths and weaknesses of each Assistant in relation to the human-written story only with regard to the Evaluation Aspect. Clearly explain the reasoning for your decision. -->  
 </evaluation>  
 <winner>  
-<!-- Declare the winner by displaying only the option (A or B) of the candidate whose story is most similar to the human-written story. For example, if Assistant A's story is the winner, display only 'A'. -->  
+<!-- Declare the winner by displaying only the option (A or B) of the Assistant whose story is most similar to the human-written story. For example, if Assistant A's story is the winner, display only 'A'. -->  
 </winner>  
 
 
-Ensure that your output is properly formatted using the above tags to ensure seamless parsing.
-
-
-
-
+Ensure that your output is properly formatted using the above tags (<evaluation> followed by <winner>) to ensure seamless parsing.

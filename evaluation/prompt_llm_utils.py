@@ -3,6 +3,7 @@ utility function for prompting OpenAI models
 '''
 
 import os
+import requests
 from openai import OpenAI, AzureOpenAI
 import time
 from tenacity import retry, wait_random_exponential, stop_after_attempt
@@ -29,7 +30,7 @@ def construct_prompt_message(system_prompt, user_prompt, user_constraints=None, 
 
 # AzureOpenAI
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
-def prompt_openai(prompt_messages, max_tokens=2000, temperature=1.0, top_p=1.0):
+def prompt_openai(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0):
     # client = AzureOpenAI(
     #     # api_key=os.environ("AZURE_OPENAI_API_KEY"),
     #     api_version="2024-02-01",
@@ -62,3 +63,61 @@ def prompt_llama(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0):
         )
 
     return response.choices[0].message.content
+
+# def prompt_llama_router(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0):
+#     openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
+#     client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=openrouter_api_key)
+
+#     response = client.chat.completions.create(
+#             # model="meta-llama/Meta-Llama-3.1-8B-Instruct",
+#             model="meta-llama/llama-3.1-70b-instruct",
+#             messages=prompt_messages,
+#             temperature=temperature,
+#             top_p=top_p,
+#             max_tokens=max_tokens,
+#             provider={
+#                 "order": ["Lepton", "Fireworks"],
+#                 "allow_fallbacks": False
+#             },
+#         )
+
+#     return response.choices[0].message.content
+
+def prompt_llama_router(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0):
+    # Retrieve the OpenRouter API key
+    openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
+    if not openrouter_api_key:
+        raise ValueError("OPENROUTER_API_KEY environment variable is not set.")
+    
+    # Define the base URL and headers
+    base_url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {openrouter_api_key}",
+        "Content-Type": "application/json",
+        # Optional headers for OpenRouter rankings
+        "HTTP-Referer": "https://your-site-url.com",  # Replace with your site URL
+        "X-Title": "Your App Name",  # Replace with your app name
+    }
+
+    # Define the request payload
+    body = {
+        "model": "meta-llama/llama-3.1-70b-instruct",
+        "messages": prompt_messages,
+        "temperature": temperature,
+        "top_p": top_p,
+        "max_tokens": max_tokens,
+        "provider": {
+            "order": ["Lepton", "Fireworks"],  # Provider prioritization
+            "allow_fallbacks": False  # Disable fallbacks
+        }
+    }
+
+    # Make the POST request
+    response = requests.post(base_url, headers=headers, json=body)
+
+    # Handle errors
+    if response.status_code != 200:
+        raise RuntimeError(f"Request failed with status {response.status_code}: {response.text}")
+
+    # Return the generated response
+    return response.json()["choices"][0]["message"]["content"]
