@@ -49,11 +49,12 @@ def prompt_openai(prompt_messages, max_tokens=2000, temperature=1.0, top_p=1.0):
     return completion.choices[0].message.content
 
 
-def prompt_llama(prompt_messages, max_tokens=2000, temperature=1.0, top_p=1.0):
-    client = OpenAI(base_url="http://127.0.0.1:30000/v1", api_key="None")
+def prompt_llama(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0):
+    client = OpenAI(base_url="http://10.100.20.10:30000/v1", api_key="None")
 
     response = client.chat.completions.create(
-            model="meta-llama/Meta-Llama-3.1-8B-Instruct",
+            # model="meta-llama/Meta-Llama-3.1-8B-Instruct",
+            model="/datasets/ai/llama3/meta-llama/models--meta-llama--Meta-Llama-3.1-70B-Instruct/snapshots/33101ce6ccc08fa6249c10a543ebfcac65173393",
             messages=prompt_messages,
             temperature=temperature,
             top_p=top_p,
