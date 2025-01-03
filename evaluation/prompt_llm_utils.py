@@ -107,7 +107,7 @@ def prompt_llama_router(prompt_messages, max_tokens=2000, temperature=0.0, top_p
         "top_p": top_p,
         "max_tokens": max_tokens,
         "provider": {
-            "order": ["Lepton", "Fireworks"],  # Provider prioritization
+            "order": ["Fireworks", "Perplexity"],  # Provider prioritization
             "allow_fallbacks": False  # Disable fallbacks
         }
     }

@@ -13,9 +13,7 @@ def extract_winner(res):
     extract text between the tag <winner></winner>
     '''
 
-    score_match = re.search(r'<score>(.*?)</score>', res, re.DOTALL)
-    if score_match:
-        score_text = score_match.group(1)
+    def get_winner(score_text):
         # Extract scores for Story A and Story B using regex
         story_a_score = re.search(r'Story A:\s*(\d+)', score_text)
         story_b_score = re.search(r'Story B:\s*(\d+)', score_text)
@@ -25,27 +23,32 @@ def extract_winner(res):
             score_b = int(story_b_score.group(1).strip())
 
             if score_a > score_b:
-                winner = 'A'
+                return 'A'
             elif score_a < score_b:
-                winner = 'B'
+                return 'B'
             else:
-                winner = 'Tie'
+                return 'Tie'
         
-            return winner
-
         else:
             return None
-    else:
-        return None
+    winner = None
+    score_match = re.search(r'<score>(.*?)</score>', res, re.DOTALL)
+    if score_match:
+        score_text = score_match.group(1)
+        winner = get_winner(score_text)
+    
+    elif '**score**' in res:
+        score_text = res.split('**score**')[1].split('**')[0]
+        winner = get_winner(score_text)
+    
+    return winner
 
 def extract_score(res):
     '''
     extract text between the tag <winner></winner>
     '''
 
-    score_match = re.search(r'<score>(.*?)</score>', res, re.DOTALL)
-    if score_match:
-        score_text = score_match.group(1)
+    def get_scores(score_text):
         # Extract scores for Story A and Story B using regex
         story_a_score = re.search(r'Story A:\s*(\d+)', score_text)
         story_b_score = re.search(r'Story B:\s*(\d+)', score_text)
@@ -54,17 +57,18 @@ def extract_score(res):
             score_a = int(story_a_score.group(1).strip())
             score_b = int(story_b_score.group(1).strip())
 
-            # if score_a > score_b:
-            #     winner = 'A'
-            # elif score_a < score_b:
-            #     winner = 'B'
-            # else:
-            #     winner = 'Tie'
-        
             return score_a, score_b
-
+        
         else:
             return None, None
+
+    score_match = re.search(r'<score>(.*?)</score>', res, re.DOTALL)
+    if score_match:
+        score_text = score_match.group(1)
+        return get_scores(score_text)
+    elif '**score**' in res:
+        score_text = res.split('**score**')[1].split('**')[0]
+        return get_scores(score_text)
     else:
         return None, None
     
@@ -212,8 +216,12 @@ def main():
                 tot_score[label_b] += score_b
 
             # overall winner
-            overall_winner = Counter(category_winners.values()).most_common(1)[0][0]
-            if overall_winner is None:
+            try:
+                overall_winner = Counter(category_winners.values()).most_common(1)[0][0]
+                if overall_winner is None:
+                    continue
+            except:
+                all_results_score.append('Parsing Error')
                 continue
 
             # # append the overall winner
