@@ -32,6 +32,9 @@ def parse_args():
     parser.add_argument('--source', type=str, default='Reddit', help='Source')
     # method choice 
     parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')    # verbose
+    # model choice 
+    parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
+
     # verbose
     parser.add_argument('--verbose', action='store_true', help='Verbose')
     # pool method
@@ -59,6 +62,9 @@ def main():
     source = args.source
     # choice
     choice = args.choice
+    # model choice
+    model_choice = args.model_choice
+
     # pool choice
     pool_choice = args.pool_choice
 
@@ -85,79 +91,90 @@ def main():
         llm_eval_name = 'llm_evaluation'
     elif pool_choice == 2:
         llm_eval_name = 'llm_evaluation_shuffle'
-
-    eval_path = f'{llm_eval_name}/{consider_dir}/{source}.json' 
-
-    output_dir = f'{llm_eval_name}_combine/{consider_dir}/{source}'
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-
-    # read the evaluation file
-    with open(eval_path, 'r') as f:
-        eval_data = json.load(f)
     
-    # iterate over the evaluation data
-    if pool_choice == 1:
+    if source == 'all':
+        sources = ['Reddit', 'AO3', 'narrativemagazine', 'newyorker', 'Storium']
+    else:
+        sources = [source]
 
-        all_results = []
-        pair_reults = []
-        for key, data in eval_data.items():
-            res_1 = extract_winner(data["1"])
-            res_2 = extract_winner(data["2"])
-            pair_reults.append((res_1, res_2))
+    # iterate over the sources
+    for source in sources:
+        eval_path = f'{llm_eval_name}/{consider_dir}/{model_choice}/{source}.json' 
 
-            if 'A' in res_1 and 'B' in res_2:
-                all_results.append('A')
-            elif 'B' in res_1  and 'A' in res_2:
-                all_results.append('B')
-            else:
-                all_results.append('Tie')
+        output_dir = f'{llm_eval_name}_stats/{consider_dir}/{model_choice}/{source}'
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+
+        # read the evaluation file
+        with open(eval_path, 'r') as f:
+            eval_data = json.load(f)
         
-        
-        # dump pair results
-        pair_output_path = os.path.join(output_dir, 'pair.json')
-        with open(pair_output_path, 'w') as f:
-            json.dump(pair_reults, f, indent=4)
-        
-    elif pool_choice == 2:
         # iterate over the evaluation data
-        all_results = []
-        for key, cat_data in eval_data.items():
-            cat_results = []
-            for cat, data in cat_data.items():
-                res = extract_winner(data["1"])
-                gt_a = data["2"].strip("A: ")
-                if res == 'A':
-                    cat_results.append(gt_a)
+        if pool_choice == 1:
+
+            all_results = []
+            pair_reults = []
+            for key, data in eval_data.items():
+                res_1 = extract_winner(data["1"])
+                res_2 = extract_winner(data["2"])
+                pair_reults.append((res_1, res_2))
+
+                if 'A' in res_1 and 'B' in res_2:
+                    all_results.append('A')
+                elif 'B' in res_1  and 'A' in res_2:
+                    all_results.append('B')
                 else:
-                    if gt_a == 'vanilla':
-                        cat_results.append('expts')
-                    else:
-                        cat_results.append('vanilla')
+                    all_results.append('Tie')
             
-            # append the label with maximum count, if count is the same then store 'Tie'
-            # max_count = max(cat_results.count('expts'), cat_results.count('vanilla'))
-            if cat_results.count('expts') == cat_results.count('vanilla'):
-                all_results.append('Tie')
-            else:
-                all_results.append(max(cat_results, key=cat_results.count))
+            
+            # dump pair results
+            pair_output_path = os.path.join(output_dir, 'pair.json')
+            with open(pair_output_path, 'w') as f:
+                json.dump(pair_reults, f, indent=4)
+            
+        elif pool_choice == 2:
+            # iterate over the evaluation data
+            all_results = []
+            for key, cat_data in eval_data.items():
+                cat_results = []
+                for cat, data in cat_data.items():
+                    res = extract_winner(data["1"])
+                    gt_a = data["2"].strip("A: ")
+                    if res == 'A':
+                        cat_results.append(gt_a)
+                    else:
+                        if gt_a == 'vanilla':
+                            cat_results.append('expts')
+                        else:
+                            cat_results.append('vanilla')
+                
+                # append the label with maximum count, if count is the same then store 'Tie'
+                # max_count = max(cat_results.count('expts'), cat_results.count('vanilla'))
+                if cat_results.count('expts') == cat_results.count('vanilla'):
+                    all_results.append('Tie')
+                else:
+                    all_results.append(max(cat_results, key=cat_results.count))
 
-   # common output 
-    ouput_path = os.path.join(output_dir, f'winner.json')
-    with open(ouput_path, 'w') as f:
-        json.dump(all_results, f, indent=4)
+        # common output 
+        ouput_path = os.path.join(output_dir, f'winner.json')
+        with open(ouput_path, 'w') as f:
+            json.dump(all_results, f, indent=4)
 
-    # calculate count
-    labels_count = Counter(all_results)
+        # calculate count
+        labels_count = Counter(all_results)
 
-    # sort the labels count
-    labels_count = dict(sorted(labels_count.items(), key=lambda x: x[1], reverse=True))
+        # sort the labels count
+        labels_count = dict(sorted(labels_count.items(), key=lambda x: x[1], reverse=True))
 
-    labels_output_path = os.path.join(output_dir, 'winner_stats.json')
-    with open(labels_output_path, 'w') as f:
-        json.dump(labels_count, f, indent=4)
-    print(labels_count)
+        labels_output_path = os.path.join(output_dir, 'winner_stats.json')
+        with open(labels_output_path, 'w') as f:
+            json.dump(labels_count, f, indent=4)
+        
+        # print the results
+        print('Source:', source)
+        print(labels_count)
+        print('-----------------------------------')
 
 
 

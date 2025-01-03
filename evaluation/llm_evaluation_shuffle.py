@@ -20,6 +20,8 @@ def parse_args():
     parser.add_argument('--source', type=str, default='Reddit', help='Source')
     # method choice 
     parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
+    # model choice 
+    parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
 
@@ -56,6 +58,8 @@ def main():
     source = args.source
     # choice
     choice = args.choice
+    # model choice
+    model_choice = args.model_choice
     # verbose
     verbose = args.verbose
 
@@ -87,7 +91,7 @@ def main():
     expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
 
     # results output directory 
-    output_dir = f"llm_evaluation_shuffle/{consider_dir}"
+    output_dir = f"llm_evaluation_shuffle/{consider_dir}/{model_choice}"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
@@ -178,15 +182,19 @@ def main():
 
                 prompt = construct_compare_prompt_message(gt_wp, gt_story, vanilla_story, expts_story, system_prompt, user_constraints, cat, categories_data[cat])
                 # prompt the OpenAI model
-                response = prompt_openai(prompt)
-                # response = prompt_llama_router(prompt)
+                if model_choice == 1:
+                    response = prompt_openai(prompt)
+                elif model_choice == 2:
+                    response = prompt_llama_router(prompt)
                 response_dict = {1: response, 2: 'A: vanilla'} 
             else:
                 # reverse the order of the stories
                 prompt = construct_compare_prompt_message(gt_wp, gt_story, expts_story, vanilla_story, system_prompt, user_constraints, cat, categories_data[cat])
                 # prompt the OpenAI model
-                response = prompt_openai(prompt)
-                # response = prompt_llama_router(prompt)
+                if model_choice == 1:
+                    response = prompt_openai(prompt)
+                elif model_choice == 2:
+                    response = prompt_llama_router(prompt)
                 response_dict = {1: response, 2: 'A: expts'}
             
             cat_dict[cat] = response_dict
