@@ -91,7 +91,7 @@ def main():
     expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
 
     # results output directory 
-    output_dir = f"llm_evaluation_shuffle/{consider_dir}/{model_choice}"
+    output_dir = f"llm_evaluation_shuffle_score/{consider_dir}/{model_choice}"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
@@ -104,8 +104,8 @@ def main():
         all_responses = {}
     
     # read prompts 
-    system_prompt_path = 'instructions/system_prompt/compare.txt'
-    user_constraints_path = 'instructions/user_prompt/compare.txt'
+    system_prompt_path = 'instructions/system_prompt/compare_score.txt'
+    user_constraints_path = 'instructions/user_prompt/compare_score.txt'
     categories_path = 'instructions/user_prompt/compare_categories.json'
 
     # read the system prompt

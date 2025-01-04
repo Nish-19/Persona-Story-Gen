@@ -1,6 +1,6 @@
 {
-    "Plot": "Evaluate the similarity in how the author structures the story, introduces conflict, engages with the prompt, and resolves the narrative.",
-    "Creativity": "Evaluate the similarity in the author's approach to blending genres, unconventional reinterpretation of the prompt, and integration of imaginative and unique elements in the story.",
-    "Development (Character and Setting)": "Evaluate the similarity in the author's methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.",
-    "Language Use": "Evaluate the similarity in how the author employs diction, sentence structure, tone, rhetorical devices, figures of speech, narrative perspective, descriptive language, pacing, and dialogue to create an engaging and immersive narrative."
+    "Plot": "How the author structures the story, introduces conflict, engages with the prompt, and resolves the narrative.",
+    "Creativity": "Author's approach to blending genres, unconventional reinterpretation of the prompt, and integration of imaginative and unique elements in the story.",
+    "Development (Character and Setting)": "Author's methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.",
+    "Language Use": "How the author employs diction, sentence structure, tone, rhetorical devices, figures of speech, narrative perspective, descriptive language, pacing, and dialogue to create an engaging and immersive narrative."
 }
