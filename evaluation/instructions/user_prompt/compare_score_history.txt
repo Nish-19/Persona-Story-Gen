@@ -1,0 +1,50 @@
+### Guidelines for Evaluation
+
+- **Impartiality**: Avoid any positional biases; ensure that the order in which the stories are presented does not influence your decision.  
+- **Length Independence**: Do not let the length of the responses affect your evaluation.  
+- **Objectivity**: Focus solely on similarity to the Human-Written Story (author history) based on the specified storytelling aspect.  
+- **Similarity Criteria**: Base your judgment on how well the Assistant stories align with the Human-Written Story in terms of the **Evaluation Aspect**.  
+- **Score Clarity**: Provide clear and well-supported reasoning for the scores assigned to each story.  
+
+---
+
+### Evaluation Instructions  
+
+### Input  
+
+You will receive (as a Python Dictionary):  
+1. A **Previous Writing Prompt** and its corresponding **Human-Written Story** (reference) written by the author.  
+2. A **New Writing Prompt** that the Assistant stories are based on.  
+3. Two **Assistant stories** (**Assistant A** and **Assistant B**) written for the new writing prompt.  
+
+Your task is to:  
+1. **Independently analyze** the Human-Written Story (from the previous prompt), Assistant A's story, and Assistant B's story based on the **specified storytelling aspect**.
+   - Provide a detailed breakdown of each story’s alignment with the storytelling aspect.
+2. **Evaluate the similarities** between each Assistant story and the Human-Written Story for the storytelling aspect.
+   - Discuss how well each Assistant story aligns with the Human-Written Story (author history) in style, execution, and adherence to the storytelling aspect.
+3. **Score** the similarity of each Assistant story to the Human-Written Story.
+   - Assign a score between 1 and 5 to each Assistant story.
+
+---
+
+### Output Format  
+
+<analysis>  
+<!-- Analyze each story (Human-Written Story, Assistant A, Assistant B) separately for the Evaluation Aspect. Clearly highlight strengths and weaknesses specific to the Evaluation Aspect. -->  
+</analysis>  
+
+<evaluation>  
+<!-- Provide a detailed comparison of Assistant A and Assistant B stories against the Human-Written Story. Discuss the similarities, differences, and alignment for the Evaluation Aspect. Clearly explain the reasoning for the evaluation. -->  
+</evaluation>  
+
+<score>  
+Assistant A: {score_here}  
+Assistant B: {score_here}  
+</score>  
+
+---
+
+### Evaluation Aspect  
+<Fill Here>  
+
+Ensure that your output adheres to the format and is appropriately tagged (<analysis>, <evaluation>, <score>) for seamless parsing. NOTE: The score has to be in the <score></score> tag.

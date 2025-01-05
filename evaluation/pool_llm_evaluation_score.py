@@ -100,7 +100,8 @@ def parse_args():
     parser.add_argument('--choice', type=int, default=5, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
     # model choice 
     parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
-
+    # history (store_true)
+    parser.add_argument('--history', action='store_true', help='Evaluate on Past History as compared to the ground truth')
     # verbose
     parser.add_argument('--verbose', type=bool, default=False, help='Verbose')
     # pool method
@@ -130,6 +131,8 @@ def main():
     choice = args.choice
     # model choice 
     model_choice = args.model_choice
+    # history
+    history = args.history
 
     # choice = 3
 
@@ -138,6 +141,12 @@ def main():
         suffix = '_few_shot'
     else:
         suffix = ''
+
+    # history 
+    if history:
+        his_suffix = '_history_multiple'
+    else:
+        his_suffix = ''
 
     # root directories 
     if choice == 1:
@@ -158,7 +167,7 @@ def main():
 
     # iterate over the sources
     for source in sources:
-        eval_dir_name = 'llm_evaluation_shuffle_score'
+        eval_dir_name = f'llm_evaluation_shuffle_score{his_suffix}'
 
         eval_path = f'{eval_dir_name}/{consider_dir}/{model_choice}/{source}.json' 
 
