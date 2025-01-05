@@ -1,205 +1,157 @@
 '''
-procure examples for human annotation
+select examples for annotation
 '''
 
 import os 
 import random
-import re
-import json 
-import pandas as pd
+import json
+import argparse
 
-def get_writing_sheet(writing_sheet_list):
-    '''
-    extract the writing sheet from the list of writing sheets
-    '''
-    # get the writing sheet
-    writing_sheet = None
-    for idx in range(len(writing_sheet_list)-1, -1, -1):
-        try:
-            writing_sheet_raw = writing_sheet_list[idx]
-            # extract the sheet in the tags <combined_user_sheet></<combined_user_sheet>
-            writing_sheet = re.search(r'<combined_user_sheet>(.*?)</combined_user_sheet>', writing_sheet_raw, re.DOTALL).group(1)
-            if writing_sheet == '':
-                writing_sheet = writing_sheet_raw
-            break
-        except:
-            continue
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--few_shot', type=bool, default=False, help='Few shot')
+    # few shot top k (int)
+    parser.add_argument('--few_shot_top_k', type=int, default=1, help='Few Shot Top K')
+    # # source
+    # parser.add_argument('--source', type=str, default='Reddit', help='Source')
+    # method choice 
+    parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
+    # history (store_true)
+    parser.add_argument('--history', action='store_true', help='Evaluate on Past History as compared to the ground truth')
+    # verbose (store_true)
+    parser.add_argument('--verbose', action='store_true', help='Verbose')
 
-    return writing_sheet
-
-def markdown_to_dict(md_text):
-    lines = md_text.splitlines()
-    result = {}
-    current_key = None
-    current_value = []
-
-    for line in lines:
-        header_match = re.match(r"^#+\s*(.*)", line)
-        if header_match:  # If it's a header
-            if current_key:  # Save the previous header's content
-                result[current_key] = "\n".join(current_value).strip()
-            current_key = header_match.group(1).strip()
-            current_value = []  # Reset current value
-        else:
-            current_value.append(line)
-
-    if current_key:  # Save the last header's content
-        result[current_key] = "\n".join(current_value).strip()
-
-    return result
-
+    return parser.parse_args()
 
 def main():
+    # parse arguments
+    args = parse_args()
+
     # set random seed
     random.seed(37)
 
-    sources = ['Reddit', 'AO3', 'Storium']
+    # few shot 
+    few_shot = args.few_shot
+    # few shot top k
+    few_shot_top_k = args.few_shot_top_k
 
-    root_dir = '../evaluation/user_sheet'
-    consider_dir = 'schema'
+    # # source 
+    # source = args.source
+    # choice
+    choice = args.choice
+    # history
+    history = args.history
+    # verbose
+    verbose = args.verbose
 
-    # pre-defined categories for evaluation
-    categories = [
-    "Story Beginning",
-    "Story Ending",
-    "Narrative Structure",
-    "Unique Elements",
-    "Engaging Themes and Imagery",
-    "Use of Tropes or Clichés",
-    "Main Character",
-    "Setting Establishment",
-    "Supporting Characters and Interactions",
-    "Narrative Perspective",
-    "Stylistic Elements",
-    "Tone and Mood Alignment"
-    ]   
+    # suffix 
+    if few_shot:
+        suffix = '_few_shot'
+    else:
+        suffix = ''
 
+    # history 
+    if history:
+        his_suffix = '_history_multiple'
+    else:
+        his_suffix = ''
 
-    # iterate over the sources
-    select_examples = {}
-    meta_data = {}
-    rows = []
-    exp_count = 0
+    if few_shot_top_k == 1:
+        top_k_suffix = ''
+    else:
+        top_k_suffix = f'_{few_shot_top_k}'
+
+    # sources 
+    sources = ['Reddit', 'AO3', 'narrativemagazine', 'newyorker', 'Storium']
+
+    # iterate over sources
+    pairs = []
     for source in sources: 
-        eval_file_path = f'{root_dir}/{consider_dir}/{source}.json'
+        print(f"Processing {source}")
         # root directories 
-        gt_root_dir = f'../datasets/data_splits/data/{source}/test/'
+        gt_root_dir = f'../../datasets/data_splits/data/{source}/test/'
+        profile_root_dir = f'../../datasets/data_splits/data/{source}/profile/'
+        if choice == 1:
+            consider_dir = f'vanilla{suffix}'
+        elif choice == 2:
+            consider_dir = f'no_schema'
+        elif choice == 3:
+            consider_dir = f'schema{top_k_suffix}'
+        elif choice == 4:
+            consider_dir = f'delta{top_k_suffix}'
+        elif choice == 5:
+            consider_dir = f'delta_schema{top_k_suffix}'
 
-        expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
-
-        # user writing sheet directory
-        user_writing_sheet_dir = f'../experiments/user_profile/schema/{source}'
-
-        # read the evaluation file
-        with open(eval_file_path, 'r') as f:
-            eval_data = json.load(f)
+        expts_root_dir = f'../../experiments/results/{consider_dir}/{source}'
         
-        # randomly select 10 examples in eval_data
-        eval_keys = list(eval_data.keys())
-        random.shuffle(eval_keys)
-        examples = eval_keys[:15]
+        # # read prompts 
+        # categories_path = 'instructions/user_prompt/compare_categories.json'
+        
+        # # read the categories
+        # with open(categories_path, 'r') as f:
+        #     categories_data = json.load(f)
 
-        # iterate over the examples
-        for ectr, example in enumerate(examples): 
-            # break if 10 examples are selected
-            if ectr == 10:
-                break
-
-
-            # get file name and index 
-            file, index = example.split('.json_')
-            index = int(index)
+        # iterate over files in the ground truth directory
+        for file in os.listdir(expts_root_dir):
+            # gt file path
+            gt_file_path = os.path.join(gt_root_dir, file)
+            # profile file path
+            profile_file_path = os.path.join(profile_root_dir, file)
+            # vanilla file path
+            vanilla_file_path = os.path.join(f'../../experiments/results/vanilla/{source}', file)
+            # expts file path
+            expts_file_path = os.path.join(expts_root_dir, file)
 
             # read the ground truth file
-            gt_file_path = f'{gt_root_dir}/{file}.json'
             with open(gt_file_path, 'r') as f:
                 gt_data = json.load(f)
             
-            # read the experiment file
-            expt_file_path = f'{expts_root_dir}/{file}.json'
-            with open(expt_file_path, 'r') as f:
-                expt_data = json.load(f)
+            # read the profile file
+            with open(profile_file_path, 'r') as f:
+                profile_data = json.load(f)
             
-            # vanilla file path
-            vanilla_file_path = f'../experiments/results/vanilla/{source}/{file}.json'
-            # read the vanilla file
-            with open(vanilla_file_path, 'r') as f:
-                vanilla_data = json.load(f)
-
-            
-            # read the user writing sheet
-            user_writing_sheet_path = f'{user_writing_sheet_dir}/{file}.json'
-            with open(user_writing_sheet_path, 'r') as f:
-                writing_sheet_list = json.load(f)
-            
-            writing_sheet_raw = get_writing_sheet(writing_sheet_list)
-
-            if writing_sheet_raw is None:
+            try:
+                # read the vanilla file
+                with open(vanilla_file_path, 'r') as f:
+                    vanilla_data = json.load(f)
+                
+                # read the expts file
+                with open(expts_file_path, 'r') as f:
+                    expts_data = json.load(f)
+            except:
+                if verbose:
+                    print('Skipping', source, file)
                 continue
         
-            writing_sheet = markdown_to_dict(writing_sheet_raw)
-            
-            # choose random number - 0 or 1
-            choice = random.choice([0, 1])
+            # choose random index in expts_data
+            rindex = random.randint(0, len(expts_data) - 1)
+            identifier = f"{file}_{rindex}"
+            try:
+                # choose random between 0 and 1
+                data_choice = random.choice([0, 1])
+                if data_choice == 0:
+                    pairs.append((identifier, gt_data[rindex]['writing_prompt'], gt_data[rindex]['story'], vanilla_data[rindex]['story'], expts_data[rindex]['story'], 'vanilla'))
+                else:
+                    pairs.append((identifier, gt_data[rindex]['writing_prompt'], gt_data[rindex]['story'], expts_data[rindex]['story'], vanilla_data[rindex]['story'], 'expts'))
+            except IndexError:
+                if verbose:
+                    print('Skipping', file)
+                continue
+                        
+    print(f"Using {consider_dir} method")
+    print(f"Consider {len(pairs)} pairs for comparison")
 
-            if choice == 0:
-                consider_dict = {
-                    'Writing Prompt': gt_data[index]['writing_prompt'],
-                    'User Writing Sheet': writing_sheet,
-                    'Story A': vanilla_data[index]['story'],
-                    'Story B': expt_data[index]['story']
-                }
+    # save as JSON 
+    pairs_headers = ['index', 'prompt', 'ground_truth', 'story_a', 'story_b', 'first_choice'] 
+    # add the headers to the pairs 
+    pair_list = [{header: value for header, value in zip(pairs_headers, pair)} for pair in pairs]
 
-            else:
-                consider_dict = {
-                    'Writing Prompt': gt_data[index]['writing_prompt'],
-                    'User Writing Sheet': writing_sheet,
-                    'Story A': expt_data[index]['story'],
-                    'Story B': vanilla_data[index]['story']
-                }
-            
-            metadata_dict = {
-                'file': file,
-                'index': index,
-                'choice': choice
-            }
-
-
-            # add the example to the list
-            select_examples[exp_count+1] = consider_dict
-            meta_data[exp_count+1] = metadata_dict
-
-            # add row information 
-            row_content_a = {'ID': f"{exp_count+1}_A"}
-            row_content_b = {'ID': f"{exp_count+1}_B"}
-            for cat in categories:
-                row_content_a[cat] = ''
-                row_content_b[cat] = ''
-            
-            # add the row to the list
-            rows.append(row_content_a)
-            rows.append(row_content_b)
-
-            exp_count += 1
-
-    output_dir = f'examples/'
-    os.makedirs(output_dir, exist_ok=True)
-
-    # write the examples to a file
-    with open(f'{output_dir}/data.json', 'w') as f:
-        json.dump(select_examples, f, indent=4)
+    output_dir = 'sample_annotation'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     
-    with open(f'{output_dir}/metadata.json', 'w') as f:
-        json.dump(meta_data, f, indent=4)
-    
-    # write the rows to a csv file
-    annotation_dir = f'{output_dir}/annotation'
-    if not os.path.exists(f'{annotation_dir}'):
-        os.makedirs(f'{annotation_dir}')
-
-    df = pd.DataFrame(rows)
-    df.to_csv(f'{annotation_dir}/annotator_1.csv', index=False)
-    df.to_csv(f'{annotation_dir}/annotator_2.csv', index=False)
+    with open('sample_annotation/pairs.json', 'w') as f:
+        json.dump(pair_list, f, indent=4)
 
 if __name__ == '__main__':
     main()

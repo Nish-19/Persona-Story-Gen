@@ -86,13 +86,11 @@ def main():
     # source 
     source = args.source
     # # choice
-    # choice = args.choice
-    choice = 5
+    choice = args.choice
     # model choice
     model_choice = args.model_choice
     # # history
-    # history = args.history
-    history = True
+    history = args.history
     # verbose
     verbose = args.verbose
 
