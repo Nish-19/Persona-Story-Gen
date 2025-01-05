@@ -85,12 +85,14 @@ def main():
 
     # source 
     source = args.source
-    # choice
-    choice = args.choice
+    # # choice
+    # choice = args.choice
+    choice = 5
     # model choice
     model_choice = args.model_choice
-    # history
-    history = args.history
+    # # history
+    # history = args.history
+    history = True
     # verbose
     verbose = args.verbose
 
@@ -217,8 +219,10 @@ def main():
                 print('Skipping None', file)
                 continue
             if history:
+                history_data = [last_story_data]
                 # get the history data (most similar BM25)
                 profile_indices = get_few_shot_indices(profile_data, gt_data[ectr], top_k=3)
+                # profile_indices = [i for i in range(len(profile_data))]
                 if last_story_data is None:
                     history_wp = profile_data[profile_indices[0]]['writing_prompt']
                     history_story = profile_data[profile_indices[0]]['story']
@@ -233,8 +237,9 @@ def main():
                         else:
                             history_story = profile_data[index]['story']
                             bm25_data = {'writing_prompt': history_wp, 'story': history_story}
+                            history_data.append(bm25_data)
                             break
-                    history_data = [last_story_data, bm25_data]
+                    # history_data = [last_story_data, bm25_data]
 
                 pairs.append((identifier, gt_wp, history_data, vanilla_data[ectr]['story'], expts['story']))
             else:
