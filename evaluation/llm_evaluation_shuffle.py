@@ -158,7 +158,8 @@ def main():
     
     # check history 
     if history: 
-        output_summarize_history_dir = f'{output_dir}/summarize_history'
+        summarize_out_dir = f"llm_evaluation_shuffle_score{his_suffix}/{consider_dir}/1"
+        output_summarize_history_dir = f'{summarize_out_dir}/summarize_history'
         if not os.path.exists(output_summarize_history_dir):
             os.makedirs(output_summarize_history_dir)
         output_summarize_history_path = f'{output_summarize_history_dir}/{source}.json'
