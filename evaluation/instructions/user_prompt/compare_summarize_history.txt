@@ -1,0 +1,50 @@
+### Guidelines for Evaluation
+
+- **Impartiality**: Avoid any positional biases; ensure that the order in which the stories are presented does not influence your decision.  
+- **Length Independence**: Do not let the length of the responses affect your evaluation.  
+- **Objectivity**: Focus solely on similarity to the **Author Style Summary** based on the specified storytelling aspect.  
+- **Similarity Criteria**: Base your judgment on how well the Assistant stories align with the author’s storytelling style as described in the **Author Style Summary** for the **Evaluation Aspect**.  
+- **Score Clarity**: Provide clear and well-supported reasoning for the scores assigned to each story.  
+
+---
+
+### Evaluation Instructions  
+
+### Input  
+
+You will receive (as a Python Dictionary):  
+1. **Author Style Summary** - A summary of the author’s unique storytelling style based on their **Author History**.  
+2. A **Writing Prompt** that the Assistant stories are based on.  
+3. Two **Assistant stories** (**Assistant A** and **Assistant B**) written for the writing prompt.  
+
+Your task is to:  
+1. **Independently analyze** the **Author Style Summary**, Assistant A's story, and Assistant B's story based on the **specified storytelling aspect**.
+   - Provide a detailed breakdown of each story’s alignment with the **Author Style Summary**.
+2. **Evaluate the similarities** between each Assistant story and the **Author Style Summary** for the storytelling aspect.
+   - Discuss how well each Assistant story aligns with the author’s style, execution, and adherence to the storytelling aspect as reflected in the **Author Style Summary**.
+3. **Score** the similarity of each Assistant story to the **Author Style Summary**.
+   - Assign a score between 1 and 5 to each Assistant story.
+
+---
+
+### Output Format  
+
+<analysis>  
+<!-- Analyze each story (Author Style Summary, Assistant A, Assistant B) separately for the Evaluation Aspect. Clearly highlight strengths and weaknesses specific to the Evaluation Aspect. -->  
+</analysis>  
+
+<evaluation>  
+<!-- Provide a detailed comparison of Assistant A and Assistant B stories against the Author Style Summary. Discuss the similarities, differences, and alignment for the Evaluation Aspect. Clearly explain the reasoning for the evaluation. -->  
+</evaluation>  
+
+<score>  
+Assistant A: {score_here}  
+Assistant B: {score_here}  
+</score>  
+
+---
+
+### Evaluation Aspect  
+<Fill Here>  
+
+Ensure that your output adheres to the format and is appropriately tagged (<analysis>, <evaluation>, <score>) for seamless parsing. NOTE: The score has to be in the <score></score> tag.

@@ -1,0 +1,38 @@
+### User Prompt
+
+### Guidelines for Analysis
+
+- **Focus on Specific Aspects**: Your task is to analyze the author’s distinct storytelling characteristics for a given aspect (e.g., Plot, Creativity, Development, or Language Use).  
+- **Objectivity**: Focus solely on the author’s style as reflected in their **Author History**. Avoid subjective interpretation or unrelated analysis.  
+- **Evidence-Based Analysis**: Support each identified characteristic with concise examples or descriptions from the **Author History**, clearly tied to specific writing prompts.  
+- **Clarity and Precision**: Summarize the author’s style in a clear, concise, and actionable manner, avoiding unnecessary jargon or ambiguity.
+
+---
+
+### Task Instructions  
+
+### Input  
+
+You will receive:  
+1. **Author History** - A list of **Previous Writing Prompts** and their corresponding **Human-Written Stories** (references) written by the author.  
+2. A **Specified Storytelling Aspect** to analyze (e.g., Plot, Creativity, Development, or Language Use).
+
+Your task is to:  
+1. **Analyze the Author History** to identify the author’s distinct storytelling characteristics for the specified aspect.
+   - Identify patterns, tendencies, and unique traits in the author’s storytelling style.
+   - Provide concise, evidence-based characteristics supported by examples from the Human-Written Stories, tied to their respective prompts.
+
+---
+
+### Output Format  
+
+<analysis>  
+<!-- Summarize the author’s storytelling style for the specified aspect based on the Author History. Highlight recurring patterns and unique characteristics, supported by examples from the Human-Written Stories. -->  
+</analysis>  
+
+---
+
+### Specified Storytelling Aspect  
+<Fill Here>  
+
+Ensure that your output is formatted using the <analysis> tags for seamless parsing and incorporates specific examples from the Author History tied to the prompts.
