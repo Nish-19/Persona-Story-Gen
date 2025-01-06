@@ -13,7 +13,7 @@
 ### Input  
 
 You will receive (as a Python Dictionary):  
-1. **Author Style Summary** - A summary of the author’s unique storytelling style based on their **Author History**.  
+1. **Author Style Summary** - A summary of the author’s unique storytelling style based on their **Author History** for a particular storytelling aspect.  
 2. A **Writing Prompt** that the Assistant stories are based on.  
 3. Two **Assistant stories** (**Assistant A** and **Assistant B**) written for the writing prompt.  
 

@@ -144,7 +144,7 @@ def main():
 
     # history 
     if history:
-        his_suffix = '_history_multiple'
+        his_suffix = '_summarize_history'
     else:
         his_suffix = ''
 

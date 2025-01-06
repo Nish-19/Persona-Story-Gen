@@ -4,6 +4,7 @@ Use LLMs for pair-wise comparison of the methods (random shuffle)
 
 import os
 import sys
+import re
 import json
 import argparse
 from tqdm import tqdm
@@ -38,9 +39,9 @@ def construct_compare_prompt_message(gt_wp, gt_story, story_a, story_b, system_p
     '''
     # check if gt_story is dict 
     if isinstance(gt_story, dict):
-        input_dict = {'Previous Writing Prompt': gt_story['writing_prompt'], 'Human-Written Story': gt_story['story'], 'New Writing Prompt': gt_wp, 'Assistant A': story_a, 'Assistant B': story_b}
-    elif isinstance(gt_story, list):
-        input_dict = {'Author History': gt_story, 'New Writing Prompt': gt_wp, 'Assistant A': story_a, 'Assistant B': story_b}
+        input_dict = {'Author Style Summary': gt_story, 'Writing Prompt': gt_wp, 'Assistant A': story_a, 'Assistant B': story_b}
+    # elif isinstance(gt_story, list):
+    #     input_dict = {'Author History': gt_story, 'New Writing Prompt': gt_wp, 'Assistant A': story_a, 'Assistant B': story_b}
     else:
         input_dict = {'Writing Prompt': gt_wp, 'Human-Written Story': gt_story, 'Assistant A': story_a, 'Assistant B': story_b}
     
@@ -49,6 +50,20 @@ def construct_compare_prompt_message(gt_wp, gt_story, story_a, story_b, system_p
     user_constraints = user_constraints.replace('<Fill Here>', f"{cat}: {cat_value}")
     prompt = construct_prompt_message(system_prompt, user_instruction, user_constraints)
     return prompt
+
+def construct_summarize_prompt_message(history_data, system_prompt, user_constraints, cat, cat_value):
+    '''
+    construct prompt for pair-wise comparison
+    '''
+    # check if gt_story is dict 
+    input_dict = {'Author History': history_data}
+    
+    user_instruction = f"{json.dumps(input_dict)}"
+    # NOTE: Replace <Fill Here> in user_instruction with cat values
+    user_constraints = user_constraints.replace('<Fill Here>', f"{cat}: {cat_value}")
+    prompt = construct_prompt_message(system_prompt, user_instruction, user_constraints)
+    return prompt
+
 
 def get_few_shot_indices(profile_data, example, top_k=1):
     '''
@@ -85,11 +100,11 @@ def main():
 
     # source 
     source = args.source
-    # # choice
+    # choice
     choice = args.choice
     # model choice
     model_choice = args.model_choice
-    # # history
+    # history
     history = args.history
     # verbose
     verbose = args.verbose
@@ -141,6 +156,19 @@ def main():
     else:
         all_responses = {}
     
+    # check history 
+    if history: 
+        output_summarize_history_dir = f'{output_dir}/summarize_history'
+        if not os.path.exists(output_summarize_history_dir):
+            os.makedirs(output_summarize_history_dir)
+        output_summarize_history_path = f'{output_summarize_history_dir}/{source}.json'
+        # check if the file exists
+        if os.path.exists(output_summarize_history_path):
+            with open(output_summarize_history_path, 'r') as f:
+                all_responses_summarize_history = json.load(f)
+        else:
+            all_responses_summarize_history = {}
+    
     # read compare prompts 
     system_prompt_path = f'instructions/system_prompt/compare_score{his_suffix}.txt'
     user_constraints_path = f'instructions/user_prompt/compare_score{his_suffix}.txt'
@@ -176,7 +204,7 @@ def main():
 
     pairs = []
     # iterate over files in the ground truth directory
-    for file in os.listdir(gt_root_dir):
+    for file in tqdm(os.listdir(gt_root_dir), desc='Processing Authors', total=len(os.listdir(gt_root_dir))):
         # gt file path
         gt_file_path = os.path.join(gt_root_dir, file)
         # profile file path
@@ -208,17 +236,42 @@ def main():
             continue
     
         if history:
-            last_story_wp = profile_data[-1]['writing_prompt']
-            last_story = profile_data[-1]['story']
-            last_story_data = {'writing_prompt': last_story_wp, 'story': last_story}
-
+            # last_story_wp = profile_data[-1]['writing_prompt']
+            # last_story = profile_data[-1]['story']
+            # last_story_data = {'writing_prompt': last_story_wp, 'story': last_story}
             # get all the history data
             history_data = [{'writing_prompt': p['writing_prompt'], 'story': p['story']} for p in profile_data]
 
             # TODO: summarize history for each category
+            # 1. Check if file exists in all_responses_summarize_history
+            if file in all_responses_summarize_history:
+                summarize_history = all_responses_summarize_history[file]
+            else:
+                summarize_history = {}
+                for cat in categories:
+                    # construct the prompt
+                    prompt = construct_summarize_prompt_message(history_data, system_prompt_sumhis, user_constraints_sumhis, cat, categories_data[cat])
+                    # prompt the OpenAI model
+                    if model_choice == 1:
+                        response = prompt_openai(prompt)
+                    elif model_choice == 2:
+                        response = prompt_llama_router(prompt)
+                    # extract response in the tags <analysis></analysis>
+                    response_match = re.search(r'<analysis>(.*)</analysis>', response, re.DOTALL)
+                    if response_match:
+                        response = response_match.group(1)
+                    else:
+                        response = response
 
-        else:
-            last_story_data = None
+                    summarize_history[cat] = response
+                
+                    # add the responses to the dictionary
+                    all_responses_summarize_history[file] = summarize_history
+                    # write the responses to a file
+                    with open(output_summarize_history_path, 'w') as f:
+                        json.dump(all_responses_summarize_history, f, indent=4)
+        # else:
+        #     last_story_data = None
         
         
         # iterrate only over expts_data 
@@ -260,7 +313,7 @@ def main():
                 #             break
                 #     # history_data = [last_story_data, bm25_data]
 
-                pairs.append((identifier, gt_wp, history_data, vanilla_data[ectr]['story'], expts['story']))
+                pairs.append((identifier, gt_wp, summarize_history, vanilla_data[ectr]['story'], expts['story']))
             else:
                 pairs.append((identifier, gt_wp, gt_story, vanilla_data[ectr]['story'], expts['story']))
         
@@ -272,13 +325,20 @@ def main():
     # iterate over the pairs
     for pair in tqdm(pairs, desc='Pair-wise Evaluation', total=len(pairs)):
         identifier, gt_wp, gt_story, vanilla_story, expts_story = pair
+
         cat_dict = {}
         for cat in categories:
+            # check type of gt_story
+            if isinstance(gt_story, dict):
+                gt_story_input = {cat: gt_story[cat]}
+            else:
+                gt_story_input = gt_story
+
             # generate random number (0 or 1)
             random_number = random.randint(0, 1)
             if random_number == 0:
 
-                prompt = construct_compare_prompt_message(gt_wp, gt_story, vanilla_story, expts_story, system_prompt, user_constraints, cat, categories_data[cat])
+                prompt = construct_compare_prompt_message(gt_wp, gt_story_input, vanilla_story, expts_story, system_prompt, user_constraints, cat, categories_data[cat])
                 # prompt the OpenAI model
                 if model_choice == 1:
                     response = prompt_openai(prompt)
@@ -287,7 +347,7 @@ def main():
                 response_dict = {1: response, 2: 'A: vanilla'} 
             else:
                 # reverse the order of the stories
-                prompt = construct_compare_prompt_message(gt_wp, gt_story, expts_story, vanilla_story, system_prompt, user_constraints, cat, categories_data[cat])
+                prompt = construct_compare_prompt_message(gt_wp, gt_story_input, expts_story, vanilla_story, system_prompt, user_constraints, cat, categories_data[cat])
                 # prompt the OpenAI model
                 if model_choice == 1:
                     response = prompt_openai(prompt)
