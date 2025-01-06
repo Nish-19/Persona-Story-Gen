@@ -212,8 +212,10 @@ def main():
             last_story = profile_data[-1]['story']
             last_story_data = {'writing_prompt': last_story_wp, 'story': last_story}
 
-            # TODO: get all the history data
+            # get all the history data
             history_data = [{'writing_prompt': p['writing_prompt'], 'story': p['story']} for p in profile_data]
+
+            # TODO: summarize history for each category
 
         else:
             last_story_data = None
