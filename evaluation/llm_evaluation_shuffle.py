@@ -102,7 +102,7 @@ def main():
 
     # history 
     if history:
-        his_suffix = '_history_multiple'
+        his_suffix = '_summarize_history'
     else:
         his_suffix = ''
 
@@ -141,22 +141,38 @@ def main():
     else:
         all_responses = {}
     
-    # read prompts 
+    # read compare prompts 
     system_prompt_path = f'instructions/system_prompt/compare_score{his_suffix}.txt'
     user_constraints_path = f'instructions/user_prompt/compare_score{his_suffix}.txt'
+
+    # read summarize history prompts 
+    system_prompt_sumhis_path = 'instructions/system_prompt/summarize_history.txt'
+    user_constraints_sumhis_path = 'instructions/user_prompt/summarize_history.txt'
+
     categories_path = 'instructions/user_prompt/compare_categories.json'
 
+    # NOTE: 1. Compare prompts 
     # read the system prompt
     with open(system_prompt_path, 'r') as f:
         system_prompt = f.read()
-    
     # read the user constraints
     with open(user_constraints_path, 'r') as f:
         user_constraints = f.read()
     
+    # NOTE: 2. Summarize History prompts
+    # read the system prompt
+    with open(system_prompt_sumhis_path, 'r') as f:
+        system_prompt_sumhis = f.read()
+    # read the user constraints
+    with open(user_constraints_sumhis_path, 'r') as f:
+        user_constraints_sumhis = f.read()
+    
     # read the categories
     with open(categories_path, 'r') as f:
         categories_data = json.load(f)
+    
+    # define the categories
+    categories = categories_data.keys()
 
     pairs = []
     # iterate over files in the ground truth directory
@@ -192,10 +208,13 @@ def main():
             continue
     
         if history:
-            # get the history data
             last_story_wp = profile_data[-1]['writing_prompt']
             last_story = profile_data[-1]['story']
             last_story_data = {'writing_prompt': last_story_wp, 'story': last_story}
+
+            # TODO: get all the history data
+            history_data = [{'writing_prompt': p['writing_prompt'], 'story': p['story']} for p in profile_data]
+
         else:
             last_story_data = None
         
@@ -217,36 +236,36 @@ def main():
                 print('Skipping None', file)
                 continue
             if history:
-                history_data = [last_story_data]
-                # get the history data (most similar BM25)
-                profile_indices = get_few_shot_indices(profile_data, gt_data[ectr], top_k=3)
-                # profile_indices = [i for i in range(len(profile_data))]
-                if last_story_data is None:
-                    history_wp = profile_data[profile_indices[0]]['writing_prompt']
-                    history_story = profile_data[profile_indices[0]]['story']
-                    history_data = {'writing_prompt': history_wp, 'story': history_story}
-                else:
-                    # iterate over profile_indices
-                    for index in profile_indices:
-                        history_wp = profile_data[index]['writing_prompt']
-                        # check if history_wp is same as recent history data
-                        if history_wp == last_story_data['writing_prompt']:
-                            continue
-                        else:
-                            history_story = profile_data[index]['story']
-                            bm25_data = {'writing_prompt': history_wp, 'story': history_story}
-                            history_data.append(bm25_data)
-                            break
-                    # history_data = [last_story_data, bm25_data]
+                # history_data = [last_story_data]
+                # # get the history data (most similar BM25)
+                # profile_indices = get_few_shot_indices(profile_data, gt_data[ectr], top_k=3)
+                # # profile_indices = [i for i in range(len(profile_data))]
+                # if last_story_data is None:
+                #     history_wp = profile_data[profile_indices[0]]['writing_prompt']
+                #     history_story = profile_data[profile_indices[0]]['story']
+                #     history_data = {'writing_prompt': history_wp, 'story': history_story}
+                # else:
+                #     # iterate over profile_indices
+                #     for index in profile_indices:
+                #         history_wp = profile_data[index]['writing_prompt']
+                #         # check if history_wp is same as recent history data
+                #         if history_wp == last_story_data['writing_prompt']:
+                #             continue
+                #         else:
+                #             history_story = profile_data[index]['story']
+                #             bm25_data = {'writing_prompt': history_wp, 'story': history_story}
+                #             history_data.append(bm25_data)
+                #             break
+                #     # history_data = [last_story_data, bm25_data]
 
                 pairs.append((identifier, gt_wp, history_data, vanilla_data[ectr]['story'], expts['story']))
             else:
                 pairs.append((identifier, gt_wp, gt_story, vanilla_data[ectr]['story'], expts['story']))
+        
     
     print(f"Using {consider_dir} method")
     print(f"Consider {len(pairs)} pairs for comparison")
 
-    categories = ['Plot', 'Creativity', 'Development (Character and Setting)', 'Language Use']
     
     # iterate over the pairs
     for pair in tqdm(pairs, desc='Pair-wise Evaluation', total=len(pairs)):
