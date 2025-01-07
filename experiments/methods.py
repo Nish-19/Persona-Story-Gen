@@ -629,7 +629,7 @@ class StoryGenMethods():
             Construct the Rule Extractor Prompt
             '''
             # construct the user instruction
-            user_instruction_dict = {'writing_prompt': writing_prompt, 'ground_truth_story': profile_story, 'base_story': base_story}
+            user_instruction_dict = {'Writing Prompt': writing_prompt, 'Author Written Story': profile_story, 'Base Story': base_story}
             user_instruction = f"{json.dumps(user_instruction_dict, indent=4)}\n\n"
 
             # construct OpenAI prompt
@@ -704,10 +704,10 @@ class StoryGenMethods():
                 if ectr < len(story_rules_response):
                     continue
 
-                # break after 3 iterations
-                if debug:
-                    if ectr > 2:
-                        break
+                # # break after 3 iterations
+                # if debug:
+                #     if ectr > 2:
+                #         break
 
                 # writing prompt 
                 writing_prompt = example['writing_prompt']
@@ -737,7 +737,7 @@ class StoryGenMethods():
             Construct the Rule Generator Prompt
             '''
             # construct the user instruction
-            user_instruction = f"Writing Prompt: {writing_prompt}"
+            user_instruction = f"New Writing Prompt: {writing_prompt}"
 
             # construct OpenAI prompt
             prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints, few_shot_examples, add_at_end=True)
@@ -766,7 +766,12 @@ class StoryGenMethods():
             os.makedirs(story_rules_output_dir)
 
         # iterate through each file in the test directory
-        for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Story Rules (Schema)', total=len(os.listdir(test_dir))):
+        for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Story Rules (Delta)', total=len(os.listdir(test_dir))):
+
+            if debug:
+                # break after 3 iterations
+                if fctr > 2:
+                    break
                         
             profile_file_path = os.path.join(profile_dir, file)
             test_file_path = os.path.join(test_dir, file)
@@ -805,11 +810,13 @@ class StoryGenMethods():
                     continue
                 
                 if debug:
-                    # break after 2 iterations
-                    if ectr > 1:
+                    # break after 3 iterations
+                    if ectr > 2:
                         break
                 
-                _, profile_indices = self.get_few_shot_examples(profile_data, example, source=source, top_k=3)
+                # _, profile_indices = self.get_few_shot_examples(profile_data, example, source=source, top_k=3)
+
+                profile_indices = [1 for i in range(len(profile_data))]
 
                 # construct few shot examples
                 few_shot_examples = {}
@@ -853,7 +860,7 @@ class StoryGenMethods():
         with open(system_instructions_path, 'r') as f:
             system_instructions = f.read()
         
-        print('Method: Personalized Rule Generator Story Generation')
+        print('Method: Personalized Rule Generator (Delta) Story Generation')
         print(f'Few Shot: True')
         print(f'Source: {source}')
 
@@ -1295,10 +1302,8 @@ def main():
     # few_shot_top_k = 3
     # method choice
     choice = args.choice
-    # choice = 5
-    # # debug 
+    # debug 
     debug = args.debug
-    # debug = True
     # is_profile
     is_profile = args.is_profile
     # # extract rules

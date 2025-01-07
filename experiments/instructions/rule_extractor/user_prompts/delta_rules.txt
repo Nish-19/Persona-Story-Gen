@@ -1,43 +1,46 @@
 ### Task Guidelines
 
 1. **Analysis Phase**:
-   - Use `<thinking></thinking>` tokens to analyze the Ground Truth story systematically based on the following four criteria:
-     - **Plot**: Evaluate how the user structures the story, introduces conflict, engages with the prompt, and resolves the narrative.
-     - **Creativity**: Analyze the user’s approach to blending genres, using humor or irony, reinterpreting the prompt, and integrating unconventional or imaginative elements.
-     - **Development (Character and Setting)**: Examine the user’s methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.
-     - **Language Use**: Assess how the user employs descriptive language, pacing, dialogue, figures of speech, choices of words, and tone to create an engaging and immersive narrative.
+   - Use `<thinking></thinking>` tokens to analyze the Author Written story systematically based on the following four criteria. Your analysis should focus on capturing the Author Written story’s unique style, execution, and alignment with the Writing Prompt, while also identifying key differences between the Author Written story and the Base Story. This comparison will help highlight the distinct narrative elements in the Author Written story.
+     - **Plot**: How the author structures the story, introduces conflict, engages with the prompt, and resolves the narrative.
+     - **Creativity**: Author's approach to blending genres, unconventional reinterpretation of the prompt, and integration of imaginative and unique elements in the story.
+     - **Development (Character and Setting)**: Author's methods for developing multidimensional characters, creating emotional arcs, and establishing immersive settings tied to the story's tone and themes.
+     - **Language Use**: How the author employs diction, sentence structure, tone, rhetorical devices, figures of speech, narrative perspective, descriptive language, pacing, and dialogue to create an engaging and immersive narrative.
 
 2. **Story Rule Generation Phase**:
-   - Output a detailed and granular set of **Story Rules** in `<story_rules></story_rules>` tags. These rules should provide actionable instructions in **direct second-person form** that an LLM can follow to emulate the Ground Truth storytelling style.
+   - Output a detailed and granular set of **Story Rules** in `<story_rules></story_rules>` tags. These rules should provide actionable instructions in **direct second-person form** that an LLM can follow to emulate the Author Written storytelling style.
+   - Ensure the rules are tailored to the Writing Prompt, incorporating its themes, tone, and narrative objectives, while reflecting the unique traits of the Author Written story.
 
 ### Constraints
 
 1. **Avoid Comparisons**:
-   - Do not explicitly compare the Ground Truth and Base Story in the rules. The rules must be independent, absolute, and reflective of the Ground Truth story’s unique style and structure.
+   - Do not explicitly compare the Author Written and Base Story in the rules. The rules must be independent, absolute, and reflective of the Author Written story’s unique style and structure.
 
 2. **No Relative Language**:
    - Avoid using words like "replace," "change," or "deepen." Instead, craft the rules as standalone instructions to achieve the desired storytelling outcome.
 
-3. **Categorical Organization**:
-   - Organize the rules under the four narrative categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use.**
+3. **Incorporate Examples**:
+   - Enrich the rules with concrete and specific examples inspired by the Author Written story. These examples must tie back to the Writing Prompt, illustrating storytelling elements such as plot structure, creative techniques, character and setting development, and language use. Include verbatim examples from the Author Written Story wherever necessary with a special focus on Language Use category.
 
-4. **Alignment with Writing Prompt**:
-   - Ensure the rules emphasize how the narrative reflects the themes, tone, and objectives of the Writing Prompt.
+4. **Categorical Organization**:
+   - Organize the rules under the four narrative categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.
+
+5. **Alignment with Writing Prompt**:
+   - Ensure the rules emphasize how the narrative reflects the themes, tone, and objectives of the Writing Prompt, while staying true to the Author Written story's style.
 
 ### Input Format
 
 ```json
 {
-  "writing_prompt": "<writing prompt>",
-  "ground_truth_story": "<ground-truth story>",
-  "base_story": "<base story>"
+  "Writing Prompt": "<writing prompt>",
+  "Author Written Story": "<author-written story>",
+  "Base Story": "<base story>"
 }
-
 
 ### Output Format
 
 <thinking>
-- Detailed reasoning and analysis here on how the base_story differs from the ground-truth, organized by the four narrative categories:
+- Detailed reasoning and analysis here on how the author-written story differs from the base_story, organized by the four narrative categories:
   1. Plot
   2. Creativity
   3. Development (Character and Setting)
@@ -45,6 +48,7 @@
 </thinking>
 
 <story_rules>
+Insert detailed, actionable rules tailored to the Writing Prompt, including concrete examples inspired by the Author Written story. Include verbatim examples from the Author Written Story wherever necessary.
 - **Plot**:
   - First actionable rule here.
   - Second actionable rule here.
