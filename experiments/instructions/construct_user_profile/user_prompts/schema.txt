@@ -1,76 +1,67 @@
-#### Instructions  
+## Input Details
+- **Author History**: A list of dictionaries, where each dictionary represents a single writing instance with the following keys:
+  - **Writing Prompt**: The scenario or theme for which the story is written.
+  - **Author-Written Story**: The author’s unique interpretation of the corresponding writing prompt.
+- A **Specified Storytelling Aspect** to analyze (e.g., Plot, Creativity, Development, or Language Use).
 
-1. **Analyze the Story**  
-   - Use the `<thinking></thinking>` tokens to analyze the story systematically. Address each question listed below for the four criteria, ensuring a detailed and thoughtful response.  
+## Output Format
+1. First, use the `<thinking></thinking>` tokens to think deeply about patterns and recurring tendencies across the Author History. Analyze the list of writing prompts and author-written stories to identify overarching themes, stylistic patterns, and narrative tendencies based on the specified storytelling aspect. Also, think of a short descriptive phrase summarizing each writing prompt (e.g., “the story regarding ‘child soldiers baiting summoners’”) to frame the evidence in your output.
 
-2. **Generate the User Writing Sheet**  
-   - After completing the analysis, output a well-structured **User Writing Sheet** under the `<user_writing_sheet></user_writing_sheet>` tag.  
-   - Provide responses to every category and it's respective question in the form of 2-3 short, simple sentences tailored to the given story and writing prompt. Do not repeat the questions, just provide the answer to every question under the respective header.
-
----
-
-#### Input Format  
-- A single user-written story paired with its writing prompt (provided as a Python dictionary). Additional metadata, such as story length, fandoms, relationship types, etc., may also be included.   
-
----
-
-#### Output Format  
-<thinking>  
-Add the general analysis for the four criteria: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use** that will help you to answer the following questions better.
-</thinking>  
-<user_writing_sheet>  
-
-### **Plot**  
-
-#### Story Beginning  
-How does the user begin the story, and what narrative devices or stylistic choices do they use to set the tone?  
-
-#### Story Ending  
-How does the user conclude the story, and what narrative devices or stylistic choices contribute to the resolution or final impact?  
-
-#### Narrative Structure  
-How does the user structure the story with a recognizable beginning, middle, and end, and what techniques do they use to connect these elements cohesively?  
-
-### **Creativity**  
-
-#### Unique Elements  
-What original or imaginative elements does the user add to the story that were not explicitly mentioned in the prompt?  
-
-#### Engaging Themes and Imagery  
-How does the user create engaging characters, themes, or imagery that draw the reader in and resonate with the story’s tone?  
-
-#### Use of Tropes or Clichés  
-How does the user handle common tropes or clichés, and do they use them intentionally for effect or subvert them to add originality?  
-
-### **Development (Character and Setting)**  
-
-#### Main Character  
-How does the user develop the main character, especially if it is derived from the prompt, and how is their role or arc established?  
-
-#### Setting Establishment  
-How does the user establish the setting, and what specific details or techniques make it immersive or relevant to the story?  
-
-#### Supporting Characters and Interactions  
-How does the user incorporate additional characters, and what role do their interactions (e.g., dialogue or actions) play in advancing the story?  
-
-### **Language Use**  
-
-#### Narrative Perspective  
-What grammatical person does the user employ, and how do they use dialogue or monologue to add depth to the narrative?  
-
-#### Stylistic Elements  
-How does the user utilize sentence structure, vocabulary, and rhetorical devices to enhance the story’s impact or tone?  
-
-#### Tone and Mood Alignment  
-How does the tone or mood of the story align with the writing prompt, and what word choices or recurring phrases reinforce this alignment?  
-
-</user_writing_sheet>  
+2. Next, output your analysis in the `<writing_style></writing_style>` tokens. For the specified storytelling aspect:
+   i. Provide **independent claims** about the author’s writing tendencies. These should reflect general writing tendencies without referencing specific story details or individual writing prompts.
+   ii. Support each claim with **one piece of contextualized evidence** from the Author History. Use the short descriptive phrase summarizing the relevant writing prompt (obtained earlier in the `<thinking>` tokens) to frame the evidence. Ensure that evidence is either short excerpts (taken verbatim) from the author-written stories or concise summaries of relevant story excerpts tied to their respective writing prompts.
+   iii. Prefer to use evidence verbatim from the story text wherever applicable.
 
 ---
 
-Your output must fully address each question within the tags `<thinking>` and `<user_writing_sheet>`. Ensure the responses provide actionable insights into the user's storytelling style and are easy to parse (the content is included within the respective tags) for further analysis.  
+## Guidelines for Claims
+- Claims must be unique and **should not repeat insights**.
+- Claims must reflect **broader patterns or tendencies** in the author’s writing style, expressed in a **concise and evidence-based** manner. Claims must avoid being tied to specific details of individual stories (e.g., plot points, characters, or settings). Instead, they should present generalized observations about the author’s overall writing style and recurring traits (e.g., “The author tends to use vivid, sensory imagery to create an immersive atmosphere”).
+- Claims must not use the terms "Author-Written Story" or refer to individual writing prompts explicitly.
+- Claims must not include adverbs of time like "often," "frequently," "sometimes," etc., to ensure they remain precise and grounded in the evidence provided.
+- Claims must be written in **simple and clear language**, avoiding unnecessary literary jargon or overly complex phrasing.
+- Claims must not include references to characters or settings outside the stories or assume the reader has general knowledge about external references.
+- Each claim must be written in a way that it is **perfectly supported by the chosen contextualized evidence**. Avoid including any phrases or interpretations in the claim that are not explicitly demonstrated by the evidence provided.
+
+---
+
+## Guidelines for Evidence
+- **Drawn from Author History**: Evidence must be drawn from the author-written stories within the Author History and explicitly tied to the relevant writing prompt.
+- **Use a Framing Phrase**: Use the short descriptive phrase to frame the evidence in the context of the relevant writing prompt. For example:
+  - “In the story regarding ‘child soldiers baiting summoners,’ the author uses log entries to create a sense of realism.”
+- **Evidence Must Be Explicitly Supported by the Stories**: Ensure that the evidence is directly drawn from the stories and clearly aligns with the details provided in the narrative. Avoid vague or inferred connections not substantiated by the text.
+- **Provide Context to Clarify the Evidence's Relevance**: Include sufficient context from the stories to make the evidence's relevance to the claim clear. Avoid isolating details that may lose their meaning or significance without additional background.
+- **Avoid Over-Interpretation or Over-Extrapolation**: Ensure the evidence remains grounded in the stories' content and does not overstate or exaggerate its implications. Avoid adding meaning that cannot be reasonably inferred from the text.
+- **Review Evidence Soundness**: Ensure evidence fully supports the described claim and avoid any contradictions with the overall body of the author’s work.
+
+---
+## Guidelines for Analysis
+
+Your task is to analyze the author’s story writing style and extract **unique insights** into their storytelling tendencies given the specific storytelling aspect. Additionally, feel free to include other tendencies that are important for capturing the author’s unique style, even if they are not explicitly mentioned in the storytelling aspect.
 
 
+## Special Instructions
+1. Always **think** of a short descriptive phrase summarizing the writing prompts to frame the evidence.
+2. Use the specified structure for the output:
+   - Begin with a **set of claims**.
+   - Each claim is followed by a **contextualized evidence** from the Author History.
+3. Ensure that the analysis captures patterns and recurring tendencies across multiple stories in the Author History.
+4. Focus on addressing specific traits or behaviors where the author demonstrates distinctive tendencies. Skip traits or behaviors that yield no unique insights.
+5. Claims must strictly avoid redundancy and provide distinct insights.
+
+---
+
+## Sample Output Structure
+<thinking>
+Deeply reason on recurring tendencies across the Author History for the specified storytelling aspect. Think of short descriptive phrases summarizing the prompts: "the story regarding a battle for lost artifacts," "the story regarding a forbidden friendship," etc.
+</thinking>
+<writing_style>
+1. **Claim about author’s writing style.**
+   - Evidence: In the story regarding “short description of the prompt,” <evidence from one of the stories in the Author History>.
+2. **Claim about author’s writing style.**
+   - Evidence: In the story regarding “short description of the prompt,” <evidence from one of the stories in the Author History>.
+...
+</writing_style>
 
 
-
+Ensure that your output is within the respective tags `<thinking>` and `<writing_style>`, to parse the output seamlessly.
