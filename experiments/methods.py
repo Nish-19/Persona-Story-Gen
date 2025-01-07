@@ -412,26 +412,26 @@ class StoryGenMethods():
             prompt = construct_prompt_message(system_instructions_sheet, user_instruction, user_constraints_sheet)
             return prompt        
 
-        # def construct_story_rules_prompt(writing_prompt, user_profile): 
-        #     '''
-        #     Construct the Prompt for Story Rules
-        #     '''
-        #     # construct the user instruction
-        #     user_instruction_dict = {'writing_prompt': writing_prompt, 'user_profile': user_profile}
-        #     user_instruction = f"{json.dumps(user_instruction_dict, indent=4)}\n\n"
+        def construct_story_rules_prompt(writing_prompt, user_profile): 
+            '''
+            Construct the Prompt for Story Rules
+            '''
+            # construct the user instruction
+            user_instruction_dict = {'Author Writing Sheet': user_profile, 'Writing Prompt': writing_prompt}
+            user_instruction = f"{json.dumps(user_instruction_dict, indent=4)}\n\n"
 
-        #     # construct OpenAI prompt
-        #     prompt = construct_prompt_message(system_instructions_story_rules, user_instruction, user_constraints_story_rules)
-        #     return prompt
+            # construct OpenAI prompt
+            prompt = construct_prompt_message(system_instructions_story_rules, user_instruction, user_constraints_story_rules)
+            return prompt
     
-        # def extract_writing_sheet(sheet_output, key='writing_style'):
-        #     '''
-        #     extract text between the tags <writing_style></writing_style>
-        #     '''            
-        #     sheet = re.search(rf'<{key}>(.*?)</{key}>', sheet_output, re.DOTALL).group(1)
-        #     if not sheet:
-        #         sheet = sheet_output
-        #     return sheet
+        def extract_writing_sheet(sheet_output, key='writing_style'):
+            '''
+            extract text between the tags <writing_style></writing_style>
+            '''            
+            sheet = re.search(rf'<{key}>(.*?)</{key}>', sheet_output, re.DOTALL).group(1)
+            if not sheet:
+                sheet = sheet_output
+            return sheet
         
     
         print('Method: Schema User Profile')
@@ -514,106 +514,111 @@ class StoryGenMethods():
                 # write the results to the output directory
                 with open(output_file_path, 'w') as f:
                     json.dump(user_sheet_response, f, indent=4)
-
-
         
-        # # NOTE: STEP 3: Generate story rules for each writing prompt in the test data
-        # test_dir = f'{self.data_split_dir}/{source}/test'
+        # NOTE: STEP 2: Generate story rules for each writing prompt in the test data
 
-        # # story rules output directory
-        # story_rules_output_dir = f'{self.story_rules_dir}/schema/{source}'
-        # if not os.path.exists(story_rules_output_dir):
-        #     os.makedirs(story_rules_output_dir)
+        # story rules output directory
+        story_rules_output_dir = f'{self.story_rules_dir}/schema/{source}'
+        if not os.path.exists(story_rules_output_dir):
+            os.makedirs(story_rules_output_dir)
         
-        # # system instructions
-        # system_instructions_story_rules_path = f'{self.user_profile_instructions_dir}/system_prompts/rules.txt'
-        # # user instructions
-        # user_instructions_story_rules_path = f'{self.user_profile_instructions_dir}/user_prompts/rules.txt'
+        # system instructions
+        system_instructions_story_rules_path = f'{self.rule_extractor_instructions_dir}/system_prompts/delta_schema.txt'
+        # user instructions
+        user_instructions_story_rules_path = f'{self.rule_extractor_instructions_dir}/user_prompts/delta_schema.txt'
 
-        # # read the system instructions
-        # with open(system_instructions_story_rules_path, 'r') as f:
-        #     system_instructions_story_rules = f.read()
+        # read the system instructions
+        with open(system_instructions_story_rules_path, 'r') as f:
+            system_instructions_story_rules = f.read()
         
-        # # read the user instructions
-        # with open(user_instructions_story_rules_path, 'r') as f:
-        #     user_constraints_story_rules = f.read()
+        # read the user instructions
+        with open(user_instructions_story_rules_path, 'r') as f:
+            user_constraints_story_rules = f.read()
         
-        # # iterate through each file in the test directory
-        # for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Story Rules (Schema)', total=len(os.listdir(test_dir))):
+        # iterate through each file in the test directory
+        for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Story Rules (Schema)', total=len(os.listdir(test_dir))):
 
-        #     test_file_path = os.path.join(test_dir, file)
-        #     # test data
-        #     with open(test_file_path, 'r') as f:
-        #         test_data = json.load(f)
-            
-        #     # output file path
-        #     output_file_path = os.path.join(story_rules_output_dir, file)
+            if debug:
+                # break after 3 iterations
+                if fctr > 2:
+                    break
 
-        #     # check if the output file already exists
-        #     if os.path.exists(output_file_path):
-        #         # read the output file
-        #         with open(output_file_path, 'r') as f:
-        #             story_rules_response = json.load(f)
-        #     else:
-        #         story_rules_response = []
-            
-            
-        #     try:
-        #         # open user profile response
-        #         user_profile_response_path = os.path.join(user_profile_output_dir, file)
-        #         with open(user_profile_response_path, 'r') as f:
-        #             user_profile_response = json.load(f)
 
-        #         user_profile = extract_writing_sheet(user_profile_response[-1], key='combined_user_sheet')
-        #     except Exception as e:
-        #         continue
+            test_file_path = os.path.join(test_dir, file)
+            # test data
+            with open(test_file_path, 'r') as f:
+                test_data = json.load(f)
             
-        #     # iterate through each example in the test data
-        #     for ectr, example in enumerate(test_data):
-        #         # check if the example already exists in the story rules response
-        #         if ectr < len(story_rules_response):
-        #             continue
+            # output file path
+            output_file_path = os.path.join(story_rules_output_dir, file)
+
+            # check if the output file already exists
+            if os.path.exists(output_file_path):
+                # read the output file
+                with open(output_file_path, 'r') as f:
+                    story_rules_response = json.load(f)
+            else:
+                story_rules_response = []
+            
+            try:
+                # open user profile response
+                user_profile_response_path = os.path.join(user_sheets_output_dir, file)
+                with open(user_profile_response_path, 'r') as f:
+                    user_profile_response = json.load(f)
                 
-        #         if debug:
-        #             # break after 2 iterations
-        #             if ectr > 1:
-        #                 break
+                user_profile = ''
+                for cat, response in user_profile_response.items():
+                    user_profile_cat = extract_writing_sheet(response, key='writing_style')
+                    user_profile += f"\n\n### **{cat}**\n\n{user_profile_cat}\n\n"
 
-        #         # construct the prompt
-        #         prompt = construct_story_rules_prompt(example['writing_prompt'], user_profile)
-        #         # call the OpenAI model
-        #         try:
-        #             response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
-        #         except Exception as e:
-        #             response = None
-        #         story_rules_response.append(response)
+            except Exception as e:
+                continue
+            
+            # iterate through each example in the test data
+            for ectr, example in enumerate(test_data):
+                # check if the example already exists in the story rules response
+                if ectr < len(story_rules_response):
+                    continue
+                
+                if debug:
+                    # break after 3 iterations
+                    if ectr > 2:
+                        break
 
-        #         # write the results to the output directory
-        #         with open(output_file_path, 'w') as f:
-        #             json.dump(story_rules_response, f, indent=4)
-    
+                # construct the prompt
+                prompt = construct_story_rules_prompt(example['writing_prompt'], user_profile)
+                # call the OpenAI model
+                try:
+                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                except Exception as e:
+                    response = None
+                story_rules_response.append(response)
 
-        # # NOTE: STEP 4: Generate stories using the user profile generated above
-        # if few_shot_top_k != 1:
-        #     suffix = f'_{few_shot_top_k}'
-        # else:
-        #     suffix = ''
+                # write the results to the output directory
+                with open(output_file_path, 'w') as f:
+                    json.dump(story_rules_response, f, indent=4)
 
-        # story_output_dir = f'{self.output_dir}/schema{suffix}/{source}'
-        # if not os.path.exists(story_output_dir):
-        #     os.makedirs(story_output_dir)
+        # NOTE: STEP 4: Generate stories using the user profile generated above
+        if few_shot_top_k != 1:
+            suffix = f'_{few_shot_top_k}'
+        else:
+            suffix = ''
+
+        story_output_dir = f'{self.output_dir}/schema/{source}'
+        if not os.path.exists(story_output_dir):
+            os.makedirs(story_output_dir)
         
-        # # system instructions
-        # system_instructions_path = f'{self.generate_story_user_profile_instructions_dir}/system_prompts/{source}.txt'
-        # # read the system instructions
-        # with open(system_instructions_path, 'r') as f:
-        #     system_instructions = f.read()
+        # system instructions
+        system_instructions_path = f'{self.generate_story_user_profile_instructions_dir}/system_prompts/{source}.txt'
+        # read the system instructions
+        with open(system_instructions_path, 'r') as f:
+            system_instructions = f.read()
         
-        # print('Method: User Profile (Schema) Story Generation')
-        # print(f'Few Shot: True')
-        # print(f'Source: {source}')
+        print('Method: Schema Story Generation')
+        print(f'Few Shot: True')
+        print(f'Source: {source}')
     
-        # self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
     
     def rule_generator(self, source='Reddit', is_profile=False, debug=False):
         '''
@@ -1150,108 +1155,110 @@ class StoryGenMethods():
                 with open(output_file_path, 'w') as f:
                     json.dump(user_profile_response, f, indent=4)
         
+        # NOTE: STEP 3: Generate story rules for each writing prompt in the test data
+        test_dir = f'{self.data_split_dir}/{source}/test'
+
+        # story rules output directory
+        story_rules_output_dir = f'{self.story_rules_dir}/delta_schema/{source}'
+        if not os.path.exists(story_rules_output_dir):
+            os.makedirs(story_rules_output_dir)
         
-        # # NOTE: STEP 3: Generate story rules for each writing prompt in the test data
-        # test_dir = f'{self.data_split_dir}/{source}/test'
+        # system instructions
+        system_instructions_story_rules_path = f'{self.rule_extractor_instructions_dir}/system_prompts/delta_schema.txt'
+        # user instructions
+        user_instructions_story_rules_path = f'{self.rule_extractor_instructions_dir}/user_prompts/delta_schema.txt'
 
-        # # story rules output directory
-        # story_rules_output_dir = f'{self.story_rules_dir}/delta_schema/{source}'
-        # if not os.path.exists(story_rules_output_dir):
-        #     os.makedirs(story_rules_output_dir)
+        # read the system instructions
+        with open(system_instructions_story_rules_path, 'r') as f:
+            system_instructions_story_rules = f.read()
         
-        # # system instructions
-        # system_instructions_story_rules_path = f'{self.rule_extractor_instructions_dir}/system_prompts/delta_schema.txt'
-        # # user instructions
-        # user_instructions_story_rules_path = f'{self.rule_extractor_instructions_dir}/user_prompts/delta_schema.txt'
-
-        # # read the system instructions
-        # with open(system_instructions_story_rules_path, 'r') as f:
-        #     system_instructions_story_rules = f.read()
+        # read the user instructions
+        with open(user_instructions_story_rules_path, 'r') as f:
+            user_constraints_story_rules = f.read()
         
-        # # read the user instructions
-        # with open(user_instructions_story_rules_path, 'r') as f:
-        #     user_constraints_story_rules = f.read()
-        
-        # # iterate through each file in the test directory
-        # for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Story Rules (Delta Schema)', total=len(os.listdir(test_dir))):
+        # iterate through each file in the test directory
+        for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Story Rules (Delta Schema)', total=len(os.listdir(test_dir))):
 
-        #     if debug:
-        #         # break after 3 iterations
-        #         if fctr > 2:
-        #             break
+            if debug:
+                # break after 3 iterations
+                if fctr > 2:
+                    break
 
 
-        #     test_file_path = os.path.join(test_dir, file)
-        #     # test data
-        #     with open(test_file_path, 'r') as f:
-        #         test_data = json.load(f)
+            test_file_path = os.path.join(test_dir, file)
+            # test data
+            with open(test_file_path, 'r') as f:
+                test_data = json.load(f)
             
-        #     # output file path
-        #     output_file_path = os.path.join(story_rules_output_dir, file)
+            # output file path
+            output_file_path = os.path.join(story_rules_output_dir, file)
 
-        #     # check if the output file already exists
-        #     if os.path.exists(output_file_path):
-        #         # read the output file
-        #         with open(output_file_path, 'r') as f:
-        #             story_rules_response = json.load(f)
-        #     else:
-        #         story_rules_response = []
+            # check if the output file already exists
+            if os.path.exists(output_file_path):
+                # read the output file
+                with open(output_file_path, 'r') as f:
+                    story_rules_response = json.load(f)
+            else:
+                story_rules_response = []
             
-        #     try:
-        #         # open user profile response
-        #         user_profile_response_path = os.path.join(user_profile_output_dir, file)
-        #         with open(user_profile_response_path, 'r') as f:
-        #             user_profile_response = json.load(f)
+            try:
+                # open user profile response
+                user_profile_response_path = os.path.join(user_profile_output_dir, file)
+                with open(user_profile_response_path, 'r') as f:
+                    user_profile_response = json.load(f)
 
-        #         user_profile = extract_writing_sheet(user_profile_response[-1], key='combined_author_sheet')
-        #     except Exception as e:
-        #         continue
+                if len(user_profile_response) == 1:
+                    user_profile = extract_writing_sheet(user_profile_response[-1], key='writing_style')
+                else:
+                    user_profile = extract_writing_sheet(user_profile_response[-1], key='combined_author_sheet')
+            except Exception as e:
+                continue
             
-        #     # iterate through each example in the test data
-        #     for ectr, example in enumerate(test_data):
-        #         # check if the example already exists in the story rules response
-        #         if ectr < len(story_rules_response):
-        #             continue
+            # iterate through each example in the test data
+            for ectr, example in enumerate(test_data):
+                # check if the example already exists in the story rules response
+                if ectr < len(story_rules_response):
+                    continue
                 
-        #         if debug:
-        #             # break after 3 iterations
-        #             if ectr > 2:
-        #                 break
+                if debug:
+                    # break after 3 iterations
+                    if ectr > 2:
+                        break
 
-        #         # construct the prompt
-        #         prompt = construct_story_rules_prompt(example['writing_prompt'], user_profile)
-        #         # call the OpenAI model
-        #         try:
-        #             response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
-        #         except Exception as e:
-        #             response = None
-        #         story_rules_response.append(response)
+                # construct the prompt
+                prompt = construct_story_rules_prompt(example['writing_prompt'], user_profile)
+                # call the OpenAI model
+                try:
+                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                except Exception as e:
+                    response = None
+                story_rules_response.append(response)
 
-        #         # write the results to the output directory
-        #         with open(output_file_path, 'w') as f:
-        #             json.dump(story_rules_response, f, indent=4)
+                # write the results to the output directory
+                with open(output_file_path, 'w') as f:
+                    json.dump(story_rules_response, f, indent=4)
 
-        # # NOTE: STEP 4: Generate stories using the user profile generated above
-        # if few_shot_top_k != 1:
-        #     suffix = f'_{few_shot_top_k}'
-        # else:
-        #     suffix = ''
+        # NOTE: STEP 4: Generate stories using the user profile generated above
+        if few_shot_top_k != 1:
+            suffix = f'_{few_shot_top_k}'
+        else:
+            suffix = ''
 
-        # story_output_dir = f'{self.output_dir}/delta_schema/{source}'
-        # if not os.path.exists(story_output_dir):
-        #     os.makedirs(story_output_dir)
+        story_output_dir = f'{self.output_dir}/delta_schema/{source}'
+        if not os.path.exists(story_output_dir):
+            os.makedirs(story_output_dir)
         
-        # # system instructions
-        # system_instructions_path = f'{self.generate_story_user_profile_instructions_dir}/system_prompts/{source}.txt'
-        # # read the system instructions
-        # with open(system_instructions_path, 'r') as f:
-        #     system_instructions = f.read()
+        # system instructions
+        system_instructions_path = f'{self.generate_story_user_profile_instructions_dir}/system_prompts/{source}.txt'
+        # read the system instructions
+        with open(system_instructions_path, 'r') as f:
+            system_instructions = f.read()
         
-        # print('Method: Delta Schema Story Generation')
-        # print(f'Few Shot: True')
-        # print(f'Source: {source}')
+        print('Method: Delta Schema Story Generation')
+        print(f'Few Shot: True')
+        print(f'Source: {source}')
     
-        # self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
 
 
 
