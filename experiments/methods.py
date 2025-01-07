@@ -816,7 +816,7 @@ class StoryGenMethods():
                 
                 # _, profile_indices = self.get_few_shot_examples(profile_data, example, source=source, top_k=3)
 
-                profile_indices = [1 for i in range(len(profile_data))]
+                profile_indices = [i for i in range(len(profile_data))]
 
                 # construct few shot examples
                 few_shot_examples = {}
