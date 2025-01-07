@@ -140,6 +140,8 @@ def main():
         consider_dir = f'delta{top_k_suffix}'
     elif choice == 5:
         consider_dir = f'delta_schema{top_k_suffix}'
+    elif choice == 6:
+        consider_dir = f'oracle{top_k_suffix}'
 
     expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
 

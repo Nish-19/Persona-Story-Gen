@@ -106,7 +106,7 @@ def parse_args():
     # model choice 
     parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
     # evaluation choice 
-    parser.add_argument('--eval_choice', type=int, default=1, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
+    parser.add_argument('--eval_choice', type=int, default=2, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
 

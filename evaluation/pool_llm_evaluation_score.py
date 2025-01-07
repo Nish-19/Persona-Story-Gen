@@ -159,6 +159,8 @@ def main():
         consider_dir = f'delta{top_k_suffix}'
     elif choice == 5:
         consider_dir = f'delta_schema{top_k_suffix}'
+    elif choice == 6:
+        consider_dir = f'oracle{top_k_suffix}'
 
     if source == 'all':
         sources = ['Reddit', 'AO3', 'narrativemagazine', 'newyorker', 'Storium']
