@@ -654,7 +654,7 @@ class StoryGenMethods():
         if is_profile:
             story_rules_output_dir = f'{self.output_dir_profile}/rules/{source}'
         else:
-            story_rules_output_dir = f'{self.output_dir}/oracle_rules/{source}'
+            story_rules_output_dir = f'{self.story_rules_dir}/oracle/{source}'
         if not os.path.exists(story_rules_output_dir):
             os.makedirs(story_rules_output_dir)
 
@@ -881,7 +881,7 @@ class StoryGenMethods():
         with open(system_instructions_path, 'r') as f:
             system_instructions = f.read()
         
-        source_constraints_dir = f'{self.output_dir}/oracle_rules/{source}'
+        source_constraints_dir = f'{self.story_rules_dir}/oracle/{source}'
         
         print('Method: Oracle Story Generation')
         print(f'Few Shot: True')
