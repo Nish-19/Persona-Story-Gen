@@ -100,9 +100,10 @@ def parse_args():
     parser.add_argument('--choice', type=int, default=5, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
     # model choice 
     parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
-
-    # verbose
-    parser.add_argument('--verbose', type=bool, default=False, help='Verbose')
+    # evaluation choice 
+    parser.add_argument('--eval_choice', type=int, default=1, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
+    # verbose (store_true)
+    parser.add_argument('--verbose', action='store_true', help='Verbose')
     # pool method
     parser.add_argument('--pool_choice', type=int, default=1, help='Choice of the method: 1. Standard, 2. Shuffle')
 
@@ -130,6 +131,9 @@ def main():
     choice = args.choice
     # model choice 
     model_choice = args.model_choice
+    # eval choice
+    eval_choice = args.eval_choice
+
 
     # choice = 3
 
@@ -158,7 +162,10 @@ def main():
 
     # iterate over the sources
     for source in sources:
-        eval_dir_name = 'author_sheet_score'
+        if eval_choice == 1:
+            eval_dir_name = 'author_sheet_score'
+        elif eval_choice == 2:
+            eval_dir_name = 'author_sheet_score_schema'
 
         eval_path = f'{eval_dir_name}/{consider_dir}/{model_choice}/{source}.json' 
 

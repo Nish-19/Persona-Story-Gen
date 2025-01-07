@@ -3,6 +3,7 @@ evaluate the two stories based on the user writing sheet
 '''
 
 import os 
+import sys
 import json 
 from ast import literal_eval
 import argparse
@@ -27,7 +28,7 @@ def construct_compare_prompt_message(gt_wp, writing_sheet, cat, story_a, story_b
 def decode_unicode_escapes(text):
     return text.encode('utf-8').decode('unicode_escape')
 
-def organize_user_sheet_new(user_sheet):
+def organize_user_sheet(user_sheet):
     '''
     Category-wise organization of user sheet with statement and example combined.
     '''
@@ -38,7 +39,7 @@ def organize_user_sheet_new(user_sheet):
     example_pattern = r"- Evidence: (.+?) \[(\d+(?:, \d+)*)\]"  # Matches the examples and sources
 
     categories = re.findall(category_pattern, user_sheet)  # Extract headers
-    category_dict = {category: [] for category in categories}  # Initialize dictionary for each category
+    category_dict = {category: '' for category in categories}  # Initialize dictionary for each category
 
     # Split the user_sheet into sections based on categories
     sections = re.split(category_pattern, user_sheet)
@@ -52,10 +53,45 @@ def organize_user_sheet_new(user_sheet):
         statements = re.findall(statement_pattern, content)
         examples = re.findall(example_pattern, content)
 
+        ctr = 1
         for statement, (example, sources) in zip(statements, examples):
-            category_dict[category].append(decode_unicode_escapes(statement.strip()))
+            # category_dict[category].append(decode_unicode_escapes(statement.strip()))
+            category_dict[category] += f"{ctr}. {decode_unicode_escapes(statement.strip())} "
+            ctr += 1
 
     return category_dict
+
+def sanitize_text(text):
+    """
+    Clean up hidden characters, excessive whitespaces, and normalize line endings.
+    """
+    # Normalize newlines to \n
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
+
+    # Remove non-breaking spaces and other invisible characters
+    text = re.sub(r'[^\S\n]', ' ', text)  # Replace non-space whitespace with space
+
+    # Strip leading/trailing whitespaces and normalize multiple spaces
+    text = re.sub(r'\s+', ' ', text).strip()
+
+    return text
+
+
+def clear_evidence(user_sheet):
+    """
+    Remove all 'Evidence' fields from the user_sheet and clean up the text.
+    Split the cleaned claims into a list of individual claims.
+    """
+    # Match lines containing '- Evidence:' and remove them
+    cleaned_sheet = re.sub(r' - Evidence:.*?(?=(\d+\.|$))', '', user_sheet, flags=re.DOTALL)
+
+    # Replace multiple consecutive spaces or newlines with a single newline
+    cleaned_sheet = re.sub(r'\s*\n\s*', '\n', cleaned_sheet.strip())
+
+    # replace ** with ''
+    cleaned_sheet = cleaned_sheet.replace('**', '')
+
+    return cleaned_sheet
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -68,6 +104,8 @@ def parse_args():
     parser.add_argument('--choice', type=int, default=5, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
     # model choice 
     parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
+    # evaluation choice 
+    parser.add_argument('--eval_choice', type=int, default=1, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
 
@@ -87,6 +125,8 @@ def main():
     choice = args.choice
     # model choice 
     model_choice = args.model_choice
+    # eval choice
+    eval_choice = args.eval_choice
     # verbose
     verbose = args.verbose
 
@@ -127,13 +167,16 @@ def main():
     expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
 
     # user writing sheet directory
-    if choice == 5:
+    if eval_choice == 1:
         user_writing_sheet_dir = f'../experiments/user_profile/delta_schema/{source}'
-    else:
+    elif eval_choice == 2:
         user_writing_sheet_dir = f'../experiments/user_profile/schema/{source}'
 
     # results output directory 
-    output_dir = f"author_sheet_score/{consider_dir}/{model_choice}"
+    if eval_choice == 1:
+        output_dir = f"author_sheet_score/{consider_dir}/{model_choice}"
+    elif eval_choice == 2:
+        output_dir = f"author_sheet_score_schema/{consider_dir}/{model_choice}"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
@@ -193,23 +236,46 @@ def main():
             continue
     
         # get the writing sheet
-        writing_sheet = None
-        for idx in range(len(writing_sheet_list)-1, -1, -1):
-            try:
-                writing_sheet_raw = writing_sheet_list[idx]
-                # extract the sheet in the tags <combined_author_sheet></<combined_author_sheet>
-                writing_sheet = re.search(r'<combined_author_sheet>(.*?)</combined_author_sheet>', writing_sheet_raw, re.DOTALL).group(1)
-                if writing_sheet == '':
-                    writing_sheet = writing_sheet_raw
-                break
-            except:
+        writing_sheet_categories = {}
+        if eval_choice == 1:
+            writing_sheet = None
+            for idx in range(len(writing_sheet_list)-1, -1, -1):
+                try:
+                    writing_sheet_raw = writing_sheet_list[idx]
+                    # extract the sheet in the tags <combined_author_sheet></<combined_author_sheet>
+                    writing_sheet = re.search(r'<combined_author_sheet>(.*?)</combined_author_sheet>', writing_sheet_raw, re.DOTALL).group(1)
+                    if writing_sheet == '':
+                        writing_sheet = writing_sheet_raw
+                    break
+                except:
+                    continue
+            if writing_sheet is None:
+                if verbose:
+                    print('Skipping None', file)
                 continue
-        if writing_sheet is None:
+            
+            writing_sheet_categories = organize_user_sheet(writing_sheet)
+
+        elif eval_choice == 2:
+            for cat, value in writing_sheet_list.items():
+                # extract writing sheet in the tags <writing_style></<writing_style> 
+                try: 
+                    writing_sheet = re.search(r'<writing_style>(.*?)</writing_style>', value, re.DOTALL).group(1)
+                    if writing_sheet == '':
+                        writing_sheet = value
+                except:
+                    writing_sheet = value
+
+                # Sanitize extracted text
+                writing_sheet = sanitize_text(writing_sheet)
+
+                # Clear evidence from the writing sheet
+                writing_sheet_categories[cat] = clear_evidence(writing_sheet)
+        
+        if len(writing_sheet_categories) == 0:
             if verbose:
-                print('Skipping None', file)
+                print('Skipping None in writing_sheet_categories', file)
             continue
-    
-        writing_sheet_categories = organize_user_sheet_new(writing_sheet)
         
         # iterrate only over expts_data 
         for ectr, expts in enumerate(expts_data):
