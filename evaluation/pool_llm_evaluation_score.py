@@ -99,11 +99,11 @@ def parse_args():
     # method choice 
     parser.add_argument('--choice', type=int, default=5, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
     # model choice 
-    parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
+    parser.add_argument('--model_choice', type=int, default=2, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
     # history (store_true)
     parser.add_argument('--history', action='store_true', help='Evaluate on Past History as compared to the ground truth')
-    # verbose
-    parser.add_argument('--verbose', type=bool, default=False, help='Verbose')
+    # verbose (store_true)
+    parser.add_argument('--verbose', action='store_true', help='Verbose')
     # pool method
     parser.add_argument('--pool_choice', type=int, default=1, help='Choice of the method: 1. Standard, 2. Shuffle')
 

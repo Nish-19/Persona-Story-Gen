@@ -35,6 +35,7 @@ def organize_user_sheet(user_sheet):
 
     # Extract headers and content
     category_pattern = r"### \*\*(.+?)\*\*"  # Matches the category headers
+    # category_pattern = r"### ?\*{0,2}(.+?)\*{0,2}"  # Matches the category headers
     statement_pattern = r"\d+\. \*\*(.+?)\*\*"  # Matches the numbered statements
     example_pattern = r"- Evidence: (.+?) \[(\d+(?:, \d+)*)\]"  # Matches the examples and sources
 
@@ -185,6 +186,8 @@ def main():
     if os.path.exists(output_file):
         with open(output_file, 'r') as f:
             all_responses = json.load(f)
+        # convert all_responses to defaultdict
+        all_responses = defaultdict(dict, all_responses)
     else:
         all_responses = defaultdict(dict)
     
@@ -238,23 +241,48 @@ def main():
         # get the writing sheet
         writing_sheet_categories = {}
         if eval_choice == 1:
-            writing_sheet = None
-            for idx in range(len(writing_sheet_list)-1, -1, -1):
-                try:
-                    writing_sheet_raw = writing_sheet_list[idx]
-                    # extract the sheet in the tags <combined_author_sheet></<combined_author_sheet>
-                    writing_sheet = re.search(r'<combined_author_sheet>(.*?)</combined_author_sheet>', writing_sheet_raw, re.DOTALL).group(1)
-                    if writing_sheet == '':
-                        writing_sheet = writing_sheet_raw
-                    break
-                except:
+            if len(writing_sheet_list) == 1:
+                writing_sheet = re.search(r'<writing_style>(.*?)</writing_style>', writing_sheet_list[0], re.DOTALL).group(1)
+                if writing_sheet == '':
+                    writing_sheet = writing_sheet_raw
+
+                # extract elements 
+                for cctr, cat in enumerate(categories):
+                    # extract text between cat and categories[cctr+1]
+                    # find index of ### {cat}
+                    cat_idx = writing_sheet.find(f'### {cat}')
+                    # find index of ### {next category}
+                    if cctr == len(categories)-1:
+                        next_cat_idx = len(writing_sheet)
+                    else:
+                        next_cat_idx = writing_sheet.find(f'### {categories[cctr+1]}')
+                    
+                    # extract the text
+                    writing_sheet_temp = writing_sheet[cat_idx+len(f'### {cat}'):next_cat_idx]
+                    
+                    # Sanitize extracted text
+                    writing_sheet_temp = sanitize_text(writing_sheet_temp)
+
+                    # Clear evidence from the writing sheet
+                    writing_sheet_categories[cat] = clear_evidence(writing_sheet_temp)
+            else:
+                writing_sheet = None
+                for idx in range(len(writing_sheet_list)-1, -1, -1):
+                    try:
+                        writing_sheet_raw = writing_sheet_list[idx]
+                        # extract the sheet in the tags <combined_author_sheet></<combined_author_sheet>
+                        writing_sheet = re.search(r'<combined_author_sheet>(.*?)</combined_author_sheet>', writing_sheet_raw, re.DOTALL).group(1)
+                        if writing_sheet == '':
+                            writing_sheet = writing_sheet_raw
+                        break
+                    except:
+                        continue
+                if writing_sheet is None:
+                    if verbose:
+                        print('Skipping None', file)
                     continue
-            if writing_sheet is None:
-                if verbose:
-                    print('Skipping None', file)
-                continue
             
-            writing_sheet_categories = organize_user_sheet(writing_sheet)
+                writing_sheet_categories = organize_user_sheet(writing_sheet)
 
         elif eval_choice == 2:
             for cat, value in writing_sheet_list.items():
