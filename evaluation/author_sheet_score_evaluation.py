@@ -104,7 +104,7 @@ def parse_args():
     # method choice 
     parser.add_argument('--choice', type=int, default=5, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
     # model choice 
-    parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
+    parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini')
     # evaluation choice 
     parser.add_argument('--eval_choice', type=int, default=2, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
     # verbose (store_true)
@@ -341,9 +341,11 @@ def main():
                 prompt = construct_compare_prompt_message(gt_wp, w_sheet, cat, vanilla_story, expts_story, system_prompt, user_constraints)
                 # prompt the OpenAI model
                 if model_choice == 1:
-                    response = prompt_openai(prompt)
+                    response = prompt_openai(prompt, model='gpt-4o')
                 elif model_choice == 2:
                     response = prompt_llama_router(prompt)
+                elif model_choice == 3:
+                    response = prompt_openai(prompt, model='gpt-4o-mini')
                 response_dict = {1: response, 2: 'A: vanilla', 'Category': cat} 
             else:
                 # reverse the order of the stories
@@ -353,6 +355,9 @@ def main():
                     response = prompt_openai(prompt)
                 elif model_choice == 2:
                     response = prompt_llama_router(prompt)
+                elif model_choice == 3:
+                    response = prompt_openai(prompt, model='gpt-4o-mini')
+
                 response_dict = {1: response, 2: 'A: expts', 'Category': cat}
 
             # add the responses to the dictionary

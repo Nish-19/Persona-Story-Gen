@@ -25,7 +25,7 @@ def parse_args():
     # method choice 
     parser.add_argument('--choice', type=int, default=1, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
     # model choice 
-    parser.add_argument('--model_choice', type=int, default=2, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
+    parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini')
     # history (store_true)
     parser.add_argument('--history', action='store_true', help='Evaluate on Past History as compared to the ground truth')
     # verbose (store_true)
@@ -39,11 +39,11 @@ def construct_compare_prompt_message(gt_wp, gt_story, story_a, story_b, system_p
     '''
     # check if gt_story is dict 
     if isinstance(gt_story, dict):
-        input_dict = {'Author Style Summary': gt_story, 'Writing Prompt': gt_wp, 'Assistant A': story_a, 'Assistant B': story_b}
+        input_dict = {'Author Style Summary': gt_story, 'Writing Prompt': gt_wp, 'Assistant A': story_a, 'Assistant B': story_b, 'Specified Storytelling Aspect to Evaluate': f"{cat}: {cat_value}"}
     # elif isinstance(gt_story, list):
     #     input_dict = {'Author History': gt_story, 'New Writing Prompt': gt_wp, 'Assistant A': story_a, 'Assistant B': story_b}
     else:
-        input_dict = {'Writing Prompt': gt_wp, 'Human-Written Story': gt_story, 'Assistant A': story_a, 'Assistant B': story_b}
+        input_dict = {'Writing Prompt': gt_wp, 'Human-Written Story': gt_story, 'Assistant A': story_a, 'Assistant B': story_b, '**Specified Storytelling Aspect to Evaluate** (evaluate on this aspect only)': f"{cat}: {cat_value}"}
     
     user_instruction = f"{json.dumps(input_dict)}"
     # NOTE: Replace <Fill Here> in user_instruction with cat values
@@ -256,9 +256,11 @@ def main():
                     prompt = construct_summarize_prompt_message(history_data, system_prompt_sumhis, user_constraints_sumhis, cat, categories_data[cat])
                     # prompt the OpenAI model
                     if model_choice == 1:
-                        response = prompt_openai(prompt)
+                        response = prompt_openai(prompt, model='gpt-4o')
                     elif model_choice == 2:
                         response = prompt_llama_router(prompt)
+                    elif model_choice == 3:
+                        response = prompt_openai(prompt, model='gpt-4o-mini')
                     # extract response in the tags <analysis></analysis>
                     response_match = re.search(r'<analysis>(.*)</analysis>', response, re.DOTALL)
                     if response_match:
@@ -344,9 +346,13 @@ def main():
                 prompt = construct_compare_prompt_message(gt_wp, gt_story_input, vanilla_story, expts_story, system_prompt, user_constraints, cat, categories_data[cat])
                 # prompt the OpenAI model
                 if model_choice == 1:
-                    response = prompt_openai(prompt)
+                    response = prompt_openai(prompt, model='gpt-4o')
                 elif model_choice == 2:
                     response = prompt_llama_router(prompt)
+                elif model_choice == 3:
+                    response = prompt_openai(prompt, model='gpt-4o-mini')
+                    user_constraints += 'Important: Please ensure to evaluate only on the specified story-telling aspect and no other.'
+
                 response_dict = {1: response, 2: 'A: vanilla'} 
             else:
                 # reverse the order of the stories
@@ -356,6 +362,9 @@ def main():
                     response = prompt_openai(prompt)
                 elif model_choice == 2:
                     response = prompt_llama_router(prompt)
+                elif model_choice == 3:
+                    response = prompt_openai(prompt, model='gpt-4o-mini')
+                    user_constraints += 'Important: Please ensure to evaluate only on the specified story-telling aspect and no other.'
                 response_dict = {1: response, 2: 'A: expts'}
             
             cat_dict[cat] = response_dict
