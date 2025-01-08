@@ -285,21 +285,30 @@ def main():
                 writing_sheet_categories = organize_user_sheet(writing_sheet)
 
         elif eval_choice == 2:
-            for cat, value in writing_sheet_list.items():
-                # extract writing sheet in the tags <writing_style></<writing_style> 
-                try: 
-                    writing_sheet = re.search(r'<writing_style>(.*?)</writing_style>', value, re.DOTALL).group(1)
-                    if writing_sheet == '':
-                        writing_sheet = value
-                except:
-                    writing_sheet = value
+            writing_sheet = re.search(r'<writing_style>(.*?)</writing_style>', writing_sheet_list[0], re.DOTALL).group(1)
+            if writing_sheet == '':
+                writing_sheet = writing_sheet_raw
 
+            # extract elements 
+            for cctr, cat in enumerate(categories):
+                # extract text between cat and categories[cctr+1]
+                # find index of ### {cat}
+                cat_idx = writing_sheet.find(f'### **{cat}**')
+                # find index of ### {next category}
+                if cctr == len(categories)-1:
+                    next_cat_idx = len(writing_sheet)
+                else:
+                    next_cat_idx = writing_sheet.find(f'### **{categories[cctr+1]}**')
+                
+                # extract the text
+                writing_sheet_temp = writing_sheet[cat_idx+len(f'### **{cat}**'):next_cat_idx]
+                
                 # Sanitize extracted text
-                writing_sheet = sanitize_text(writing_sheet)
+                writing_sheet_temp = sanitize_text(writing_sheet_temp)
 
                 # Clear evidence from the writing sheet
-                writing_sheet_categories[cat] = clear_evidence(writing_sheet)
-        
+                writing_sheet_categories[cat] = clear_evidence(writing_sheet_temp)
+                    
         if len(writing_sheet_categories) == 0:
             if verbose:
                 print('Skipping None in writing_sheet_categories', file)
