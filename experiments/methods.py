@@ -396,13 +396,14 @@ class StoryGenMethods():
         Choice 3: User Profile (Schema)
         '''
 
-        def construct_user_sheet_prompt(author_history, category_value):
+        def construct_user_sheet_prompt(author_history, category_value=None):
             '''
             Construct the Prompt for User Profile
             '''
 
             # construct the user instruction
-            example_dict = {'Author History': author_history, 'Specified Storytelling Aspect': category_value}
+            # example_dict = {'Author History': author_history, 'Specified Storytelling Aspect': category_value}
+            example_dict = {'Author History': author_history}
             user_instruction = f"{json.dumps(example_dict, indent=4)}\n\n"
 
             # # replace <Fill Here> with the category value in user_constraints_sheet
@@ -493,27 +494,45 @@ class StoryGenMethods():
                 # read the output file
                 with open(output_file_path, 'r') as f:
                     user_sheet_response = json.load(f)
-            else:
-                user_sheet_response = {}
-            
-            for cctr, category in enumerate(category_list):
-                if cctr < len(user_sheet_response):
+                
+                if len(user_sheet_response) != 0:
                     continue
+            else:
+                # user_sheet_response = {}
+                user_sheet_response = []
+                        
+            # for cctr, category in enumerate(category_list):
+            #     if cctr < len(user_sheet_response):
+            #         continue
 
-                category_value = {category: categories_dict[category]}
+            #     category_value = {category: categories_dict[category]}
 
-                # construct the prompt
-                prompt = construct_user_sheet_prompt(author_history, category_value)
-                # call the OpenAI model
-                try:
-                    response = prompt_openai(prompt, max_tokens=1024, temperature=0.0)
-                except Exception as e:
-                    response = None
-                user_sheet_response[category] = response
+            #     # construct the prompt
+            #     prompt = construct_user_sheet_prompt(author_history, category_value)
+            #     # call the OpenAI model
+            #     try:
+            #         response = prompt_openai(prompt, max_tokens=1024, temperature=0.0)
+            #     except Exception as e:
+            #         response = None
+            #     user_sheet_response[category] = response
 
-                # write the results to the output directory
-                with open(output_file_path, 'w') as f:
-                    json.dump(user_sheet_response, f, indent=4)
+            #     # write the results to the output directory
+            #     with open(output_file_path, 'w') as f:
+            #         json.dump(user_sheet_response, f, indent=4)
+        
+            # construct the prompt
+            prompt = construct_user_sheet_prompt(author_history)
+            # call the OpenAI model
+            try:
+                response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+            except Exception as e:
+                response = None
+            user_sheet_response.append(response)
+
+            # write the results to the output directory
+            with open(output_file_path, 'w') as f:
+                json.dump(user_sheet_response, f, indent=4)
+
         
         # NOTE: STEP 2: Generate story rules for each writing prompt in the test data
 
@@ -566,10 +585,12 @@ class StoryGenMethods():
                 with open(user_profile_response_path, 'r') as f:
                     user_profile_response = json.load(f)
                 
-                user_profile = ''
-                for cat, response in user_profile_response.items():
-                    user_profile_cat = extract_writing_sheet(response, key='writing_style')
-                    user_profile += f"\n\n### **{cat}**\n\n{user_profile_cat}\n\n"
+                user_profile = extract_writing_sheet(user_profile_response[0], key='writing_style')
+                
+                # user_profile = ''
+                # for cat, response in user_profile_response.items():
+                #     user_profile_cat = extract_writing_sheet(response, key='writing_style')
+                #     user_profile += f"\n\n### **{cat}**\n\n{user_profile_cat}\n\n"
 
             except Exception as e:
                 continue
@@ -635,7 +656,6 @@ class StoryGenMethods():
             # construct OpenAI prompt
             prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints)
             return prompt
-
 
 
         # ground truth profile directory
