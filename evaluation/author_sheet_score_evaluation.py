@@ -110,6 +110,8 @@ def parse_args():
     parser.add_argument('--eval_choice', type=int, default=2, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
+    # verbose (store_true)
+    parser.add_argument('--azure', action='store_true', help='To use azure openai')
 
     return parser.parse_args()
 
@@ -129,6 +131,8 @@ def main():
     model_choice = args.model_choice
     # eval choice
     eval_choice = args.eval_choice
+    # azure
+    azure = args.azure
     # verbose
     verbose = args.verbose
 
@@ -351,22 +355,22 @@ def main():
                 prompt = construct_compare_prompt_message(gt_wp, w_sheet, cat, vanilla_story, expts_story, system_prompt, user_constraints)
                 # prompt the OpenAI model
                 if model_choice == 1:
-                    response = prompt_openai(prompt, model='gpt-4o')
+                    response = prompt_openai(prompt, model='gpt-4o', azure=azure)
                 elif model_choice == 2:
                     response = prompt_llama_router(prompt)
                 elif model_choice == 3:
-                    response = prompt_openai(prompt, model='gpt-4o-mini')
+                    response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
                 response_dict = {1: response, 2: 'A: vanilla', 'Category': cat} 
             else:
                 # reverse the order of the stories
                 prompt = construct_compare_prompt_message(gt_wp, w_sheet, cat, expts_story, vanilla_story, system_prompt, user_constraints)
                 # prompt the OpenAI model
                 if model_choice == 1:
-                    response = prompt_openai(prompt)
+                    response = prompt_openai(prompt, azure=azure)
                 elif model_choice == 2:
                     response = prompt_llama_router(prompt)
                 elif model_choice == 3:
-                    response = prompt_openai(prompt, model='gpt-4o-mini')
+                    response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
 
                 response_dict = {1: response, 2: 'A: expts', 'Category': cat}
 
@@ -377,8 +381,8 @@ def main():
             with open(output_file, 'w') as f:
                 json.dump(all_responses, f, indent=4)
             
-            # sleep for 1 second
-            time.sleep(1)
+            # sleep for 10 seconds
+            time.sleep(10)
 
         
 
