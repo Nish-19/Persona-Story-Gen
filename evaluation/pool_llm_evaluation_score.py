@@ -86,6 +86,10 @@ def store_label_count(all_results, output_dir, suffix=''):
     with open(labels_output_path, 'w') as f:
         json.dump(labels_count, f, indent=4)
     print(labels_count)
+    # print percentage labels_count
+    percent_labels_count = {k: v/len(all_results)*100 for k, v in labels_count.items()}
+    print(percent_labels_count)
+
 
 
 def parse_args():

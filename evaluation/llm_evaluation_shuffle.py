@@ -31,6 +31,9 @@ def parse_args():
     parser.add_argument('--history', action='store_true', help='Evaluate on Past History as compared to the ground truth')
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
+    # verbose (store_true)
+    parser.add_argument('--azure', action='store_true', help='To use azure openai')
+
 
     return parser.parse_args()
 
@@ -107,6 +110,8 @@ def main():
     model_choice = args.model_choice
     # history
     history = args.history
+    # azure
+    azure = args.azure
     # verbose
     verbose = args.verbose
 
@@ -257,11 +262,11 @@ def main():
                     prompt = construct_summarize_prompt_message(history_data, system_prompt_sumhis, user_constraints_sumhis, cat, categories_data[cat])
                     # prompt the OpenAI model
                     if model_choice == 1:
-                        response = prompt_openai(prompt, model='gpt-4o')
+                        response = prompt_openai(prompt, model='gpt-4o', azure=azure)
                     elif model_choice == 2:
                         response = prompt_llama_router(prompt)
                     elif model_choice == 3:
-                        response = prompt_openai(prompt, model='gpt-4o-mini')
+                        response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
                     # extract response in the tags <analysis></analysis>
                     response_match = re.search(r'<analysis>(.*)</analysis>', response, re.DOTALL)
                     if response_match:
@@ -347,11 +352,11 @@ def main():
                 prompt = construct_compare_prompt_message(gt_wp, gt_story_input, vanilla_story, expts_story, system_prompt, user_constraints, cat, categories_data[cat])
                 # prompt the OpenAI model
                 if model_choice == 1:
-                    response = prompt_openai(prompt, model='gpt-4o')
+                    response = prompt_openai(prompt, model='gpt-4o', azure=azure)
                 elif model_choice == 2:
                     response = prompt_llama_router(prompt)
                 elif model_choice == 3:
-                    response = prompt_openai(prompt, model='gpt-4o-mini')
+                    response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
                     user_constraints += 'Important: Please ensure to evaluate only on the specified story-telling aspect and no other.'
 
                 response_dict = {1: response, 2: 'A: vanilla'} 
@@ -360,11 +365,11 @@ def main():
                 prompt = construct_compare_prompt_message(gt_wp, gt_story_input, expts_story, vanilla_story, system_prompt, user_constraints, cat, categories_data[cat])
                 # prompt the OpenAI model
                 if model_choice == 1:
-                    response = prompt_openai(prompt)
+                    response = prompt_openai(prompt, azure=azure)
                 elif model_choice == 2:
                     response = prompt_llama_router(prompt)
                 elif model_choice == 3:
-                    response = prompt_openai(prompt, model='gpt-4o-mini')
+                    response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
                     user_constraints += 'Important: Please ensure to evaluate only on the specified story-telling aspect and no other.'
                 response_dict = {1: response, 2: 'A: expts'}
             
