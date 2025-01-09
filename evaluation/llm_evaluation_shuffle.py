@@ -377,8 +377,8 @@ def main():
             with open(output_file, 'w') as f:
                 json.dump(all_responses, f, indent=4)
             
-            # sleep for 5 seconds
-            time.sleep(5)
+            # sleep for 10 seconds
+            time.sleep(10)
         
 
 if __name__ == '__main__':
