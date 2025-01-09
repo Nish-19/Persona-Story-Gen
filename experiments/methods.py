@@ -1208,7 +1208,7 @@ class StoryGenMethods():
 
             if debug:
                 # break after 3 iterations
-                if fctr > 2:
+                if fctr > 3:
                     break
 
 
@@ -1288,8 +1288,6 @@ class StoryGenMethods():
         self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
 
 
-
-
 def parse_args():
     parser = argparse.ArgumentParser(description='Story Generation Methods')
     # few shot
@@ -1308,6 +1306,8 @@ def parse_args():
     parser.add_argument('--extract_rules', action='store_true', help='extract rules')
     # debug mode
     parser.add_argument('--debug', action='store_true', help='Debug Mode')
+    # azure mode
+    parser.add_argument('--azure', action='store_true', help='Azure Mode')
     return parser.parse_args()
 
 def main():

@@ -32,7 +32,7 @@ def construct_prompt_message(system_prompt, user_prompt, user_constraints=None, 
     return prompt_message
 
 # AzureOpenAI
-@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
+@retry(wait=wait_random_exponential(min=1, max=30), stop=stop_after_attempt(6))
 def prompt_openai(prompt_messages, max_tokens=2000, temperature=1.0, top_p=1.0):
     # client = AzureOpenAI(
     #     # api_key=os.environ("AZURE_OPENAI_API_KEY"),
@@ -51,4 +51,7 @@ def prompt_openai(prompt_messages, max_tokens=2000, temperature=1.0, top_p=1.0):
             top_p=top_p,
             max_tokens=max_tokens,
         )
+    
+    # sleep for 1 second
+    time.sleep(1)
     return completion.choices[0].message.content
