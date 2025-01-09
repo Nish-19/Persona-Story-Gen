@@ -8,6 +8,7 @@ import re
 import json
 import argparse
 from tqdm import tqdm
+import time
 import random
 from rank_bm25 import BM25Okapi
 from nltk.tokenize import word_tokenize
@@ -375,6 +376,9 @@ def main():
             # write the responses to a file
             with open(output_file, 'w') as f:
                 json.dump(all_responses, f, indent=4)
+            
+            # sleep for 5 seconds
+            time.sleep(5)
         
 
 if __name__ == '__main__':

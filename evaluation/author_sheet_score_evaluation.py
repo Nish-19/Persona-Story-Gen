@@ -8,6 +8,7 @@ import json
 from ast import literal_eval
 import argparse
 from tqdm import tqdm
+import time
 import random
 from collections import defaultdict
 import re
@@ -375,6 +376,10 @@ def main():
             # write the responses to a file
             with open(output_file, 'w') as f:
                 json.dump(all_responses, f, indent=4)
+            
+            # sleep for 1 second
+            time.sleep(1)
+
         
 
 if __name__ == '__main__':
