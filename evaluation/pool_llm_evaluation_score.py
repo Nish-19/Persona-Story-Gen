@@ -94,7 +94,8 @@ def store_label_count(all_results, output_dir, suffix=''):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--few_shot', type=bool, default=False, help='Few shot')
+    # few shot
+    parser.add_argument('--few_shot', action='store_true', help='Few Shot Story Generation')
     # few shot top k (int)
     parser.add_argument('--few_shot_top_k', type=int, default=1, help='Few Shot Top K')
 
