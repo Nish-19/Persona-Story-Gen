@@ -55,3 +55,24 @@ def prompt_openai(prompt_messages, max_tokens=2000, temperature=1.0, top_p=1.0):
     # sleep for 1 second
     time.sleep(1)
     return completion.choices[0].message.content
+
+def prompt_llama(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0, port_choice=1):
+
+    if port_choice == 1:
+        base_url = "http://127.0.0.1:30000/v1"
+    elif port_choice == 2:
+        base_url = "http://127.0.0.1:50000/v1"
+    elif port_choice == 3:
+        base_url = "http://127.0.0.1:10000/v1"
+
+    client = OpenAI(base_url=base_url, api_key="None")
+
+    response = client.chat.completions.create(
+            model="meta-llama/Meta-Llama-3.1-8B-Instruct",
+            messages=prompt_messages,
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,
+        )
+
+    return response.choices[0].message.content

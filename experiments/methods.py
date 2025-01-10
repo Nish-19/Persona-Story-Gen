@@ -10,7 +10,7 @@ from rank_bm25 import BM25Okapi
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from collections import defaultdict
-from prompt_llm_utils import construct_prompt_message, prompt_openai
+from prompt_llm_utils import construct_prompt_message, prompt_openai, prompt_llama
 import argparse
 import re
 
@@ -35,6 +35,8 @@ class StoryGenMethods():
 
         # output directory
         self.output_dir = 'results/'
+        # llama output directory
+        self.llama_output_dir = 'results_llama/'
 
         # output directory (profile)
         self.output_dir_profile = 'results_profile/'
@@ -100,7 +102,7 @@ class StoryGenMethods():
         
         return few_shot_examples, profile_indices
 
-    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, system_instructions='', debug=False, is_profile=False, few_shot_top_k=1):
+    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, system_instructions='', debug=False, is_profile=False, few_shot_top_k=1, llama=False, port_choice=1):
         '''
         performs story generation given - source, few_shot, source_constraints, output_dir
         '''
@@ -136,6 +138,12 @@ class StoryGenMethods():
             iterate_over_source_constraints = False
         else:
             iterate_over_source_constraints = True
+        
+        # story output directory
+        if llama: 
+            story_output_dir = story_output_dir.replace(self.output_dir, self.llama_output_dir)
+            if not os.path.exists(story_output_dir):
+                os.makedirs(story_output_dir)
         
 
         # NOTE: Edit the system instructions
@@ -231,7 +239,10 @@ class StoryGenMethods():
                 prompt = construct_story_prompt(example, source_constraints, few_shot_examples)
                 # call the OpenAI model
                 try:
-                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.7, top_p=0.95)
+                    if llama:
+                        response = prompt_llama(prompt, max_tokens=4096, temperature=0.7, top_p=0.95, port_choice=port_choice)
+                    else:
+                        response = prompt_openai(prompt, max_tokens=4096, temperature=0.7, top_p=0.95)
                 except Exception as e:
                     response = None
                 results.append({'writing_prompt': example['writing_prompt'], 'story': response})
@@ -240,7 +251,7 @@ class StoryGenMethods():
                 with open(output_file_path, 'w') as f:
                     json.dump(results, f, indent=4)
     
-    def perform_vanilla(self, source='Reddit', few_shot=False, debug=False, is_profile=False):
+    def perform_vanilla(self, source='Reddit', few_shot=False, debug=False, is_profile=False, llama=False, port_choice=1):
         '''
         Vanilla Story Generation
         '''
@@ -276,18 +287,10 @@ class StoryGenMethods():
         print(f'Source: {source}')
 
         # perform story generation
-        self.perform_story_generation(source=source, few_shot=few_shot, story_output_dir=output_dir, source_constraints_dir=source_constraints_path, system_instructions=system_instructions, debug=debug, is_profile=is_profile)
-
-    def perform_oracle_rules(self, source='Reddit', debug=False):
-        '''
-        Oracle Rules Story Generation
-        1. generate oracle delta rules for the test set 
-        2. use these rules to generate stories
-        '''
-        pass 
+        self.perform_story_generation(source=source, few_shot=few_shot, story_output_dir=output_dir, source_constraints_dir=source_constraints_path, system_instructions=system_instructions, debug=debug, is_profile=is_profile, llama=llama, port_choice=port_choice)
 
     
-    def no_schema_user_profile(self, source='Reddit', debug=False):
+    def no_schema_user_profile(self, source='Reddit', debug=False, llama=False, port_choice=1):
         '''
         User Profile (No Schema)
         '''
@@ -389,9 +392,9 @@ class StoryGenMethods():
         print(f'Few Shot: True')
         print(f'Source: {source}')
 
-        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = user_profile_output_dir, system_instructions=system_instructions, debug=debug)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = user_profile_output_dir, system_instructions=system_instructions, debug=debug, llama=llama, port_choice=port_choice)
     
-    def schema_user_profile(self, source='Reddit', debug=False, few_shot_top_k=1):
+    def schema_user_profile(self, source='Reddit', debug=False, few_shot_top_k=1, llama=False, port_choice=1):
         '''
         Choice 3: User Profile (Schema)
         '''
@@ -639,7 +642,7 @@ class StoryGenMethods():
         print(f'Few Shot: True')
         print(f'Source: {source}')
     
-        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
     
     def rule_generator(self, source='Reddit', is_profile=False, debug=False):
         '''
@@ -748,7 +751,7 @@ class StoryGenMethods():
                 with open(output_file_path, 'w') as f:
                     json.dump(story_rules_response, f, indent=4)
     
-    def personalized_rule_generator(self, source='Reddit', debug=False, few_shot_top_k=1):
+    def personalized_rule_generator(self, source='Reddit', debug=False, few_shot_top_k=1, llama=False, port_choice=1):
         '''
         generate personalized rules for the stories in the test set
         '''
@@ -884,9 +887,9 @@ class StoryGenMethods():
         print(f'Few Shot: True')
         print(f'Source: {source}')
 
-        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, llama=llama, port_choice=port_choice)
 
-    def perform_oracle(self, source='Reddit', debug=False):
+    def perform_oracle(self, source='Reddit', debug=False, llama=False, port_choice=1):
         '''
         Oracle Story Generation for the test set
         '''
@@ -907,9 +910,9 @@ class StoryGenMethods():
         print(f'Few Shot: True')
         print(f'Source: {source}')
     
-        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = source_constraints_dir, system_instructions=system_instructions, debug=debug)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = source_constraints_dir, system_instructions=system_instructions, debug=debug, llama=llama, port_choice=port_choice)
     
-    def delta_user_profile(self, source='Reddit', debug=False, few_shot_top_k=1):
+    def delta_user_profile(self, source='Reddit', debug=False, few_shot_top_k=1, llama=False, port_choice=1):
         '''
         Chioce 5: User Profile (Delta)
         '''
@@ -1285,7 +1288,7 @@ class StoryGenMethods():
         print(f'Few Shot: True')
         print(f'Source: {source}')
     
-        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
 
 
 def parse_args():
@@ -1306,8 +1309,10 @@ def parse_args():
     parser.add_argument('--extract_rules', action='store_true', help='extract rules')
     # debug mode
     parser.add_argument('--debug', action='store_true', help='Debug Mode')
-    # azure mode
-    parser.add_argument('--azure', action='store_true', help='Azure Mode')
+    # llama mode
+    parser.add_argument('--llama', action='store_true', help='Llama 8B for Generation')
+    # port choice for llama
+    parser.add_argument('--port_choice', type=int, default=1, help='Choice of the port: 1. 30000, 2. 50000')
     return parser.parse_args()
 
 def main():
@@ -1328,6 +1333,10 @@ def main():
     is_profile = args.is_profile
     # # extract rules
     extract_rules = args.extract_rules
+    # llama
+    llama = args.llama
+    # port 
+    port_choice = args.port_choice
     # create an instance of the StoryGenMethods class
     story_gen_methods = StoryGenMethods()
 
@@ -1337,22 +1346,22 @@ def main():
     else:
         if choice == 1:
             # perform Vanilla story generation
-            story_gen_methods.perform_vanilla(source=source, few_shot=few_shot, debug=debug, is_profile=is_profile)
+            story_gen_methods.perform_vanilla(source=source, few_shot=few_shot, debug=debug, is_profile=is_profile, llama=llama, port_choice=port_choice)
         elif choice == 2:
             # User Profile (No Schema)
-            story_gen_methods.no_schema_user_profile(source=source, debug=debug)
+            story_gen_methods.no_schema_user_profile(source=source, debug=debug, llama=llama, port_choice=port_choice)
         elif choice == 3:
             # User Profile (Schema)
-            story_gen_methods.schema_user_profile(source=source, debug=debug, few_shot_top_k=few_shot_top_k)
+            story_gen_methods.schema_user_profile(source=source, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
         elif choice == 4:
             # Rule Generator
-            story_gen_methods.personalized_rule_generator(source=source, debug=debug, few_shot_top_k=few_shot_top_k)
+            story_gen_methods.personalized_rule_generator(source=source, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
         elif choice == 5:
             # User Profile (Delta)
-            story_gen_methods.delta_user_profile(source=source, debug=debug, few_shot_top_k=few_shot_top_k)
+            story_gen_methods.delta_user_profile(source=source, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
         elif choice == 6:
             # oracle generator
-            story_gen_methods.perform_oracle(source=source, debug=debug)
+            story_gen_methods.perform_oracle(source=source, debug=debug, llama=llama, port_choice=port_choice)
 
 if __name__ == '__main__':
     main()
