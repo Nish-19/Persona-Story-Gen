@@ -8,6 +8,30 @@ import json
 import argparse
 from collections import Counter, defaultdict 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    # few shot
+    parser.add_argument('--few_shot', action='store_true', help='Few Shot Story Generation')
+    # few shot top k (int)
+    parser.add_argument('--few_shot_top_k', type=int, default=1, help='Few Shot Top K')
+
+    # source
+    parser.add_argument('--source', type=str, default='Reddit', help='Source')
+    # method choice 
+    parser.add_argument('--choice', type=int, default=5, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
+    # model choice 
+    parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
+    # evaluation choice 
+    parser.add_argument('--eval_choice', type=int, default=2, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
+    # verbose (store_true)
+    parser.add_argument('--verbose', action='store_true', help='Verbose')
+    # llama (store_true)
+    parser.add_argument('--llama', action='store_true', help='To use llama generated model results')
+    # pool method
+    parser.add_argument('--pool_choice', type=int, default=1, help='Choice of the method: 1. Standard, 2. Shuffle')
+
+    return parser.parse_args()
+
 def extract_winner(res):
     '''
     extract text between the tag <winner></winner>
@@ -87,31 +111,11 @@ def store_label_count(all_results, output_dir, suffix=''):
         json.dump(labels_count, f, indent=4)
     print(labels_count)
     # print percentage labels_count
-    percent_labels_count = {k: v/len(all_results)*100 for k, v in labels_count.items()}
+    percent_labels_count = {k: round(v/len(all_results)*100, 2) for k, v in labels_count.items()}
     print(percent_labels_count)
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    # few shot
-    parser.add_argument('--few_shot', action='store_true', help='Few Shot Story Generation')
-    # few shot top k (int)
-    parser.add_argument('--few_shot_top_k', type=int, default=1, help='Few Shot Top K')
 
-    # source
-    parser.add_argument('--source', type=str, default='Reddit', help='Source')
-    # method choice 
-    parser.add_argument('--choice', type=int, default=5, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
-    # model choice 
-    parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
-    # evaluation choice 
-    parser.add_argument('--eval_choice', type=int, default=2, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
-    # verbose (store_true)
-    parser.add_argument('--verbose', action='store_true', help='Verbose')
-    # pool method
-    parser.add_argument('--pool_choice', type=int, default=1, help='Choice of the method: 1. Standard, 2. Shuffle')
-
-    return parser.parse_args()
         
 
 def main():
@@ -137,6 +141,9 @@ def main():
     model_choice = args.model_choice
     # eval choice
     eval_choice = args.eval_choice
+    # llama 
+    llama = args.llama
+
 
 
     # choice = 3
@@ -146,6 +153,13 @@ def main():
         suffix = '_few_shot'
     else:
         suffix = ''
+
+    # llama_suffix
+    if llama:
+        llama_suffix = '_llama'
+    else:
+        llama_suffix = ''
+
 
     # root directories 
     if choice == 1:
@@ -170,9 +184,9 @@ def main():
     # iterate over the sources
     for source in sources:
         if eval_choice == 1:
-            eval_dir_name = 'author_sheet_score'
+            eval_dir_name = f'author_sheet_score{llama_suffix}'
         elif eval_choice == 2:
-            eval_dir_name = 'author_sheet_score_schema'
+            eval_dir_name = f'author_sheet_score_schema{llama_suffix}'
 
         eval_path = f'{eval_dir_name}/{consider_dir}/{model_choice}/{source}.json' 
 
