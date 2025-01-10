@@ -14,6 +14,28 @@ from collections import defaultdict
 import re
 from prompt_llm_utils import construct_prompt_message, prompt_openai, prompt_llama_router
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    # few shot
+    parser.add_argument('--few_shot', action='store_true', help='Few Shot Story Generation')
+    # few shot top k (int)
+    parser.add_argument('--few_shot_top_k', type=int, default=1, help='Few Shot Top K')
+    # source
+    parser.add_argument('--source', type=str, default='Reddit', help='Source')
+    # method choice 
+    parser.add_argument('--choice', type=int, default=5, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
+    # model choice 
+    parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini')
+    # evaluation choice 
+    parser.add_argument('--eval_choice', type=int, default=2, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
+    # verbose (store_true)
+    parser.add_argument('--verbose', action='store_true', help='Verbose')
+    # verbose (store_true)
+    parser.add_argument('--azure', action='store_true', help='To use azure openai')
+    # llama (store_true)
+    parser.add_argument('--llama', action='store_true', help='To use llama generated model results')
+
+    return parser.parse_args()
 
 def construct_compare_prompt_message(gt_wp, writing_sheet, cat, story_a, story_b, system_prompt, user_constraints):
     '''
@@ -95,26 +117,6 @@ def clear_evidence(user_sheet):
 
     return cleaned_sheet
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    # few shot
-    parser.add_argument('--few_shot', action='store_true', help='Few Shot Story Generation')
-    # few shot top k (int)
-    parser.add_argument('--few_shot_top_k', type=int, default=1, help='Few Shot Top K')
-    # source
-    parser.add_argument('--source', type=str, default='Reddit', help='Source')
-    # method choice 
-    parser.add_argument('--choice', type=int, default=5, help='Choice of the method: 1. Vanilla, 2. User Profile (No Schema) 3. User Profile (Schema), 4. Personaized Rule Generator, 5. User Profile (Delta), 6. Oracle')
-    # model choice 
-    parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini')
-    # evaluation choice 
-    parser.add_argument('--eval_choice', type=int, default=2, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
-    # verbose (store_true)
-    parser.add_argument('--verbose', action='store_true', help='Verbose')
-    # verbose (store_true)
-    parser.add_argument('--azure', action='store_true', help='To use azure openai')
-
-    return parser.parse_args()
 
 def main():
     # parse arguments
@@ -134,6 +136,8 @@ def main():
     eval_choice = args.eval_choice
     # azure
     azure = args.azure
+    # llama 
+    llama = args.llama
     # verbose
     verbose = args.verbose
 
@@ -148,6 +152,13 @@ def main():
         top_k_suffix = ''
     else:
         top_k_suffix = f'_{few_shot_top_k}'
+
+    # llama_suffix
+    if llama:
+        llama_suffix = '_llama'
+    else:
+        llama_suffix = ''
+
 
     # root directories 
     gt_root_dir = f'../datasets/data_splits/data/{source}/test/'
@@ -173,8 +184,7 @@ def main():
         "Language Use"
     ]
 
-
-    expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
+    expts_root_dir = f'../experiments/results{llama_suffix}/{consider_dir}/{source}'
 
     # user writing sheet directory
     if eval_choice == 1:
@@ -184,9 +194,9 @@ def main():
 
     # results output directory 
     if eval_choice == 1:
-        output_dir = f"author_sheet_score/{consider_dir}/{model_choice}"
+        output_dir = f"author_sheet_score{llama_suffix}/{consider_dir}/{model_choice}"
     elif eval_choice == 2:
-        output_dir = f"author_sheet_score_schema/{consider_dir}/{model_choice}"
+        output_dir = f"author_sheet_score_schema{llama_suffix}/{consider_dir}/{model_choice}"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
@@ -218,7 +228,7 @@ def main():
         # gt file path
         gt_file_path = os.path.join(gt_root_dir, file)
         # vanilla file path
-        vanilla_file_path = os.path.join(f'../experiments/results/vanilla/{source}', file)
+        vanilla_file_path = os.path.join(f'../experiments/results{llama_suffix}/vanilla/{source}', file)
         # expts file path
         expts_file_path = os.path.join(expts_root_dir, file)
 

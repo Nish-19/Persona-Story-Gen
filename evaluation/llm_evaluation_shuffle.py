@@ -32,9 +32,10 @@ def parse_args():
     parser.add_argument('--history', action='store_true', help='Evaluate on Past History as compared to the ground truth')
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
-    # verbose (store_true)
+    # azure (store_true)
     parser.add_argument('--azure', action='store_true', help='To use azure openai')
-
+    # llama (store_true)
+    parser.add_argument('--llama', action='store_true', help='To use llama generated model results')
 
     return parser.parse_args()
 
@@ -113,6 +114,8 @@ def main():
     history = args.history
     # azure
     azure = args.azure
+    # llama 
+    llama = args.llama
     # verbose
     verbose = args.verbose
 
@@ -127,6 +130,12 @@ def main():
         his_suffix = '_summarize_history'
     else:
         his_suffix = ''
+    
+    # llama_suffix
+    if llama:
+        llama_suffix = '_llama'
+    else:
+        llama_suffix = ''
 
     if few_shot_top_k == 1:
         top_k_suffix = ''
@@ -150,10 +159,10 @@ def main():
     elif choice == 6:
         consider_dir = f'oracle{top_k_suffix}'
 
-    expts_root_dir = f'../experiments/results/{consider_dir}/{source}'
+    expts_root_dir = f'../experiments/results{llama_suffix}/{consider_dir}/{source}'
 
     # results output directory 
-    output_dir = f"llm_evaluation_shuffle_score{his_suffix}/{consider_dir}/{model_choice}"
+    output_dir = f"llm_evaluation_shuffle_score{his_suffix}{llama_suffix}/{consider_dir}/{model_choice}"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
@@ -220,7 +229,7 @@ def main():
         # profile file path
         profile_file_path = os.path.join(profile_root_dir, file)
         # vanilla file path
-        vanilla_file_path = os.path.join(f'../experiments/results/vanilla/{source}', file)
+        vanilla_file_path = os.path.join(f'../experiments/results{llama_suffix}/vanilla/{source}', file)
         # expts file path
         expts_file_path = os.path.join(expts_root_dir, file)
 
@@ -383,8 +392,8 @@ def main():
             with open(output_file, 'w') as f:
                 json.dump(all_responses, f, indent=4)
             
-            # sleep for 10 seconds
-            time.sleep(10)
+            # sleep for 5 seconds
+            time.sleep(5)
         
 
 if __name__ == '__main__':
