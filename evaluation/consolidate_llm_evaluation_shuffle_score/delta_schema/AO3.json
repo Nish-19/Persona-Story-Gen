@@ -1,0 +1,22 @@
+{
+    "Plot": {
+        "vanilla": 0.575,
+        "expts": 0.275,
+        "Tie": 0.15
+    },
+    "Creativity": {
+        "expts": 0.4125,
+        "vanilla": 0.35,
+        "Tie": 0.2375
+    },
+    "Development (Character and Setting)": {
+        "expts": 0.46835443037974683,
+        "vanilla": 0.34177215189873417,
+        "Tie": 0.189873417721519
+    },
+    "Language Use": {
+        "expts": 0.5443037974683544,
+        "vanilla": 0.31645569620253167,
+        "Tie": 0.13924050632911392
+    }
+}
