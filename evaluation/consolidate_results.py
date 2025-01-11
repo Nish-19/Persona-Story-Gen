@@ -7,6 +7,7 @@ import argparse
 import re
 from collections import defaultdict
 import json
+import pandas as pd
 
 def extract_winner(res):
     '''
@@ -126,6 +127,8 @@ def main():
             method_source_wise_results[method][source] = catwise_winners
     
     # methodwise results (normalize across sources)
+    consider_methods = ['oracle', 'vanilla_few_shot', 'delta', 'schema', 'delta_schema']
+    categorywise_method_results = defaultdict(dict)
     for method, source_data in method_source_wise_results.items():
         # if method not in consider_methods:
         #     continue
@@ -144,8 +147,18 @@ def main():
         # sort catwise_winners based on values
         for cat, win_dict in catwise_winners.items():
             catwise_winners[cat] = {k: v for k, v in sorted(win_dict.items(), key=lambda item: item[1], reverse=True)}
+            if method in consider_methods:
+                categorywise_method_results[cat][method] = f"{round(win_dict['expts']*100, 2)} + ({round(win_dict['Tie']*100, 2)})"
         
         method_source_wise_results[method]['overall.json'] = catwise_winners
+
+    # construct rows for table
+    rows = []
+    for cat, method_dict in categorywise_method_results.items():
+        row = {'category': cat}
+        for method in consider_methods:
+            row[method] = method_dict.get(method, 'NA')
+        rows.append(row)
     
     # output dir 
     output_dir = f'consolidate_{root_dir}'
@@ -162,6 +175,10 @@ def main():
             output_path = f"{output_sub_path}/{source}"
             with open(output_path, 'w') as f:
                 json.dump(catwise_winners, f, indent=4)
+    
+    # write the table to a csv file
+    df = pd.DataFrame(rows)
+    df.to_csv(f"{output_dir}/catwise_winners{llama_suffix}.csv", index=False)
     
     print(f'Saved results to {output_dir}')
 
