@@ -12,3 +12,4 @@ human/user_sheet_annotation/clean_user_sheet
 human/user_sheet_annotation/organize_sheet.ipynb
 human/user_sheet_annotation/temp_user_sheet.txt
 human/legacy
+traditional_evaluation/__pycache__
