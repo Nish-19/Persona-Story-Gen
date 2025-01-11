@@ -127,7 +127,10 @@ def main():
             
             # iterrate only over expts_data 
             for ectr, expts in enumerate(expts_data):
-                gt_story = gt_data[ectr]['story']
+                try:
+                    gt_story = gt_data[ectr]['story']
+                except: 
+                    continue
                 if gt_story is None or expts['story'] is None:
                     print('Skipping None', file)
                     continue

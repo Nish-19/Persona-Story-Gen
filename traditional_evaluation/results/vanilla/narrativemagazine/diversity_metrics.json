@@ -1,0 +1,22 @@
+{
+    "compression_scores": {
+        "compression_ratio_gt": 2.511,
+        "compression_ratio_gen": 2.799
+    },
+    "homogenization_scores_bleu": {
+        "homogenization_score_gt_bleu": 0.014,
+        "homogenization_score_gen_bleu": 0.042
+    },
+    "homogenization_scores_rougel": {
+        "homogenization_score_gt_rougel": 0.118,
+        "homogenization_score_gen_rougel": 0.138
+    },
+    "homogenization_scores_bertscore": {
+        "homogenization_score_gt_bertscore": 0.678,
+        "homogenization_score_gen_bertscore": 0.687
+    },
+    "ngram_diversity_scores": {
+        "ngram_diversity_score_gt": 3.003,
+        "ngram_diversity_score_gen": 2.837
+    }
+}
