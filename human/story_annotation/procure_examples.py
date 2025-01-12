@@ -3,6 +3,7 @@ procure examples for Upwork annotation
 '''
 
 import os 
+import re
 import random
 import json
 import argparse
@@ -19,6 +20,24 @@ def parse_args():
     # llama (store_true)
     parser.add_argument('--llama', action='store_true', help='Whether to use Llama')
     return parser.parse_args()
+
+def clean_text(story_text):
+    '''
+    make story human readable
+    '''
+    # Normalize carriage returns and literal `\n` first
+    story_text = story_text.replace('\r', '')  # Remove carriage returns
+    story_text = re.sub(r'[ \t]*\n[ \t]*', '\n', story_text)  # Normalize spaces around newlines
+    story_text = story_text.replace('\\n', '\n')  # Replace escaped \n with actual newlines
+    # Clean the story_text by replacing multiple newlines with a single newline
+    story_text = re.sub(r'\n+', '\n', story_text).strip()
+    # remove escape characters 
+    story_text = story_text.replace('\\\"', '\"')
+    story_text = story_text.replace('\\\\', '\\')
+
+    return story_text
+
+
 
 def main():
     # set random seed
@@ -104,11 +123,11 @@ def main():
             
             # read data 
             identifier = f"{source}_{user_name}_{common_index}"
-            wp, gt_story = gt_data[common_index]['writing_prompt'], gt_data[common_index]['story']
-            vanilla_story = vanilla_data[common_index]['story']
-            delta_story = delta_data[common_index]['story']
-            schema_story = schema_data[common_index]['story']
-            delta_schema_story = delta_schema_data[common_index]['story']
+            wp, gt_story = gt_data[common_index]['writing_prompt'], clean_text(gt_data[common_index]['story'])
+            vanilla_story = clean_text(vanilla_data[common_index]['story'])
+            delta_story = clean_text(delta_data[common_index]['story'])
+            schema_story = clean_text(schema_data[common_index]['story'])
+            delta_schema_story = clean_text(delta_schema_data[common_index]['story'])
 
             # construct pairs
             pairs.append((identifier, wp, gt_story, vanilla_story, delta_story, 'delta'))
@@ -151,7 +170,7 @@ def main():
         for j in range(len(annotator_dict[i])):
             annotator_dict[i][j] = dict(zip(pairs_headers, annotator_dict[i][j]))
     
-    output_dir = 'upwork_annotation'
+    output_dir = 'upwork_annotation_data'
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
