@@ -44,6 +44,9 @@ class StoryGenMethods():
         # user profile directory
         self.user_profile_dir = 'user_profile'
 
+        # persona directory 
+        self.persona_dir = 'persona'
+
         # # user sheets directory
         # self.user_sheets_dir = 'user_sheets'
 
@@ -102,14 +105,20 @@ class StoryGenMethods():
         
         return few_shot_examples, profile_indices
 
-    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, system_instructions='', debug=False, is_profile=False, few_shot_top_k=1, llama=False, port_choice=1):
+    def perform_story_generation(self, source='Reddit', few_shot=False, story_output_dir=None, source_constraints_dir = None, persona_dir = None, system_instructions='', debug=False, is_profile=False, few_shot_top_k=1, llama=False, port_choice=1):
         '''
         performs story generation given - source, few_shot, source_constraints, output_dir
         '''
-        def construct_story_prompt(example, source_constraints, few_shot_examples=None):
+        def construct_story_prompt(example, source_constraints, few_shot_examples=None, persona=None):
             '''
             Construct the Vanilla prompt
             '''
+            # add persona 
+            if persona is not None:
+                system_intructions_new = system_instructions + f'\nHere is the description of the author that you are role-playing: {persona}'
+            else:
+                system_intructions_new = system_instructions
+
             # include user constraints
             user_constraints = f"## Story Rules\n{source_constraints}\n\n"
 
@@ -117,7 +126,7 @@ class StoryGenMethods():
             user_instruction = self.construct_user_instruction(example, source)
 
             # construct OpenAI prompt
-            prompt = construct_prompt_message(system_instructions, user_instruction, user_constraints, few_shot_examples, add_at_end=True)
+            prompt = construct_prompt_message(system_intructions_new, user_instruction, user_constraints, few_shot_examples, add_at_end=True)
             return prompt
     
 
@@ -149,7 +158,7 @@ class StoryGenMethods():
         # NOTE: Edit the system instructions
         # 1. Mention source constraints
         # if source_constraints:
-        system_instructions += ' Be sure to adhere to the ## Story Rules provided, as they define the specific elements of the writing style you are expected to mimic. Ensure to carefully follow all the Story Rules without missing any details to ensure the generated story is consistent with the user\'s story writing style.'
+        system_instructions += ' Be sure to adhere to the ## Story Rules provided, as they define the specific elements of the writing style you are expected to mimic. Ensure to carefully follow all the Story Rules without missing any details to ensure the generated story is consistent with the author\'s story writing style.'
         # 2. Mention few shot demonstrations (chat history)
         if few_shot:
             system_instructions += ' Also, follow the patterns and examples demonstrated in the provided few-shot chat history, as they illustrate the tone, style, and structure of the desired writing style of your story.'
@@ -189,6 +198,20 @@ class StoryGenMethods():
                 consider_data = profile_data
             else:
                 consider_data = test_data
+            
+            if persona_dir is not None:
+                persona_file_path = os.path.join(persona_dir, file)
+                # persona data
+                with open(persona_file_path, 'r') as f:
+                    persona_data = json.load(f)
+                
+                # extract persona
+                persona_data_raw = persona_data[0]
+                persona = re.search(rf'<persona_prompt>(.*?)</persona_prompt>', persona_data_raw, re.DOTALL).group(1)
+                if not persona:
+                    persona = persona_data_raw
+            else:
+                persona = None
             
             # iterate over the test data
             for ictr, example in tqdm(enumerate(consider_data), desc=f'Processing {file}', total=len(consider_data)):
@@ -236,7 +259,7 @@ class StoryGenMethods():
                             continue
                         
 
-                prompt = construct_story_prompt(example, source_constraints, few_shot_examples)
+                prompt = construct_story_prompt(example, source_constraints, few_shot_examples, persona)
                 # call the OpenAI model
                 try:
                     if llama:
@@ -394,7 +417,7 @@ class StoryGenMethods():
 
         self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = user_profile_output_dir, system_instructions=system_instructions, debug=debug, llama=llama, port_choice=port_choice)
     
-    def schema_user_profile(self, source='Reddit', debug=False, few_shot_top_k=1, llama=False, port_choice=1):
+    def schema_user_profile(self, source='Reddit', debug=False, few_shot_top_k=1, persona=False, llama=False, port_choice=1):
         '''
         Choice 3: User Profile (Schema)
         '''
@@ -436,6 +459,19 @@ class StoryGenMethods():
             if not sheet:
                 sheet = sheet_output
             return sheet
+
+        def construct_persona_prompt(user_profile): 
+            '''
+            Construct the Prompt for creating the Persona of the author
+            '''
+            # construct the user instruction
+            user_instruction_dict = {'Author Writing Sheet': user_profile}
+            user_instruction = f"{json.dumps(user_instruction_dict, indent=4)}\n\n"
+
+            # construct OpenAI prompt
+            prompt = construct_prompt_message(system_instructions_persona, user_instruction, user_constraints_persona)
+            return prompt
+
         
     
         print('Method: Schema User Profile')
@@ -622,13 +658,93 @@ class StoryGenMethods():
                 with open(output_file_path, 'w') as f:
                     json.dump(story_rules_response, f, indent=4)
 
-        # NOTE: STEP 4: Generate stories using the user profile generated above
+        # NOTE: STEP 4: Generate Persona for the Author
+        if persona:
+            # persona output directory
+            persona_output_dir = f'{self.persona_dir}/schema/{source}'
+            if not os.path.exists(persona_output_dir):
+                os.makedirs(persona_output_dir)
+            
+            # system instructions
+            system_instructions_persona_path = f'{self.rule_extractor_instructions_dir}/system_prompts/persona.txt'
+            # user instructions
+            user_instructions_persona_path = f'{self.rule_extractor_instructions_dir}/user_prompts/persona.txt'
+
+            # read the system instructions
+            with open(system_instructions_persona_path, 'r') as f:
+                system_instructions_persona = f.read()
+            
+            # read the user instructions
+            with open(user_instructions_persona_path, 'r') as f:
+                user_constraints_persona = f.read()
+
+            # iterate through each file in the test directory
+            for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Persona (Schema)', total=len(os.listdir(test_dir))):
+
+                if debug:
+                    # break after 3 iterations
+                    if fctr > 2:
+                        break
+
+                # output file path
+                output_file_path = os.path.join(persona_output_dir, file)
+
+                # check if the output file already exists
+                if os.path.exists(output_file_path):
+                    # read the output file
+                    with open(output_file_path, 'r') as f:
+                        persona_response = json.load(f)
+                else:
+                    persona_response = []
+                
+                try:
+                    # open user profile response
+                    user_profile_response_path = os.path.join(user_sheets_output_dir, file)
+                    with open(user_profile_response_path, 'r') as f:
+                        user_profile_response = json.load(f)
+                    
+                    user_profile = extract_writing_sheet(user_profile_response[0], key='writing_style')
+                    
+                    # user_profile = ''
+                    # for cat, response in user_profile_response.items():
+                    #     user_profile_cat = extract_writing_sheet(response, key='writing_style')
+                    #     user_profile += f"\n\n### **{cat}**\n\n{user_profile_cat}\n\n"
+
+                except Exception as e:
+                    continue
+
+                # check if persona_response is non empty 
+                if len(persona_response) != 0:
+                    continue
+
+                # construct the prompt
+                prompt = construct_persona_prompt(user_profile)
+                # call the OpenAI model
+                try:
+                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                except Exception as e:
+                    response = None
+                persona_response.append(response)
+
+                # write the results to the output directory
+                with open(output_file_path, 'w') as f:
+                    json.dump(persona_response, f, indent=4)
+
+
+        # NOTE: STEP 5: Generate stories using the user profile generated above
         if few_shot_top_k != 1:
             suffix = f'_{few_shot_top_k}'
         else:
             suffix = ''
+        
+        if persona:
+            persona_dir = persona_output_dir
+            persona_suffix = '_persona'
+        else:
+            persona_dir = None
+            persona_suffix = ''
 
-        story_output_dir = f'{self.output_dir}/schema/{source}'
+        story_output_dir = f'{self.output_dir}/schema{persona_suffix}/{source}'
         if not os.path.exists(story_output_dir):
             os.makedirs(story_output_dir)
         
@@ -641,8 +757,11 @@ class StoryGenMethods():
         print('Method: Schema Story Generation')
         print(f'Few Shot: True')
         print(f'Source: {source}')
-    
-        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
+        if persona:
+            print(f'Persona: True')
+
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, persona_dir = persona_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
+
     
     def rule_generator(self, source='Reddit', is_profile=False, debug=False):
         '''
@@ -912,7 +1031,7 @@ class StoryGenMethods():
     
         self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = source_constraints_dir, system_instructions=system_instructions, debug=debug, llama=llama, port_choice=port_choice)
     
-    def delta_user_profile(self, source='Reddit', debug=False, few_shot_top_k=1, llama=False, port_choice=1):
+    def delta_user_profile(self, source='Reddit', debug=False, few_shot_top_k=1, persona=False, llama=False, port_choice=1):
         '''
         Chioce 5: User Profile (Delta)
         '''
@@ -1006,6 +1125,18 @@ class StoryGenMethods():
 
             # construct OpenAI prompt
             prompt = construct_prompt_message(system_instructions_story_rules, user_instruction, user_constraints_story_rules)
+            return prompt
+
+        def construct_persona_prompt(user_profile): 
+            '''
+            Construct the Prompt for creating the Persona of the author
+            '''
+            # construct the user instruction
+            user_instruction_dict = {'Author Writing Sheet': user_profile}
+            user_instruction = f"{json.dumps(user_instruction_dict, indent=4)}\n\n"
+
+            # construct OpenAI prompt
+            prompt = construct_prompt_message(system_instructions_persona, user_instruction, user_constraints_persona)
             return prompt
 
 
@@ -1267,14 +1398,90 @@ class StoryGenMethods():
                 # write the results to the output directory
                 with open(output_file_path, 'w') as f:
                     json.dump(story_rules_response, f, indent=4)
+        
+        # NOTE: STEP 4: Generate Persona for the Author
+        if persona:
+            # persona output directory
+            persona_output_dir = f'{self.persona_dir}/delta_schema/{source}'
+            if not os.path.exists(persona_output_dir):
+                os.makedirs(persona_output_dir)
+            
+            # system instructions
+            system_instructions_persona_path = f'{self.rule_extractor_instructions_dir}/system_prompts/persona.txt'
+            # user instructions
+            user_instructions_persona_path = f'{self.rule_extractor_instructions_dir}/user_prompts/persona.txt'
 
-        # NOTE: STEP 4: Generate stories using the user profile generated above
+            # read the system instructions
+            with open(system_instructions_persona_path, 'r') as f:
+                system_instructions_persona = f.read()
+            
+            # read the user instructions
+            with open(user_instructions_persona_path, 'r') as f:
+                user_constraints_persona = f.read()
+
+            # iterate through each file in the test directory
+            for fctr, file in tqdm(enumerate(os.listdir(test_dir)), desc='Persona (Delta Schema)', total=len(os.listdir(test_dir))):
+
+                if debug:
+                    # break after 3 iterations
+                    if fctr > 2:
+                        break
+
+                # output file path
+                output_file_path = os.path.join(persona_output_dir, file)
+
+                # check if the output file already exists
+                if os.path.exists(output_file_path):
+                    # read the output file
+                    with open(output_file_path, 'r') as f:
+                        persona_response = json.load(f)
+                else:
+                    persona_response = []
+                
+                try:
+                    # open user profile response
+                    user_profile_response_path = os.path.join(user_profile_output_dir, file)
+                    with open(user_profile_response_path, 'r') as f:
+                        user_profile_response = json.load(f)
+
+                    if len(user_profile_response) == 1:
+                        user_profile = extract_writing_sheet(user_profile_response[-1], key='writing_style')
+                    else:
+                        user_profile = extract_writing_sheet(user_profile_response[-1], key='combined_author_sheet')
+                except Exception as e:
+                    continue
+
+                # check if persona_response is non empty 
+                if len(persona_response) != 0:
+                    continue
+
+                # construct the prompt
+                prompt = construct_persona_prompt(user_profile)
+                # call the OpenAI model
+                try:
+                    response = prompt_openai(prompt, max_tokens=4096, temperature=0.0)
+                except Exception as e:
+                    response = None
+                persona_response.append(response)
+
+                # write the results to the output directory
+                with open(output_file_path, 'w') as f:
+                    json.dump(persona_response, f, indent=4)
+
+        # NOTE: STEP 5: Generate stories using the user profile generated above
         if few_shot_top_k != 1:
             suffix = f'_{few_shot_top_k}'
         else:
             suffix = ''
+        
+        if persona:
+            persona_dir = persona_output_dir
+            persona_suffix = '_persona'
+        else:
+            persona_dir = None
+            persona_suffix = ''
 
-        story_output_dir = f'{self.output_dir}/delta_schema/{source}'
+        story_output_dir = f'{self.output_dir}/delta_schema{persona_suffix}/{source}'
         if not os.path.exists(story_output_dir):
             os.makedirs(story_output_dir)
         
@@ -1287,8 +1494,10 @@ class StoryGenMethods():
         print('Method: Delta Schema Story Generation')
         print(f'Few Shot: True')
         print(f'Source: {source}')
+        if persona:
+            print(f'Persona: True')
     
-        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
+        self.perform_story_generation(source=source, few_shot=True, story_output_dir=story_output_dir, source_constraints_dir = story_rules_output_dir, persona_dir = persona_dir, system_instructions=system_instructions, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
 
 
 def parse_args():
@@ -1307,6 +1516,8 @@ def parse_args():
     parser.add_argument('--is_profile', action='store_true', help='generate on profile data')
     # extract rules
     parser.add_argument('--extract_rules', action='store_true', help='extract rules')
+    # persona mode
+    parser.add_argument('--persona', action='store_true', help='To use persona prompt obtained from Author Sheet (for Schema and Delta Schema only)')
     # debug mode
     parser.add_argument('--debug', action='store_true', help='Debug Mode')
     # llama mode
@@ -1329,6 +1540,8 @@ def main():
     choice = args.choice
     # debug 
     debug = args.debug
+    # persona
+    persona = args.persona
     # is_profile
     is_profile = args.is_profile
     # # extract rules
@@ -1337,6 +1550,11 @@ def main():
     llama = args.llama
     # port 
     port_choice = args.port_choice
+
+    # sanity check
+    if persona and choice != 3 and choice != 5:
+        raise ValueError('Persona mode is only available for User Profile (Schema) and User Profile (Delta)')
+
     # create an instance of the StoryGenMethods class
     story_gen_methods = StoryGenMethods()
 
@@ -1352,13 +1570,13 @@ def main():
             story_gen_methods.no_schema_user_profile(source=source, debug=debug, llama=llama, port_choice=port_choice)
         elif choice == 3:
             # User Profile (Schema)
-            story_gen_methods.schema_user_profile(source=source, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
+            story_gen_methods.schema_user_profile(source=source, debug=debug, few_shot_top_k=few_shot_top_k, persona=persona, llama=llama, port_choice=port_choice)
         elif choice == 4:
             # Rule Generator
             story_gen_methods.personalized_rule_generator(source=source, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
         elif choice == 5:
             # User Profile (Delta)
-            story_gen_methods.delta_user_profile(source=source, debug=debug, few_shot_top_k=few_shot_top_k, llama=llama, port_choice=port_choice)
+            story_gen_methods.delta_user_profile(source=source, debug=debug, few_shot_top_k=few_shot_top_k, persona=persona, llama=llama, port_choice=port_choice)
         elif choice == 6:
             # oracle generator
             story_gen_methods.perform_oracle(source=source, debug=debug, llama=llama, port_choice=port_choice)

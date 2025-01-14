@@ -1,0 +1,42 @@
+### User Prompt
+
+#### Constraints
+
+The Persona Prompt must:
+1. Be **well-structured** and organized into four categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.
+2. Capture the **unique traits** described in the Author Writing Sheet, summarizing them into a natural, flowing narrative that conveys the author's storytelling style without directly referencing the Author Writing Sheet.
+3. Use **engaging language** to describe the author’s tendencies, preferences, and strengths in storytelling, including specific patterns, methods, and tonal choices.
+4. Be written as a **descriptive, second-person narrative**, avoiding instructional or bullet-point formats.
+5. Be concise, limited to approximately **300 words**, while still highlighting key storytelling characteristics.
+
+The **Author Writing Sheet** follows **Common Core Standards in English Language Arts**, ensuring the claims and evidence reflect detailed, well-structured insights into the author’s narrative style.
+
+---
+
+#### Input Format
+
+You will be provided with:
+1. An **Author Writing Sheet** that contains Claim-Evidence pairs detailing the author’s storytelling style. This sheet is organized into four categories: **Plot**, **Creativity**, **Development (Character and Setting)**, and **Language Use**.
+
+#### Your Task
+
+1. **Analyze the Author Writing Sheet**:
+   - Identify recurring patterns, unique traits, and strengths in the author’s storytelling style from each category of the Author Writing Sheet.
+
+2. **Generate a Persona Prompt**:
+   - Summarize the author’s storytelling style into a cohesive, engaging persona description.
+   - Ensure the narrative reflects the storytelling categories (Plot, Creativity, Development, Language Use) and integrates insights naturally.
+
+---
+
+#### Output Format
+
+<thinking>
+[Reflect on the author's storytelling style based on the Author Writing Sheet. Analyze the unique patterns, tendencies, and techniques described in the Claim-Evidence pairs for each category: Plot, Creativity, Development (Character and Setting), and Language Use. Use this analysis to plan how to construct the Persona Prompt.]
+</thinking>
+
+<persona_prompt>
+[Insert the Persona Prompt here, organized into paragraphs with each category seamlessly integrated into the narrative.]
+</persona_prompt>  
+
+Ensure that the Persona Prompt effectively captures the author’s storytelling essence and adheres to the constraints. Be sure to include the <thinking> and <persona_prompt> tags for seamless parsing of your output. 
