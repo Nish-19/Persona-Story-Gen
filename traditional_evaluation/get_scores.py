@@ -23,6 +23,9 @@ def parse_args():
     parser.add_argument('--llama', action='store_true', help='To use llama generated model results')
     # compute_gt (store_true)
     parser.add_argument('--compute_gt', action='store_true', help='Compute Ground Truth')
+    # persona mode
+    parser.add_argument('--persona', action='store_true', help='To use persona prompt obtained from Author Sheet (for Schema and Delta Schema only)')
+
 
     return parser.parse_args()
 
@@ -44,6 +47,8 @@ def main():
     compute_gt = args.compute_gt
     # llama 
     llama = args.llama
+    # persona
+    persona = args.persona
 
     # suffix 
     if few_shot:
@@ -62,17 +67,24 @@ def main():
     else:
         llama_suffix = ''
 
+    # persona suffix
+    if persona:
+        persona_suffix = '_persona'
+    else:
+        persona_suffix = ''
+
+
     # root directories 
     if choice == 1:
         consider_dir = f'vanilla{suffix}'
     elif choice == 2:
         consider_dir = f'no_schema'
     elif choice == 3:
-        consider_dir = f'schema{top_k_suffix}'
+        consider_dir = f'schema{top_k_suffix}{persona_suffix}'
     elif choice == 4:
         consider_dir = f'delta{top_k_suffix}'
     elif choice == 5:
-        consider_dir = f'delta_schema{top_k_suffix}'
+        consider_dir = f'delta_schema{top_k_suffix}{persona_suffix}'
     elif choice == 6:
         consider_dir = f'oracle{top_k_suffix}'
     

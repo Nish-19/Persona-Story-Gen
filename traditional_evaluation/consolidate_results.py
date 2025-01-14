@@ -58,8 +58,8 @@ def get_consolidated_results(res_dir, store_gt=False):
 
 
 def main():
-    # root_dir = 'results'
-    root_dir = 'results_llama'
+    root_dir = 'results'
+    # root_dir = 'results_llama'
     vanilla_dir = f"{root_dir}/vanilla"
     consolidate_vanilla, consolidate_gt = get_consolidated_results(vanilla_dir, store_gt=True)
     assert len(consolidate_vanilla) == len(consolidate_gt)
@@ -74,7 +74,7 @@ def main():
 
 
     # iterate over directories in root_dir
-    source_dirs = ['oracle', 'vanilla', 'vanilla_few_shot', 'delta', 'schema', 'delta_schema']
+    source_dirs = ['oracle', 'vanilla', 'vanilla_few_shot', 'delta', 'schema', 'schema_persona', 'delta_schema', 'delta_schema_persona']
     for source_dir in source_dirs:
         if source_dir == 'vanilla':
             # NOTE: add consolidate_vanilla to rows

@@ -127,7 +127,7 @@ def main():
             method_source_wise_results[method][source] = catwise_winners
     
     # methodwise results (normalize across sources)
-    consider_methods = ['oracle', 'vanilla_few_shot', 'delta', 'schema', 'delta_schema']
+    consider_methods = ['oracle', 'vanilla_few_shot', 'delta', 'schema', 'schema_persona', 'delta_schema', 'delta_schema_persona']
     categorywise_method_results = defaultdict(dict)
     for method, source_data in method_source_wise_results.items():
         # if method not in consider_methods:
