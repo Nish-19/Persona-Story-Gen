@@ -23,6 +23,8 @@ def parse_args():
     parser.add_argument('--model_choice', type=int, default=1, help='Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B')
     # evaluation choice 
     parser.add_argument('--eval_choice', type=int, default=2, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
+    # persona mode
+    parser.add_argument('--persona', action='store_true', help='To use persona prompt obtained from Author Sheet (for Schema and Delta Schema only)')
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
     # llama (store_true)
@@ -143,6 +145,8 @@ def main():
     eval_choice = args.eval_choice
     # llama 
     llama = args.llama
+    # persona
+    persona = args.persona
 
 
 
@@ -159,6 +163,12 @@ def main():
         llama_suffix = '_llama'
     else:
         llama_suffix = ''
+    
+    # persona
+    if persona:
+        persona_suffix = '_persona'
+    else:
+        persona_suffix = ''
 
 
     # root directories 
@@ -167,11 +177,11 @@ def main():
     elif choice == 2:
         consider_dir = f'no_schema'
     elif choice == 3:
-        consider_dir = f'schema{top_k_suffix}'
+        consider_dir = f'schema{top_k_suffix}{persona_suffix}'
     elif choice == 4:
         consider_dir = f'delta{top_k_suffix}'
     elif choice == 5:
-        consider_dir = f'delta_schema{top_k_suffix}'
+        consider_dir = f'delta_schema{top_k_suffix}{persona_suffix}'
     elif choice == 6:
         consider_dir = f'oracle{top_k_suffix}'
 

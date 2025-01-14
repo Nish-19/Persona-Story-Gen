@@ -30,7 +30,9 @@ def parse_args():
     parser.add_argument('--eval_choice', type=int, default=2, help='Choice of the Evaluation: 1. Author Sheet, 2. Author Sheet Schema')
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
-    # verbose (store_true)
+    # persona mode
+    parser.add_argument('--persona', action='store_true', help='To use persona prompt obtained from Author Sheet (for Schema and Delta Schema only)')
+    # azure (store_true)
     parser.add_argument('--azure', action='store_true', help='To use azure openai')
     # llama (store_true)
     parser.add_argument('--llama', action='store_true', help='To use llama generated model results')
@@ -134,6 +136,8 @@ def main():
     model_choice = args.model_choice
     # eval choice
     eval_choice = args.eval_choice
+    # persona
+    persona = args.persona
     # azure
     azure = args.azure
     # llama 
@@ -147,6 +151,12 @@ def main():
         suffix = '_few_shot'
     else:
         suffix = ''
+    
+    # persona suffix
+    if persona:
+        persona_suffix = '_persona'
+    else:
+        persona_suffix = ''
     
     if few_shot_top_k == 1:
         top_k_suffix = ''
@@ -167,11 +177,11 @@ def main():
     elif choice == 2:
         consider_dir = f'no_schema'
     elif choice == 3:
-        consider_dir = f'schema{top_k_suffix}'
+        consider_dir = f'schema{top_k_suffix}{persona_suffix}'
     elif choice == 4:
         consider_dir = f'delta{top_k_suffix}'
     elif choice == 5:
-        consider_dir = f'delta_schema{top_k_suffix}'
+        consider_dir = f'delta_schema{top_k_suffix}{persona_suffix}'
     elif choice == 6:
         consider_dir = f'oracle{top_k_suffix}'
 
