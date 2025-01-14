@@ -41,7 +41,7 @@ def clean_text(story_text):
 
 def main():
     # set random seed
-    random.seed(42)
+    random.seed(27)
 
     # parse arguments
     args = parse_args()
@@ -86,8 +86,8 @@ def main():
             gt_root_dir = f'../../datasets/data_splits/data/{source}/test/'
             vanilla_dir = f'../../experiments/results/vanilla/{source}'
             delta_dir = f'../../experiments/results/delta/{source}'
-            schema_dir = f'../../experiments/results/schema/{source}'
-            delta_schema_dir = f'../../experiments/results/delta_schema/{source}'
+            schema_dir = f'../../experiments/results/schema_persona/{source}'
+            delta_schema_dir = f'../../experiments/results/delta_schema_persona/{source}'
 
             # read files in gt_root_dir
             gt_files = os.listdir(gt_root_dir)
