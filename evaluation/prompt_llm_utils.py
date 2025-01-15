@@ -102,7 +102,7 @@ def prompt_llama_router(prompt_messages, max_tokens=2000, temperature=0.0, top_p
         "Content-Type": "application/json",
         # Optional headers for OpenRouter rankings
         "HTTP-Referer": "https://your-site-url.com",  # Replace with your site URL
-        "X-Title": "Your App Name",  # Replace with your app name
+        "X-Title": "Evaluation",  # Replace with your app name
     }
 
     # Define the request payload
