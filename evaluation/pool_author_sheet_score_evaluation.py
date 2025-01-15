@@ -28,7 +28,9 @@ def parse_args():
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
     # llama (store_true)
-    parser.add_argument('--llama', action='store_true', help='To use llama generated model results')
+    parser.add_argument('--llama', action='store_true', help='To use llama 8B generated model results')
+    # llama (store_true)
+    parser.add_argument('--llama70', action='store_true', help='To use llama 70B generated model results')
     # pool method
     parser.add_argument('--pool_choice', type=int, default=1, help='Choice of the method: 1. Standard, 2. Shuffle')
 
@@ -145,6 +147,8 @@ def main():
     eval_choice = args.eval_choice
     # llama 
     llama = args.llama
+    # llama70
+    llama70 = args.llama70
     # persona
     persona = args.persona
 
@@ -161,6 +165,8 @@ def main():
     # llama_suffix
     if llama:
         llama_suffix = '_llama'
+    elif llama70:
+        llama_suffix = '_llama70'
     else:
         llama_suffix = ''
     

@@ -35,7 +35,10 @@ def parse_args():
     # azure (store_true)
     parser.add_argument('--azure', action='store_true', help='To use azure openai')
     # llama (store_true)
-    parser.add_argument('--llama', action='store_true', help='To use llama generated model results')
+    parser.add_argument('--llama', action='store_true', help='To use llama 8B generated model results')
+    # llama (store_true)
+    parser.add_argument('--llama70', action='store_true', help='To use llama 70B generated model results')
+
 
     return parser.parse_args()
 
@@ -142,6 +145,8 @@ def main():
     azure = args.azure
     # llama 
     llama = args.llama
+    # llama70
+    llama70 = args.llama70
     # verbose
     verbose = args.verbose
 
@@ -166,8 +171,11 @@ def main():
     # llama_suffix
     if llama:
         llama_suffix = '_llama'
+    elif llama70:
+        llama_suffix = '_llama70'
     else:
         llama_suffix = ''
+    
 
 
     # root directories 
