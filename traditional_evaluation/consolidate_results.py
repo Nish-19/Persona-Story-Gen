@@ -58,8 +58,9 @@ def get_consolidated_results(res_dir, store_gt=False):
 
 
 def main():
-    root_dir = 'results'
+    # root_dir = 'results'
     # root_dir = 'results_llama'
+    root_dir = 'results_llama70'
     vanilla_dir = f"{root_dir}/vanilla"
     consolidate_vanilla, consolidate_gt = get_consolidated_results(vanilla_dir, store_gt=True)
     assert len(consolidate_vanilla) == len(consolidate_gt)

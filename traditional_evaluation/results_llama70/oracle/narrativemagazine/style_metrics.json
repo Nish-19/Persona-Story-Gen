@@ -1,0 +1,13 @@
+{
+    "length": {
+        "avg_length_gt": "None",
+        "avg_length_gen": 882.2857142857143
+    },
+    "reading_score": {
+        "avg_flesch_reading_score_gt": "None",
+        "avg_flesch_reading_score_gen": 77.08857142857143
+    },
+    "luar_score": {
+        "avg_luar_cosine_similarity": 0.8102142857142857
+    }
+}

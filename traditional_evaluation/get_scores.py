@@ -20,7 +20,9 @@ def parse_args():
     # verbose (store_true)
     parser.add_argument('--verbose', action='store_true', help='Verbose')
     # llama (store_true)
-    parser.add_argument('--llama', action='store_true', help='To use llama generated model results')
+    parser.add_argument('--llama', action='store_true', help='To use llama 8B generated model results')
+    # llama (store_true)
+    parser.add_argument('--llama70', action='store_true', help='To use llama 70B generated model results')
     # compute_gt (store_true)
     parser.add_argument('--compute_gt', action='store_true', help='Compute Ground Truth')
     # persona mode
@@ -47,6 +49,8 @@ def main():
     compute_gt = args.compute_gt
     # llama 
     llama = args.llama
+    # llama70
+    llama70 = args.llama70
     # persona
     persona = args.persona
 
@@ -64,6 +68,8 @@ def main():
     # llama_suffix
     if llama:
         llama_suffix = '_llama'
+    elif llama70:
+        llama_suffix = '_llama70'
     else:
         llama_suffix = ''
 
