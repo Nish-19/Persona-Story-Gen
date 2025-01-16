@@ -3,6 +3,7 @@ utility function for prompting OpenAI models
 '''
 
 import os
+import sys
 import requests
 from openai import OpenAI, AzureOpenAI
 import time
