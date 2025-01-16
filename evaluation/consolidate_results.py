@@ -94,7 +94,9 @@ def get_catwise_winners(source_data):
 def parse_args():
     parser = argparse.ArgumentParser(description='Consolidate results from different sources for each method')
     # llama (store_true)
-    parser.add_argument('--llama', action='store_true', help='Consolidate results for llama')
+    parser.add_argument('--llama', action='store_true', help='Consolidate results for llama 8B')
+    # llama (store_true)
+    parser.add_argument('--llama70', action='store_true', help='Consolidate results for llama 70B')
     return parser.parse_args()
 
 
@@ -105,6 +107,8 @@ def main():
     llama = args.llama
     if llama: 
         llama_suffix = '_llama'
+    elif args.llama70:
+        llama_suffix = '_llama70'
     else:
         llama_suffix = ''
 
