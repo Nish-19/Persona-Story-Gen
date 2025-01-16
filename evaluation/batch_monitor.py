@@ -9,8 +9,8 @@ def main():
     # Initialize OpenAI client
     client = OpenAI(api_key=api_key)
 
-    # # list of batches
-    # print(client.batches.list(limit=5))
+    # list of batches
+    print(client.batches.list(limit=15))
 
     # retrieve a batch
     batch_job = client.batches.retrieve("batch_6788887e866c81909871487a7111b748")
