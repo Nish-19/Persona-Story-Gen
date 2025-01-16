@@ -117,6 +117,12 @@ def store_label_count(all_results, output_dir, suffix=''):
     # print percentage labels_count
     percent_labels_count = {k: round(v/len(all_results)*100, 2) for k, v in labels_count.items()}
     print(percent_labels_count)
+    expts_out, tie_out = 0, 0
+    if 'expts' in percent_labels_count:
+        expts_out = percent_labels_count['expts']
+    if 'Tie' in percent_labels_count:
+        tie_out = percent_labels_count['Tie']
+    print(f"{expts_out}+{tie_out}")
 
 def main():
     # parse arguments
