@@ -89,6 +89,7 @@ def prompt_llama(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0):
 
 #     return response.choices[0].message.content
 
+@retry(wait=wait_random_exponential(min=1, max=10), stop=stop_after_attempt(6))
 def prompt_llama_router(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0):
     # Retrieve the OpenRouter API key
     openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
