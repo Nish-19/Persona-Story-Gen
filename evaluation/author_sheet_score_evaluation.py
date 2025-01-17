@@ -12,7 +12,7 @@ import time
 import random
 from collections import defaultdict
 import re
-from prompt_llm_utils import construct_prompt_message, prompt_openai, prompt_llama_router
+from prompt_llm_utils import construct_prompt_message, prompt_openai, prompt_llama_router, prompt_llama
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -389,7 +389,8 @@ def main():
                 if model_choice == 1:
                     response = prompt_openai(prompt, model='gpt-4o', azure=azure)
                 elif model_choice == 2:
-                    response = prompt_llama_router(prompt)
+                    # response = prompt_llama_router(prompt)
+                    response = prompt_llama(prompt)
                 elif model_choice == 3:
                     response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
                 response_dict = {1: response, 2: 'A: vanilla', 'Category': cat} 
@@ -400,7 +401,8 @@ def main():
                 if model_choice == 1:
                     response = prompt_openai(prompt, azure=azure)
                 elif model_choice == 2:
-                    response = prompt_llama_router(prompt)
+                    # response = prompt_llama_router(prompt)
+                    response = prompt_llama(prompt)
                 elif model_choice == 3:
                     response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
 
@@ -414,7 +416,7 @@ def main():
                 json.dump(all_responses, f, indent=4)
             
             # sleep for 10 seconds
-            time.sleep(10)
+            time.sleep(5)
 
         
 
