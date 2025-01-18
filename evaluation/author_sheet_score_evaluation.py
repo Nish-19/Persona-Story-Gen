@@ -176,10 +176,12 @@ def main():
     else:
         llama_suffix = ''
     
-
+    if source == 'all':
+        sources = ['Reddit', 'AO3', 'narrativemagazine', 'newyorker', 'Storium']
+    else:
+        sources = [source]
 
     # root directories 
-    gt_root_dir = f'../datasets/data_splits/data/{source}/test/'
     if choice == 1:
         consider_dir = f'vanilla{suffix}'
     elif choice == 2:
@@ -202,83 +204,130 @@ def main():
         "Language Use"
     ]
 
-    expts_root_dir = f'../experiments/results{llama_suffix}/{consider_dir}/{source}'
+    # iterate over sources
+    for source in sources:
+        print(f'### Processsing {source} ###')
+        gt_root_dir = f'../datasets/data_splits/data/{source}/test/'
+        expts_root_dir = f'../experiments/results{llama_suffix}/{consider_dir}/{source}'
 
-    # user writing sheet directory
-    if eval_choice == 1:
-        user_writing_sheet_dir = f'../experiments/user_profile/delta_schema/{source}'
-    elif eval_choice == 2:
-        user_writing_sheet_dir = f'../experiments/user_profile/schema/{source}'
-
-    # results output directory 
-    if eval_choice == 1:
-        output_dir = f"author_sheet_score{llama_suffix}/{consider_dir}/{model_choice}"
-    elif eval_choice == 2:
-        output_dir = f"author_sheet_score_schema{llama_suffix}/{consider_dir}/{model_choice}"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    
-    output_file = f'{output_dir}/{source}.json'
-    # check if the file exists
-    if os.path.exists(output_file):
-        with open(output_file, 'r') as f:
-            all_responses = json.load(f)
-        # convert all_responses to defaultdict
-        all_responses = defaultdict(dict, all_responses)
-    else:
-        all_responses = defaultdict(dict)
-    
-    # read prompts 
-    system_prompt_path = 'instructions/system_prompt/author_sheet_score.txt'
-    user_constraints_path = 'instructions/user_prompt/author_sheet_score.txt'
-
-    # read the system prompt
-    with open(system_prompt_path, 'r') as f:
-        system_prompt = f.read()
-    
-    # read the user constraints
-    with open(user_constraints_path, 'r') as f:
-        user_constraints = f.read()
-
-    pairs = []
-    # iterate over files in the ground truth directory
-    for file in os.listdir(gt_root_dir):
-        # gt file path
-        gt_file_path = os.path.join(gt_root_dir, file)
-        # vanilla file path
-        vanilla_file_path = os.path.join(f'../experiments/results{llama_suffix}/vanilla/{source}', file)
-        # expts file path
-        expts_file_path = os.path.join(expts_root_dir, file)
-
-        # user writing sheet path
-        user_writing_sheet_path = os.path.join(user_writing_sheet_dir, file)
-
-        # read the ground truth file
-        with open(gt_file_path, 'r') as f:
-            gt_data = json.load(f)
-        
-        try:
-            # read the vanilla file
-            with open(vanilla_file_path, 'r') as f:
-                vanilla_data = json.load(f)
-            
-            # read the expts file
-            with open(expts_file_path, 'r') as f:
-                expts_data = json.load(f)
-            
-            # read the user writing sheet
-            with open(user_writing_sheet_path, 'r') as f:
-                writing_sheet_list = json.load(f)
-
-        except:
-            if verbose:
-                print('Skipping', file)
-            continue
-    
-        # get the writing sheet
-        writing_sheet_categories = {}
+        # user writing sheet directory
         if eval_choice == 1:
-            if len(writing_sheet_list) == 1:
+            user_writing_sheet_dir = f'../experiments/user_profile/delta_schema/{source}'
+        elif eval_choice == 2:
+            user_writing_sheet_dir = f'../experiments/user_profile/schema/{source}'
+
+        # results output directory 
+        if eval_choice == 1:
+            output_dir = f"author_sheet_score{llama_suffix}/{consider_dir}/{model_choice}"
+        elif eval_choice == 2:
+            output_dir = f"author_sheet_score_schema{llama_suffix}/{consider_dir}/{model_choice}"
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        
+        output_file = f'{output_dir}/{source}.json'
+        # check if the file exists
+        if os.path.exists(output_file):
+            with open(output_file, 'r') as f:
+                all_responses = json.load(f)
+            # convert all_responses to defaultdict
+            all_responses = defaultdict(dict, all_responses)
+        else:
+            all_responses = defaultdict(dict)
+        
+        # read prompts 
+        system_prompt_path = 'instructions/system_prompt/author_sheet_score.txt'
+        user_constraints_path = 'instructions/user_prompt/author_sheet_score.txt'
+
+        # read the system prompt
+        with open(system_prompt_path, 'r') as f:
+            system_prompt = f.read()
+        
+        # read the user constraints
+        with open(user_constraints_path, 'r') as f:
+            user_constraints = f.read()
+
+        pairs = []
+        # iterate over files in the ground truth directory
+        for file in os.listdir(gt_root_dir):
+            # gt file path
+            gt_file_path = os.path.join(gt_root_dir, file)
+            # vanilla file path
+            vanilla_file_path = os.path.join(f'../experiments/results{llama_suffix}/vanilla/{source}', file)
+            # expts file path
+            expts_file_path = os.path.join(expts_root_dir, file)
+
+            # user writing sheet path
+            user_writing_sheet_path = os.path.join(user_writing_sheet_dir, file)
+
+            # read the ground truth file
+            with open(gt_file_path, 'r') as f:
+                gt_data = json.load(f)
+            
+            try:
+                # read the vanilla file
+                with open(vanilla_file_path, 'r') as f:
+                    vanilla_data = json.load(f)
+                
+                # read the expts file
+                with open(expts_file_path, 'r') as f:
+                    expts_data = json.load(f)
+                
+                # read the user writing sheet
+                with open(user_writing_sheet_path, 'r') as f:
+                    writing_sheet_list = json.load(f)
+
+            except:
+                if verbose:
+                    print('Skipping', file)
+                continue
+        
+            # get the writing sheet
+            writing_sheet_categories = {}
+            if eval_choice == 1:
+                if len(writing_sheet_list) == 1:
+                    writing_sheet = re.search(r'<writing_style>(.*?)</writing_style>', writing_sheet_list[0], re.DOTALL).group(1)
+                    if writing_sheet == '':
+                        writing_sheet = writing_sheet_raw
+
+                    # extract elements 
+                    for cctr, cat in enumerate(categories):
+                        # extract text between cat and categories[cctr+1]
+                        # find index of ### {cat}
+                        cat_idx = writing_sheet.find(f'### {cat}')
+                        # find index of ### {next category}
+                        if cctr == len(categories)-1:
+                            next_cat_idx = len(writing_sheet)
+                        else:
+                            next_cat_idx = writing_sheet.find(f'### {categories[cctr+1]}')
+                        
+                        # extract the text
+                        writing_sheet_temp = writing_sheet[cat_idx+len(f'### {cat}'):next_cat_idx]
+                        
+                        # Sanitize extracted text
+                        writing_sheet_temp = sanitize_text(writing_sheet_temp)
+
+                        # Clear evidence from the writing sheet
+                        writing_sheet_categories[cat] = clear_evidence(writing_sheet_temp)
+                else:
+                    writing_sheet = None
+                    for idx in range(len(writing_sheet_list)-1, -1, -1):
+                        try:
+                            writing_sheet_raw = writing_sheet_list[idx]
+                            # extract the sheet in the tags <combined_author_sheet></<combined_author_sheet>
+                            writing_sheet = re.search(r'<combined_author_sheet>(.*?)</combined_author_sheet>', writing_sheet_raw, re.DOTALL).group(1)
+                            if writing_sheet == '':
+                                writing_sheet = writing_sheet_raw
+                            break
+                        except:
+                            continue
+                    if writing_sheet is None:
+                        if verbose:
+                            print('Skipping None', file)
+                        continue
+                
+                    writing_sheet_categories = organize_user_sheet(writing_sheet)
+
+            elif eval_choice == 2:
                 writing_sheet = re.search(r'<writing_style>(.*?)</writing_style>', writing_sheet_list[0], re.DOTALL).group(1)
                 if writing_sheet == '':
                     writing_sheet = writing_sheet_raw
@@ -287,136 +336,93 @@ def main():
                 for cctr, cat in enumerate(categories):
                     # extract text between cat and categories[cctr+1]
                     # find index of ### {cat}
-                    cat_idx = writing_sheet.find(f'### {cat}')
+                    cat_idx = writing_sheet.find(f'### **{cat}**')
                     # find index of ### {next category}
                     if cctr == len(categories)-1:
                         next_cat_idx = len(writing_sheet)
                     else:
-                        next_cat_idx = writing_sheet.find(f'### {categories[cctr+1]}')
+                        next_cat_idx = writing_sheet.find(f'### **{categories[cctr+1]}**')
                     
                     # extract the text
-                    writing_sheet_temp = writing_sheet[cat_idx+len(f'### {cat}'):next_cat_idx]
+                    writing_sheet_temp = writing_sheet[cat_idx+len(f'### **{cat}**'):next_cat_idx]
                     
                     # Sanitize extracted text
                     writing_sheet_temp = sanitize_text(writing_sheet_temp)
 
                     # Clear evidence from the writing sheet
                     writing_sheet_categories[cat] = clear_evidence(writing_sheet_temp)
-            else:
-                writing_sheet = None
-                for idx in range(len(writing_sheet_list)-1, -1, -1):
-                    try:
-                        writing_sheet_raw = writing_sheet_list[idx]
-                        # extract the sheet in the tags <combined_author_sheet></<combined_author_sheet>
-                        writing_sheet = re.search(r'<combined_author_sheet>(.*?)</combined_author_sheet>', writing_sheet_raw, re.DOTALL).group(1)
-                        if writing_sheet == '':
-                            writing_sheet = writing_sheet_raw
-                        break
-                    except:
-                        continue
-                if writing_sheet is None:
-                    if verbose:
-                        print('Skipping None', file)
-                    continue
-            
-                writing_sheet_categories = organize_user_sheet(writing_sheet)
-
-        elif eval_choice == 2:
-            writing_sheet = re.search(r'<writing_style>(.*?)</writing_style>', writing_sheet_list[0], re.DOTALL).group(1)
-            if writing_sheet == '':
-                writing_sheet = writing_sheet_raw
-
-            # extract elements 
-            for cctr, cat in enumerate(categories):
-                # extract text between cat and categories[cctr+1]
-                # find index of ### {cat}
-                cat_idx = writing_sheet.find(f'### **{cat}**')
-                # find index of ### {next category}
-                if cctr == len(categories)-1:
-                    next_cat_idx = len(writing_sheet)
-                else:
-                    next_cat_idx = writing_sheet.find(f'### **{categories[cctr+1]}**')
-                
-                # extract the text
-                writing_sheet_temp = writing_sheet[cat_idx+len(f'### **{cat}**'):next_cat_idx]
-                
-                # Sanitize extracted text
-                writing_sheet_temp = sanitize_text(writing_sheet_temp)
-
-                # Clear evidence from the writing sheet
-                writing_sheet_categories[cat] = clear_evidence(writing_sheet_temp)
-                    
-        if len(writing_sheet_categories) == 0:
-            if verbose:
-                print('Skipping None in writing_sheet_categories', file)
-            continue
-        
-        # iterrate only over expts_data 
-        for ectr, expts in enumerate(expts_data):
-            # add the pair
-            identifier = f"{file}_{ectr}"
-
-            # check if the identifier exists in the output file
-            if identifier in all_responses:
+                        
+            if len(writing_sheet_categories) == 0:
                 if verbose:
-                    print(f"Skipping {identifier}")
+                    print('Skipping None in writing_sheet_categories', file)
                 continue
-
-            gt_wp = gt_data[ectr]['writing_prompt']
-
-
-            if expts['story'] is None:
-                print('Skipping None', file)
-                continue
-            pairs.append((identifier, gt_wp, writing_sheet_categories, vanilla_data[ectr]['story'], expts['story']))
-    
-    print(f"Using {consider_dir} method")
-    print(f"Consider {len(pairs)} pairs for comparison")
-    
-    # iterate over the pairs
-    for pair in tqdm(pairs, desc='Pair-wise Evaluation', total=len(pairs)):
-        identifier, gt_wp, w_sheet, vanilla_story, expts_story = pair
-
-        # iterate over the categories
-        for cat in categories:
-        
-            # generate random number (0 or 1)
-            random_number = random.randint(0, 1)
-            if random_number == 0:
-
-                prompt = construct_compare_prompt_message(gt_wp, w_sheet, cat, vanilla_story, expts_story, system_prompt, user_constraints)
-                # prompt the OpenAI model
-                if model_choice == 1:
-                    response = prompt_openai(prompt, model='gpt-4o', azure=azure)
-                elif model_choice == 2:
-                    # response = prompt_llama_router(prompt)
-                    response = prompt_llama(prompt)
-                elif model_choice == 3:
-                    response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
-                response_dict = {1: response, 2: 'A: vanilla', 'Category': cat} 
-            else:
-                # reverse the order of the stories
-                prompt = construct_compare_prompt_message(gt_wp, w_sheet, cat, expts_story, vanilla_story, system_prompt, user_constraints)
-                # prompt the OpenAI model
-                if model_choice == 1:
-                    response = prompt_openai(prompt, azure=azure)
-                elif model_choice == 2:
-                    # response = prompt_llama_router(prompt)
-                    response = prompt_llama(prompt)
-                elif model_choice == 3:
-                    response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
-
-                response_dict = {1: response, 2: 'A: expts', 'Category': cat}
-
-            # add the responses to the dictionary
-            all_responses[identifier][cat] = response_dict
-        
-            # write the responses to a file
-            with open(output_file, 'w') as f:
-                json.dump(all_responses, f, indent=4)
             
-            # sleep for 10 seconds
-            time.sleep(5)
+            # iterrate only over expts_data 
+            for ectr, expts in enumerate(expts_data):
+                # add the pair
+                identifier = f"{file}_{ectr}"
+
+                # check if the identifier exists in the output file
+                if identifier in all_responses:
+                    if verbose:
+                        print(f"Skipping {identifier}")
+                    continue
+
+                gt_wp = gt_data[ectr]['writing_prompt']
+
+
+                if expts['story'] is None:
+                    print('Skipping None', file)
+                    continue
+                pairs.append((identifier, gt_wp, writing_sheet_categories, vanilla_data[ectr]['story'], expts['story']))
+        
+        print(f"Using {consider_dir} method")
+        print(f"Consider {len(pairs)} pairs for comparison")
+        
+        # iterate over the pairs
+        for pair in tqdm(pairs, desc='Pair-wise Evaluation', total=len(pairs)):
+            identifier, gt_wp, w_sheet, vanilla_story, expts_story = pair
+
+            # iterate over the categories
+            for cat in categories:
+            
+                # generate random number (0 or 1)
+                random_number = random.randint(0, 1)
+                if random_number == 0:
+
+                    prompt = construct_compare_prompt_message(gt_wp, w_sheet, cat, vanilla_story, expts_story, system_prompt, user_constraints)
+                    # prompt the OpenAI model
+                    if model_choice == 1:
+                        response = prompt_openai(prompt, model='gpt-4o', azure=azure)
+                    elif model_choice == 2:
+                        # response = prompt_llama_router(prompt)
+                        response = prompt_llama(prompt)
+                    elif model_choice == 3:
+                        response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
+                    response_dict = {1: response, 2: 'A: vanilla', 'Category': cat} 
+                else:
+                    # reverse the order of the stories
+                    prompt = construct_compare_prompt_message(gt_wp, w_sheet, cat, expts_story, vanilla_story, system_prompt, user_constraints)
+                    # prompt the OpenAI model
+                    if model_choice == 1:
+                        response = prompt_openai(prompt, azure=azure)
+                    elif model_choice == 2:
+                        # response = prompt_llama_router(prompt)
+                        response = prompt_llama(prompt)
+                    elif model_choice == 3:
+                        response = prompt_openai(prompt, model='gpt-4o-mini', azure=azure)
+
+                    response_dict = {1: response, 2: 'A: expts', 'Category': cat}
+
+                # add the responses to the dictionary
+                all_responses[identifier][cat] = response_dict
+            
+                # write the responses to a file
+                with open(output_file, 'w') as f:
+                    json.dump(all_responses, f, indent=4)
+                
+                # sleep for 10 seconds
+                time.sleep(5)
 
         
 
