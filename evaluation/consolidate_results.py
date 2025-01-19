@@ -161,19 +161,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+
 def create_graph(method_source_wise_results, output_dir):
     # Specify methods to compare
-    methods_to_compare = ['delta_schema_persona', 'schema_persona']
+    methods_to_compare = ['delta', 'schema_persona', 'delta_schema_persona']
+    # define method alias
+    method_alias = {'delta_schema_persona': 'DSP', 'schema_persona': 'SP', 'delta': 'D'}
+    # source alias
+    source_alias = {'Reddit.json': 'Reddit', 'AO3.json': 'AO3', 'Storium.json': 'Storium', 'narrativemagazine.json': 'Narrative Magazine', 'newyorker.json': 'New Yorker'}
 
     save_dir = f'{output_dir}/graphs'
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     
-    # Define distinct colors for methods
-    method_colors = {
-        'delta_schema_persona': {'expts': 'blue', 'Tie': 'orange', 'vanilla': 'green'},
-        'schema_persona': {'expts': 'purple', 'Tie': 'pink', 'vanilla': 'yellow'}
-    }
+    # Define common colors for all methods
+    common_colors = {'expts': 'blue', 'Tie': 'orange', 'vanilla': 'green'}
     
     # Iterate over sources
     for source in next(iter(method_source_wise_results.values())).keys():
@@ -182,13 +187,16 @@ def create_graph(method_source_wise_results, output_dir):
 
         # Extract categories
         categories = list(next(iter(method_source_wise_results.values()))[source].keys())
+        # replace "Development (Character and Setting)" with "Development"
+        categories_labels = [cat.replace('Development (Character and Setting)', 'Development') for cat in categories]
         
         # Initialize bar data
-        bar_width = 0.35
-        x = np.arange(len(categories))  # Position of categories
+        bar_width = 0.1  # Reduce bar width to make bars narrower
+        gap_width = 0.05  # Gap between methods
+        x = np.arange(len(categories)) * 0.65  # Position of categories
         
         # Plot setup
-        fig, ax = plt.subplots(figsize=(12, 6))
+        fig, ax = plt.subplots(figsize=(6, 3))
         
         for i, method in enumerate(methods_to_compare):
             if method not in method_source_wise_results:
@@ -209,24 +217,37 @@ def create_graph(method_source_wise_results, output_dir):
             bottom_tie = np.array(expts)
             bottom_vanilla = bottom_tie + np.array(ties)
 
-            # Plot bars for the method with distinct colors
-            ax.bar(x + i * bar_width, expts, bar_width, label=f'{method} - expts', color=method_colors[method]['expts'])
-            ax.bar(x + i * bar_width, ties, bar_width, bottom=bottom_tie, label=f'{method} - Tie', color=method_colors[method]['Tie'])
-            ax.bar(x + i * bar_width, vanilla, bar_width, bottom=bottom_vanilla, label=f'{method} - vanilla', color=method_colors[method]['vanilla'])
+            # Plot bars for the method with common colors
+            method_x = x + i * (bar_width + gap_width)  # Add gap for differentiation between methods
+            ax.bar(method_x, expts, bar_width, color=common_colors['expts'], label=f'{method_alias[method]} - expts' if i == 0 else "")
+            ax.bar(method_x, ties, bar_width, bottom=bottom_tie, color=common_colors['Tie'], label=f'{method_alias[method]} - Tie' if i == 0 else "")
+            ax.bar(method_x, vanilla, bar_width, bottom=bottom_vanilla, color=common_colors['vanilla'], label=f'{method_alias[method]} - vanilla' if i == 0 else "")
+
+            # Add method names directly below respective bars
+            for pos in method_x:
+                ax.text(pos, -0.05, method_alias[method], ha='center', va='top', fontsize=8, rotation=15, color='black', transform=ax.get_xaxis_transform())
+
+        # Adjust category labels to be tilted and flushed downward
+        ax.set_xticks(x + (len(methods_to_compare) - 1) * (bar_width + gap_width) / 2)
+        ax.set_xticklabels(categories_labels, rotation=0, ha='center', fontsize=10, y=-0.10)
 
         # Formatting
-        ax.set_title(f'Win Rates by Category for {source}', fontsize=16)
-        ax.set_xlabel('Category', fontsize=14)
-        ax.set_ylabel('Proportion', fontsize=14)
-        ax.set_xticks(x + bar_width / 2)
-        ax.set_xticklabels(categories, rotation=45, ha='right', fontsize=12)
-        ax.legend(fontsize=10)
+        ax.set_title(f'{source_alias[source]}', fontsize=16)
+        # ax.set_xlabel('Category', fontsize=14)
+        ax.set_ylabel('Win-Rate Proportion', fontsize=12)
+
+        # Add a single legend
+        handles = [
+            plt.Line2D([0], [0], color=common_colors['expts'], lw=4, label='Method'),
+            plt.Line2D([0], [0], color=common_colors['Tie'], lw=4, label='Tie'),
+            plt.Line2D([0], [0], color=common_colors['vanilla'], lw=4, label='Ideal User')
+        ]
+        ax.legend(handles=handles, fontsize=10, loc='upper right')
 
         # Save the plot to disk
         plt.tight_layout()
-        plt.savefig(f'{save_dir}/{source}.png')
+        plt.savefig(f'{save_dir}/{source.split('.')[0]}.png')
         plt.close()
-
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Consolidate results from different sources for each method')
