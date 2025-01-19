@@ -8,6 +8,8 @@ import re
 from collections import defaultdict
 import json
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 def extract_winner(res):
     '''
@@ -90,6 +92,141 @@ def get_catwise_winners(source_data):
         category_winners[cat] = {k: v for k, v in sorted(win_dict.items(), key=lambda item: item[1], reverse=True)}
     
     return category_winners
+
+# def create_graph(method_source_wise_results, output_dir):
+#     # Specify methods to compare
+#     methods_to_compare = ['delta_schema_persona', 'schema_persona']
+
+#     save_dir = f'{output_dir}/graphs'
+#     if not os.path.exists(save_dir):
+#         os.makedirs(save_dir)
+    
+#     # Iterate over methods
+#     for method, source_data in method_source_wise_results.items():
+#         if method not in methods_to_compare:
+#             continue
+
+#         for source, data in source_data.items():
+#             print(source)
+#             if source == 'overall.json':
+#                 continue
+
+#             # Extract categories
+#             categories = list(data.keys())
+            
+#             # Initialize bar data
+#             bar_width = 0.35
+#             x = np.arange(len(categories))  # Position of categories
+            
+#             # Plot setup
+#             fig, ax = plt.subplots(figsize=(12, 6))
+            
+#             for i, compare_method in enumerate(methods_to_compare):
+#                 if compare_method != method:
+#                     continue
+
+#                 print('In here', method)
+#                 # Get data for the method
+#                 method_data = data
+#                 print('method_data', method_data)
+
+#                 # Prepare bar segments
+#                 expts = [method_data[cat].get('expts', 0) for cat in categories]
+#                 ties = [method_data[cat].get('Tie', 0) for cat in categories]
+#                 vanilla = [method_data[cat].get('vanilla', 0) for cat in categories]
+                
+#                 # Bottom positions for stacked bars
+#                 bottom_tie = np.array(expts)
+#                 bottom_vanilla = bottom_tie + np.array(ties)
+
+#                 # Plot bars for the method
+#                 ax.bar(x + i * bar_width, expts, bar_width, label=f'{method} - expts', color='blue')
+#                 ax.bar(x + i * bar_width, ties, bar_width, bottom=bottom_tie, label=f'{method} - Tie', color='orange')
+#                 ax.bar(x + i * bar_width, vanilla, bar_width, bottom=bottom_vanilla, label=f'{method} - vanilla', color='green')
+
+#             # Formatting
+#             ax.set_title(f'Win Rates by Category for {source}', fontsize=16)
+#             ax.set_xlabel('Category', fontsize=14)
+#             ax.set_ylabel('Proportion', fontsize=14)
+#             ax.set_xticks(x + bar_width / 2)
+#             ax.set_xticklabels(categories, rotation=45, ha='right', fontsize=12)
+#             ax.legend(fontsize=10)
+
+#             # Save the plot to disk
+#             plt.tight_layout()
+#             plt.savefig(f'{save_dir}/{method}_{source}.png')
+#             plt.close()
+
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+
+def create_graph(method_source_wise_results, output_dir):
+    # Specify methods to compare
+    methods_to_compare = ['delta_schema_persona', 'schema_persona']
+
+    save_dir = f'{output_dir}/graphs'
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    
+    # Define distinct colors for methods
+    method_colors = {
+        'delta_schema_persona': {'expts': 'blue', 'Tie': 'orange', 'vanilla': 'green'},
+        'schema_persona': {'expts': 'purple', 'Tie': 'pink', 'vanilla': 'yellow'}
+    }
+    
+    # Iterate over sources
+    for source in next(iter(method_source_wise_results.values())).keys():
+        if source == 'overall.json':
+            continue
+
+        # Extract categories
+        categories = list(next(iter(method_source_wise_results.values()))[source].keys())
+        
+        # Initialize bar data
+        bar_width = 0.35
+        x = np.arange(len(categories))  # Position of categories
+        
+        # Plot setup
+        fig, ax = plt.subplots(figsize=(12, 6))
+        
+        for i, method in enumerate(methods_to_compare):
+            if method not in method_source_wise_results:
+                continue
+
+            # Get data for the source in the method
+            if source not in method_source_wise_results[method]:
+                continue
+
+            method_data = method_source_wise_results[method][source]
+
+            # Prepare bar segments
+            expts = [method_data[cat].get('expts', 0) for cat in categories]
+            ties = [method_data[cat].get('Tie', 0) for cat in categories]
+            vanilla = [method_data[cat].get('vanilla', 0) for cat in categories]
+            
+            # Bottom positions for stacked bars
+            bottom_tie = np.array(expts)
+            bottom_vanilla = bottom_tie + np.array(ties)
+
+            # Plot bars for the method with distinct colors
+            ax.bar(x + i * bar_width, expts, bar_width, label=f'{method} - expts', color=method_colors[method]['expts'])
+            ax.bar(x + i * bar_width, ties, bar_width, bottom=bottom_tie, label=f'{method} - Tie', color=method_colors[method]['Tie'])
+            ax.bar(x + i * bar_width, vanilla, bar_width, bottom=bottom_vanilla, label=f'{method} - vanilla', color=method_colors[method]['vanilla'])
+
+        # Formatting
+        ax.set_title(f'Win Rates by Category for {source}', fontsize=16)
+        ax.set_xlabel('Category', fontsize=14)
+        ax.set_ylabel('Proportion', fontsize=14)
+        ax.set_xticks(x + bar_width / 2)
+        ax.set_xticklabels(categories, rotation=45, ha='right', fontsize=12)
+        ax.legend(fontsize=10)
+
+        # Save the plot to disk
+        plt.tight_layout()
+        plt.savefig(f'{save_dir}/{source}.png')
+        plt.close()
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Consolidate results from different sources for each method')
@@ -179,7 +316,9 @@ def main():
             output_path = f"{output_sub_path}/{source}"
             with open(output_path, 'w') as f:
                 json.dump(catwise_winners, f, indent=4)
-        # TODO: construct graph for each source
+    
+    # TODO: construct graph for each source
+    create_graph(method_source_wise_results, output_dir)
     
     # write the table to a csv file
     df = pd.DataFrame(rows)
