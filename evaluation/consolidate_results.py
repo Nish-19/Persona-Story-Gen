@@ -179,6 +179,7 @@ def main():
             output_path = f"{output_sub_path}/{source}"
             with open(output_path, 'w') as f:
                 json.dump(catwise_winners, f, indent=4)
+        # TODO: construct graph for each source
     
     # write the table to a csv file
     df = pd.DataFrame(rows)
