@@ -6,6 +6,7 @@ import os
 import json 
 from collections import defaultdict
 import pandas as pd 
+import argparse
 
 def get_consolidated_results(res_dir, store_gt=False):
     # initialie consolidated results
@@ -56,11 +57,35 @@ def get_consolidated_results(res_dir, store_gt=False):
     
     return consolidate_results, consolidate_results_gt
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    # store true (llama)
+    # llama (store_true)
+    parser.add_argument('--llama', action='store_true', help='To use llama 8B generated model results')
+    # llama (store_true)
+    parser.add_argument('--llama70', action='store_true', help='To use llama 70B generated model results')
+
+    return parser.parse_args()
 
 def main():
-    # root_dir = 'results'
-    # root_dir = 'results_llama'
-    root_dir = 'results_llama70'
+    # parse arguments
+    args = parse_args()
+
+    # llama
+    llama = args.llama
+    # llama70
+    llama70 = args.llama70
+
+    # llama_suffix
+    if llama:
+        llama_suffix = '_llama'
+    elif llama70:
+        llama_suffix = '_llama70'
+    else:
+        llama_suffix = ''
+
+
+    root_dir = f'results{llama_suffix}'
     vanilla_dir = f"{root_dir}/vanilla"
     consolidate_vanilla, consolidate_gt = get_consolidated_results(vanilla_dir, store_gt=True)
     assert len(consolidate_vanilla) == len(consolidate_gt)

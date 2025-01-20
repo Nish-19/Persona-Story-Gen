@@ -104,6 +104,8 @@ def main():
         print(f'### Processing {source} ###')
         # ground truth directory
         gt_root_dir = f'../datasets/data_splits/data/{source}/test/'
+        # profile directory
+        profile_root_dir = f'../datasets/data_splits/data/{source}/profile/'
 
         expts_root_dir = f'../experiments/results{llama_suffix}/{consider_dir}/{source}'
 
@@ -114,12 +116,17 @@ def main():
             os.makedirs(output_dir)
 
         pairs = []
+        # store author-wise data
+        author_profile = {}
+        author_index = []
         # iterate over files in the ground truth directory
-        for file in os.listdir(gt_root_dir):
+        for fctr, file in enumerate(os.listdir(gt_root_dir)):
             # gt file path
             gt_file_path = os.path.join(gt_root_dir, file)
             # expts file path
             expts_file_path = os.path.join(expts_root_dir, file)
+            # profile file path
+            profile_file_path = os.path.join(profile_root_dir, file)
 
             try:
                 # read the ground truth file
@@ -129,6 +136,10 @@ def main():
                 # read the expts file
                 with open(expts_file_path, 'r') as f:
                     expts_data = json.load(f)
+                
+                # read the profile file
+                with open(profile_file_path, 'r') as f:
+                    profile_data = json.load(f)
             except:
                 print('Error reading file', file)
                 continue
@@ -153,11 +164,19 @@ def main():
                     print('Skipping None', file)
                     continue
                 pairs.append((gt_story, expts['story']))
+                # add the author index
+                author_index.append(fctr)
+
+            # add the author profile data
+            author_profile[file] = [pdata['story'] for pdata in profile_data]
+            # # add the author test data
+            # author_test_data[file] = [edata['story'] for edata in expts_data]
         
         print(f'## Processing {len(pairs)} pairs')
+        print(f'## Processing {len(author_profile)} author profiles')
             
         # initialize metrics class
-        metrics = Metrics(pairs, compute_gt=compute_gt)
+        metrics = Metrics(pairs, author_profile, author_index, compute_gt=compute_gt)
 
         # 1. Reference-based metrics
 
@@ -224,8 +243,27 @@ def main():
             with open(style_metrics_path, 'w') as outfile:
                 json.dump(style_metrics, outfile, indent=4)
 
-        if verbose:
-            print('Saved the evaluation scores')
+        
+        # 4. Author Attribution 
+        if os.path.exists(f'{output_dir}/author_attribution.json'):
+            if verbose:
+                print('Author Attribution already computed')
+        else:
+            author_attribution = metrics.author_attribution(verbose=verbose)
+
+            author_attribution_dict = {'author_attribution': author_attribution}
+
+            if verbose:
+                print('Computed Author Attribution')
+
+            # save author attribution
+            author_attribution_path = f'{output_dir}/author_attribution.json'
+            with open(author_attribution_path, 'w') as outfile:
+                json.dump(author_attribution_dict, outfile, indent=4)
+            
+            if verbose:
+                print('Saved all the evaluation scores')
+
 
 if __name__ == '__main__':
     main()

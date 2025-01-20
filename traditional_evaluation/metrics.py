@@ -59,11 +59,14 @@ def suppress_output():
 
 
 class Metrics:
-    def __init__(self, pairs, compute_gt=True):
+    def __init__(self, pairs, author_profile, author_index, compute_gt=True):
         '''
         pairs: list of tuples of reference and generated story turns
         '''
         self.pairs = pairs
+        self.author_profile = author_profile
+        self.author_index = author_index
+
         self.compute_gt = compute_gt
 
         # # load the NRC lexicon
@@ -408,6 +411,27 @@ class Metrics:
         # return pointwise_scores, final_scores
         return final_scores
 
+    # Helper function to get embeddings
+    def get_luar_embeddings(self, text_series, luar_tokenizer, luar_embedder):
+        # Batch size for embedding computation
+        batch_size = 32
+        num_batches = (len(text_series) - 1) // batch_size + 1
+        embeddings = []
+        for i in range(num_batches):
+            texts = list(text_series[i * batch_size: (i + 1) * batch_size])
+            actual_batch_size = len(texts)
+
+            # Tokenize and reshape
+            tokenized_texts = luar_tokenizer(texts, max_length=512, padding="max_length", truncation=True, return_tensors="pt").to(self.device)
+            tokenized_texts['input_ids'] = tokenized_texts['input_ids'].reshape(actual_batch_size, 1, -1)
+            tokenized_texts['attention_mask'] = tokenized_texts['attention_mask'].reshape(actual_batch_size, 1, -1)
+
+            # Get embeddings
+            with torch.no_grad():
+                out = luar_embedder(**tokenized_texts)
+            embeddings.append(out.detach().cpu())
+        return torch.cat(embeddings, dim=0)
+
     def luar_score(self):
         '''
         Compute the LUAR-based cosine similarity score for text pairs.
@@ -419,34 +443,12 @@ class Metrics:
         # Initialize accumulators for cosine similarities
         cosine_similarities = []
 
-        # Batch size for embedding computation
-        batch_size = 32
-
-        # Helper function to get embeddings
-        def get_luar_embeddings(text_series):
-            num_batches = (len(text_series) - 1) // batch_size + 1
-            embeddings = []
-            for i in range(num_batches):
-                texts = list(text_series[i * batch_size: (i + 1) * batch_size])
-                actual_batch_size = len(texts)
-
-                # Tokenize and reshape
-                tokenized_texts = luar_tokenizer(texts, max_length=512, padding="max_length", truncation=True, return_tensors="pt").to(self.device)
-                tokenized_texts['input_ids'] = tokenized_texts['input_ids'].reshape(actual_batch_size, 1, -1)
-                tokenized_texts['attention_mask'] = tokenized_texts['attention_mask'].reshape(actual_batch_size, 1, -1)
-
-                # Get embeddings
-                with torch.no_grad():
-                    out = luar_embedder(**tokenized_texts)
-                embeddings.append(out.detach().cpu())
-            return torch.cat(embeddings, dim=0)
-
         # Separate references and generations
         refs, gens = zip(*self.pairs)
 
         # Compute embeddings for references and generated texts
-        ref_embeddings = get_luar_embeddings(refs)
-        gen_embeddings = get_luar_embeddings(gens)
+        ref_embeddings = self.get_luar_embeddings(refs, luar_tokenizer, luar_embedder)
+        gen_embeddings = self.get_luar_embeddings(gens, luar_tokenizer, luar_embedder)
 
         # Compute cosine similarities for each pair
         for ref_emb, gen_emb in zip(ref_embeddings, gen_embeddings):
@@ -468,6 +470,98 @@ class Metrics:
 
         # return pointwise_scores, final_scores
         return final_scores
+    
+    def author_attribution(self, verbose=False):
+        '''
+        Compute the author attribution scores
+        '''
 
+        # Separate references and generations
+        refs, author_stories = zip(*self.pairs)
+        author_index = self.author_index
 
+        # Load the LUAR tokenizer and model
+        luar_tokenizer = AutoTokenizer.from_pretrained('rrivera1849/LUAR-CRUD', trust_remote_code=True)
+        luar_embedder = AutoModel.from_pretrained('rrivera1849/LUAR-CRUD', trust_remote_code=True).to(self.device)
 
+        # get embeddings for author profile
+        author_embeddings = []
+        for author, stories in self.author_profile.items():
+            embeddings = self.get_luar_embeddings(stories, luar_tokenizer, luar_embedder)
+            # agregate the embeddings for each author
+            author_embeddings.append(embeddings.mean(dim=0))
+        
+        # convert the list of embeddings to a tensor
+        author_embeddings = torch.stack(author_embeddings)
+        # if verbose:
+        #     print('Computed author embeddings', author_embeddings.shape)
+
+        # get embeddings for author test data
+        test_embeddings = self.get_luar_embeddings(author_stories, luar_tokenizer, luar_embedder)
+        # if verbose:
+        #     print('Computed test embeddings', test_embeddings.shape)
+
+        # compute cosine similarity between author profile and author test data (don't use for loop)
+        cosine_similarities = cosine_similarity(test_embeddings, author_embeddings)
+        
+        if self.compute_gt:
+            # calculate the cosine similarity between the ground truth and the author profile
+            gt_embeddings = self.get_luar_embeddings(refs, luar_tokenizer, luar_embedder)            
+            gt_cosine_similarities = cosine_similarity(gt_embeddings, author_embeddings)
+
+        # NOTE: Authorship Attribution Cosine Similarity
+        # Group cosine similarities by author index
+        authorwise_scores = defaultdict(list)
+        for idx, author_idx in enumerate(author_index):
+            authorwise_scores[author_idx].append(cosine_similarities[idx, author_idx])
+
+        # compute average cosine similarity for each author
+        authorwise_avg_scores = {author: sum(scores) / len(scores) for author, scores in authorwise_scores.items()}
+
+        # compute average of average cosine similarity
+        author_attr_cosine_similarity = sum(authorwise_avg_scores.values()) / len(authorwise_avg_scores)
+
+        # compute gt
+        if self.compute_gt:
+            # Group cosine similarities by author index
+            gt_authorwise_scores = defaultdict(list)
+            for idx, author_idx in enumerate(author_index):
+                gt_authorwise_scores[author_idx].append(gt_cosine_similarities[idx, author_idx])
+
+            # compute average cosine similarity for each author
+            gt_authorwise_avg_scores = {author: sum(scores) / len(scores) for author, scores in gt_authorwise_scores.items()}
+
+            # compute average of average cosine similarity
+            gt_author_attr_cosine_similarity = sum(gt_authorwise_avg_scores.values()) / len(gt_authorwise_avg_scores)
+        else:
+            gt_author_attr_cosine_similarity = 'None'
+
+        # final scores
+        final_scores = {
+            'author_attr_cosine_similarity_gt': gt_author_attr_cosine_similarity,
+            'author_attr_cosine_similarity_gen': author_attr_cosine_similarity
+        }
+
+        # NOTE: Authorship Attribution Accuracy
+        # # get the index of the maximum cosine similarity for each test data
+        # predicted_author_index = np.argmax(cosine_similarities, axis=1)
+        # if verbose:
+        #     print('Computed predicted author index', predicted_author_index.shape)
+
+        # # check if the predicted author index is correct with author_index
+        # correct_predictions = (predicted_author_index == author_index).sum()
+
+        # # compute the accuracy
+        # accuracy = correct_predictions / len(author_index)
+
+        # # pointwise scores
+        # pointwise_scores = {
+        #     'author_attribution_accuracy': accuracy
+        # }
+
+        # # final scores
+        # final_scores = {
+        #     'author_attribution_accuracy': accuracy
+        # }
+
+        return final_scores
