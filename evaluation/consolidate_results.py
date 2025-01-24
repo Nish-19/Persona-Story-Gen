@@ -128,7 +128,7 @@ def create_graph(method_source_wise_results, output_dir):
         x = np.arange(len(categories)) * 0.65  # Position of categories
         
         # Plot setup
-        fig, ax = plt.subplots(figsize=(6, 3))
+        fig, ax = plt.subplots(figsize=(7, 4))
         
         for i, method in enumerate(methods_to_compare):
             if method not in method_source_wise_results:
@@ -157,16 +157,16 @@ def create_graph(method_source_wise_results, output_dir):
 
             # Add method names directly below respective bars
             for pos in method_x:
-                ax.text(pos, -0.05, method_alias[method], ha='center', va='top', fontsize=8, rotation=15, color='black', transform=ax.get_xaxis_transform())
+                ax.text(pos, -0.05, method_alias[method], ha='center', va='top', fontsize=12, rotation=15, color='black', transform=ax.get_xaxis_transform())
 
         # Adjust category labels to be tilted and flushed downward
         ax.set_xticks(x + (len(methods_to_compare) - 1) * (bar_width + gap_width) / 2)
-        ax.set_xticklabels(categories_labels, rotation=0, ha='center', fontsize=10, y=-0.10)
+        ax.set_xticklabels(categories_labels, rotation=0, ha='center', fontsize=14, y=-0.15)
 
         # Formatting
         ax.set_title(f'{source_alias[source]}', fontsize=16)
         # ax.set_xlabel('Category', fontsize=14)
-        ax.set_ylabel('Win-Rate Proportion', fontsize=12)
+        ax.set_ylabel('Win-Rate Proportion', fontsize=14)
 
         # Add a single legend
         handles = [
@@ -174,7 +174,7 @@ def create_graph(method_source_wise_results, output_dir):
             plt.Line2D([0], [0], color=common_colors['Tie'], lw=4, label='Tie'),
             plt.Line2D([0], [0], color=common_colors['vanilla'], lw=4, label='Ideal Author')
         ]
-        ax.legend(handles=handles, fontsize=10, loc='upper right')
+        ax.legend(handles=handles, fontsize=14, loc='upper right')
 
         # Save the plot to disk
         plt.tight_layout()
