@@ -55,6 +55,7 @@ def main():
     method_source_wise_results = defaultdict(dict)
     for mctr, method in enumerate(methods):
         method_dir = f"{root_dir}/{method}/{model_choice}"
+        all_expts, all_vanilla = [], []
         for sctr, source in enumerate(sources):
             source_dir = f"{method_dir}/{source}"
             stats_file = f"{source_dir}/winner_stats_score.json"
@@ -65,6 +66,12 @@ def main():
                 vanilla_percent = round(vanilla_value / (sum(list(results.values()))) * 100)
                 method_name, source_name = methods_alias[mctr], sources_alias[sctr]
                 method_source_wise_results[method_name][source_name] = f"{expts_percent}-{vanilla_percent}"
+                all_expts.append(expts_percent)
+                all_vanilla.append(vanilla_percent)
+        # calculate average for each method
+        avg_expts = round(sum(all_expts) / len(all_expts))
+        avg_vanilla = round(sum(all_vanilla) / len(all_vanilla))
+        method_source_wise_results[method_name]['Overall'] = f"{avg_expts}-{avg_vanilla}"
     
     # create a dataframe
     df = pd.DataFrame(method_source_wise_results)
