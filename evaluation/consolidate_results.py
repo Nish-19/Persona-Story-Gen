@@ -101,7 +101,7 @@ def create_graph(method_source_wise_results, output_dir):
     # Specify methods to compare
     methods_to_compare = ['delta', 'schema_persona', 'delta_schema_persona']
     # define method alias
-    method_alias = {'delta_schema_persona': 'DSP', 'schema_persona': 'SP', 'delta': 'D'}
+    method_alias = {'delta_schema_persona': 'WS', 'schema_persona': 'S', 'delta': 'D'}
     # source alias
     source_alias = {'Reddit.json': 'Reddit', 'AO3.json': 'AO3', 'Storium.json': 'Storium', 'narrativemagazine.json': 'Narrative Magazine', 'newyorker.json': 'New Yorker'}
 
@@ -172,7 +172,7 @@ def create_graph(method_source_wise_results, output_dir):
         handles = [
             plt.Line2D([0], [0], color=common_colors['expts'], lw=4, label='Method'),
             plt.Line2D([0], [0], color=common_colors['Tie'], lw=4, label='Tie'),
-            plt.Line2D([0], [0], color=common_colors['vanilla'], lw=4, label='Ideal User')
+            plt.Line2D([0], [0], color=common_colors['vanilla'], lw=4, label='Ideal Author')
         ]
         ax.legend(handles=handles, fontsize=10, loc='upper right')
 
