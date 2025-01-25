@@ -10,9 +10,9 @@ import argparse
 from tqdm import tqdm
 import time
 import random
-# from rank_bm25 import BM25Okapi
-# from nltk.tokenize import word_tokenize
-# from nltk.corpus import stopwords
+from rank_bm25 import BM25Okapi
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 from prompt_llm_utils import construct_prompt_message, prompt_openai, prompt_llama, prompt_llama_router, prompt_llama
 
 def parse_args():
