@@ -27,28 +27,31 @@ def main():
     args = parse_args()
 
     llama = args.llama
+    llama70 = args.llama70
     faith = args.faith
     model_choice = str(args.model_choice)
 
     print('Model Choice:', model_choice)
-    print('Llama:', llama)
     print('Faithfulness:', faith)
 
 
     if llama: 
         llama_suffix = '_llama'
-    elif args.llama70:
+    elif llama70:
         llama_suffix = '_llama70'
     else:
         llama_suffix = ''
+    
+    if llama or llama70:
+        print('LLama Suffix:', llama_suffix.split('_')[1])
 
     if faith:
         root_dir = f'author_sheet_score_schema{llama_suffix}_stats' 
     else:
         root_dir = f'llm_evaluation_shuffle_score{llama_suffix}_stats' 
 
-    methods = ['oracle', 'vanilla_few_shot', 'delta', 'schema', 'schema_persona', 'delta_schema', 'delta_schema_persona']
-    methods_alias = ['Oracle', 'RAG', 'Delta', 'Summary no-persona', 'Summary', 'Writing Sheet no-persona', 'Writing Sheet']
+    methods = ['oracle', 'vanilla_few_shot', 'delta', 'delta_schema_persona', 'schema_persona', 'delta_schema', 'schema']
+    methods_alias = ['Oracle', 'RAG', 'Delta', 'Writing Sheet', 'Writing Summary', 'Writing Sheet nP', 'Writing Summary nP']
     sources = ['AO3', 'Reddit', 'Storium', 'narrativemagazine', 'newyorker']
     sources_alias = ['AO3', 'Reddit', 'Storium', 'N.Magazine', 'New Yorker']
     
