@@ -1,0 +1,29 @@
+
+### Guidelines:
+- Output **only** a valid Python list (e.g., `["Topic1", "Topic2", "Topic3"]`)
+- Use **one-word topics** (e.g., "Magic", "Destiny", "Conflict")
+- **Avoid duplicating similar words** (e.g., use either "Fantasy" or "Magic", but not both)
+- **Generalize where possible** (e.g., "Supernatural" instead of "Vampires")
+
+### Examples:
+
+**Writing Prompt:**  
+"Three wishes? Okay, my first one is I wish I knew what to wish for that would have no negative or unintended consequences."
+
+**Output:**  
+`["Wishes", "Consequences", "Magic", "Philosophy"]`
+
+**Writing Prompt:**  
+"The magical ability test results got leaked... what nobody expected was some rando to be the most powerful mage at the academy."
+
+**Output:**  
+["Magic", "Academy", "Power", "Destiny"]
+
+---
+
+Now process the following writing prompt:
+
+**Writing Prompt:**  
+"<INSERT PROMPT HERE>"
+
+**Output:**  
