@@ -103,7 +103,7 @@ def create_graph(method_source_wise_results, output_dir):
     # define method alias
     method_alias = {'delta_schema_persona': 'WS', 'schema_persona': 'S', 'delta': 'D'}
     # source alias
-    source_alias = {'Reddit.json': 'Reddit', 'AO3.json': 'AO3', 'Storium.json': 'Storium', 'narrativemagazine.json': 'Narrative Magazine', 'newyorker.json': 'New Yorker'}
+    source_alias = {'Reddit.json': 'Reddit', 'AO3.json': 'AO3', 'Storium.json': 'Storium', 'narrativemagazine.json': 'N.Magazine', 'newyorker.json': 'New Yorker'}
 
     save_dir = f'{output_dir}/graphs'
     if not os.path.exists(save_dir):
@@ -172,7 +172,7 @@ def create_graph(method_source_wise_results, output_dir):
         handles = [
             plt.Line2D([0], [0], color=common_colors['expts'], lw=4, label='Method'),
             plt.Line2D([0], [0], color=common_colors['Tie'], lw=4, label='Tie'),
-            plt.Line2D([0], [0], color=common_colors['vanilla'], lw=4, label='Ideal Author')
+            plt.Line2D([0], [0], color=common_colors['vanilla'], lw=4, label='Average Author')
         ]
         ax.legend(handles=handles, fontsize=14, loc='upper right')
 
