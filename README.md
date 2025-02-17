@@ -1,10 +1,14 @@
 # Persona-Story-Gen
 
-Code for the Personalized Story Generation Project
-
 ## Datasets
 
-```cd datasets/data_splits/data```
+Navigate to the datasets directory:
+
+```
+cd datasets/data_splits/data
+```
+
+The dataset is organized as follows:
 
 ```
 ├── AO3
@@ -14,95 +18,185 @@ Code for the Personalized Story Generation Project
 └── Storium
 ```
 
-Each source directory above contains two directories - profiling (```profile```) and the generation (```test```) sets. Both ```profile``` and ```test``` contain a list of files each corresponding to an author. Each author file contains a list of ```writing_prompt``` and corresponding ```story```.
+Each source directory contains two subdirectories: `profile` and `test` corresponding to the `profling` and `generation` set respectively. Each directory contain a list of files each corresponding to an author. Each author file contains a list of ```writing_prompt``` and corresponding ```story```.
 
-Optional: If you want to re-generate the writing prompts navigate to ```cd generate_prompts```
+### Optional: Re-generate Writing Prompts
+
+To regenerate writing prompts, follow instructions in the `generate_prompts` directory:
+
+```
+cd generate_prompts
+```
+
+---
 
 ## Experiments
-```cd experiments```
 
-```python methods.py --help``` for a details on all arguments. 
+Navigate to the experiments directory:
 
-Use ```--source``` to specific name of data source (ex: Reddit), ```--llama``` and ```--llama70``` for LLama 3.1 8B and LLama 3.1 70B models respectively along with the commands given below.
+```
+cd experiments
+```
 
-Output directories
-* Personalized Stories: ```results``` for GPT-4o, ```results_llama``` for LLama 3.1 8B, and ```results_llama70``` for LLama 3.1 70B
-* Author Writing Sheet/ Summary: ```user_profile```
-* Story Rules: ```story_rules```
-* Persona descriptions: ```persona```
+Run the following command to see details of available arguments:
+
+```
+python methods.py --help
+```
+
+Use the `--source` argument to specify a data source (e.g., `Reddit`). 
+
+### Model Selection
+- Default GPT-4o
+- `--llama` for LLaMA 3.1 8B
+- `--llama70` for LLaMA 3.1 70B
+
+Output directories:
+- **Personalized Stories**: 
+  - `results` (GPT-4o)
+  - `results_llama` (LLaMA 3.1 8B)
+  - `results_llama70` (LLaMA 3.1 70B)
+- **Author Writing Sheet/Summary**: `user_profile`
+- **Story Rules**: `story_rules`
+- **Persona Descriptions**: `persona`
 
 ### Average Author
 
-```python methods.py --choice 1```
+```
+python methods.py --choice 1
+```
 
-The output is stored in directory ```vanilla```
+Output directory: `vanilla`
 
 ### RAG
 
-```python methods.py --choice 1 --few_shot```
+```
+python methods.py --choice 1 --few_shot
+```
 
-The output is stored in directory ```vanilla_few_shot```
+Output directory: `vanilla_few_shot`
 
 ### Delta
 
-1. Generate Average Author Stories for the profiling set 
-```python methods.py --choice 1 --is_profile```
+1. Generate Average Author Stories for the profiling set:
 
-2. Generate rules for profiling set 
-```python methods.py --extract_rules --is_profile```
+   ```
+   python methods.py --choice 1 --is_profile
+   ```
 
-3. Generate personalized stories using Delta
-```python methods.py --choice 4```
+2. Generate rules for the profiling set:
 
-The output is stored in directory ```delta```
+   ```
+   python methods.py --extract_rules --is_profile
+   ```
+
+3. Generate personalized stories using Delta:
+
+   ```
+   python methods.py --choice 4
+   ```
+
+Output directory: `delta`
 
 ### Writing Summary
 
-```python methods.py --choice 3 --persona```
+```
+python methods.py --choice 3 --persona
+```
 
-The output is stored in directory ```schema_persona```
+Output directory: `schema_persona`
 
-### Writing Sheet 
-```python methods.py --choice 5 --persona```
-
-The output is stored in directory ```delta_schema_persona```
-
-For nP variants of Writing Summary and Sheet (i.e., ablation without using persona description, do not include ```--persona``` in the command. The output is saved in ```schema``` and ```delta_schema``` respectively.)
-
-## GPT-4o-as-judge Evaluation 
-
-```cd evaluation```
-
-### Faithfulness to Writing History 
-
-Prompt GPT-4o for evaluation 
-```python author_sheet_score_evaluation.py --source <source_name> --choice <choice_number>```
-
-Compute win-rates
-```python pool_author_sheet_score_evaluation.py --source <source_name> --choice <choice_number>```
-
-### Similarity to Author Story 
-
-Prompt GPT-4o for evaluation 
-```python llm_evaluation_shuffle.py --source <source_name> --choice <choice_number>```
-
-Compute win-rates
-```python pool_llm_evaluation_score.py --source <source_name> --choice <choice_number>```
-
-```<source_name>``` is the name of data source. ```<choice_number>``` is the choice of the method which can be found above in ```Experiments``` section. Additionally argument ```--persona``` should be used for Writing Sheet and Summary. ```--llama```, and ```--llama70``` for evaluating generations for LLama 3.1 8B and LLama 3.1 70B respectively. 
-
-### Category-wise win-rates
-
-```python consolidate_results.py```
-
-```--faith``` for Faithfulness to Writing History. ```--llama```, and ```--llama70``` for LLama 3.1 8B and LLama 3.1 70B respectively. 
-
-## Traditional Metrics 
+### Writing Sheet
 
 ```
-cd traditional_evaluation
-python get_scores.py --source <source_choice> 
+python methods.py --choice 5 --persona
+```
+
+Output directory: `delta_schema_persona`
+
+#### nP Variants (Ablation without Persona Descriptions)
+For the nP variants of Writing Summary and Sheet (i.e., ablation without using persona descriptions), **omit** the `--persona` flag.
+
+- Writing Summary nP output: `schema`
+- Writing Sheet nP output: `delta_schema`
+
+---
+
+## GPT-4o-as-Judge Evaluation
+
+Navigate to the evaluation directory:
+
+```
+cd evaluation
+```
+
+### Faithfulness to Writing History
+
+1. Prompt GPT-4o for evaluation:
+
+   ```
+   python author_sheet_score_evaluation.py --source <source_name> --choice <choice_number>
+   ```
+
+2. Compute win-rates:
+
+   ```
+   python pool_author_sheet_score_evaluation.py --source <source_name> --choice <choice_number>
+   ```
+
+### Similarity to Author Story
+
+1. Prompt GPT-4o for evaluation:
+
+   ```
+   python llm_evaluation_shuffle.py --source <source_name> --choice <choice_number>
+   ```
+
+2. Compute win-rates:
+
+   ```
+   python pool_llm_evaluation_score.py --source <source_name> --choice <choice_number>
+   ```
+
+#### Notes:
+- `<source_name>` refers to the dataset source (e.g., `Reddit`).
+- `<choice_number>` corresponds to the method choice (see **Experiments** section).
+- Use the `--persona` argument for Writing Sheet and Summary evaluations.
+- Use `--llama` and `--llama70` for evaluating generations from LLaMA 3.1 8B and LLaMA 3.1 70B, respectively.
+
+### Category-wise Win-Rates
+
+```
 python consolidate_results.py
 ```
 
-For ```get_scores.py``` use the same arguments as mentioned Experiments for a particular method. Additionally use ```--compute_gt``` to get scores for the ground-truth author story. 
+- Use `--faith` for Faithfulness to Writing History.
+- Use `--llama` and `--llama70` for LLaMA 3.1 8B and LLaMA 3.1 70B.
+
+---
+
+## Traditional Metrics Evaluation
+
+Navigate to the traditional evaluation directory:
+
+```
+cd traditional_evaluation
+```
+
+1. Compute evaluation scores:
+
+   ```
+   python get_scores.py --source <source_choice>
+   ```
+
+2. Consolidate results:
+
+   ```
+   python consolidate_results.py
+   ```
+
+#### Notes:
+- Use the same arguments as in **Experiments** for selecting a specific method.
+- Add `--compute_gt` to compute scores for the **ground-truth** author story.
+
+---
