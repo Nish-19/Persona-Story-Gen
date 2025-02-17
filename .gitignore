@@ -25,3 +25,4 @@ evaluation/batch*/
 evaluation/extract_batch_output.py
 evaluation/gpu*.log
 evaluation/history_legacy/
+evaluation/debug.py
