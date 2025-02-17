@@ -15,3 +15,4 @@ human/legacy
 traditional_evaluation/__pycache__
 evaluation/slurm*
 evaluation/llama70*.sh
+human/
