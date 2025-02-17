@@ -19,3 +19,5 @@ human/
 evaluation_legacy/
 experiments/agents.py
 experiments/methods_legacy.py
+evaluation/metadata_batch_llm_evaluation_shuffle_score_llama70
+evaluation/batch*.py
