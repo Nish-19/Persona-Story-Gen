@@ -21,3 +21,7 @@ experiments/agents.py
 experiments/methods_legacy.py
 evaluation/metadata_batch_llm_evaluation_shuffle_score_llama70
 evaluation/batch*.py
+evaluation/batch*/
+evaluation/extract_batch_output.py
+evaluation/gpu*.log
+evaluation/history_legacy/
