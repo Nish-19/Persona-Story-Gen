@@ -4,8 +4,14 @@ Code for the Personalized Story Generation Project
 
 ## Datasets
 
-```cd datasets```
+```cd datasets/data_splits/data```
 
-Directories - ```Reddit``` and ```AO3```. 
+```
+├── AO3
+├── narrativemagazine
+├── newyorker
+├── Reddit
+└── Storium
+```
 
-The ```selected_human``` directory contains the selected data
+Each source contains a directory for profiling (```profile```) and the generation (```test```) set.
