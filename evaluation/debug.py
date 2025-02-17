@@ -15,11 +15,11 @@ from prompt_llm_utils import prompt_llama
 
 start_time = time.time()
 
-content1 = 'Write a story of 1000 words about an alien spicies invading the world'
-content2 = 'Write a story of 1000 words about a mother who is a detective'
-content3 = 'Write a story of 1000 words about an elf who is a wizard'
+content1 = "Write a story of 1000 words about an alien spicies invading the world"
+content2 = "Write a story of 1000 words about a mother who is a detective"
+content3 = "Write a story of 1000 words about an elf who is a wizard"
 
-messages=[
+messages = [
     {"role": "user", "content": content3},
 ]
 
