@@ -71,7 +71,38 @@ For nP variants of Writing Summary and Sheet (i.e., ablation without using perso
 
 ## GPT-4o-as-judge Evaluation 
 
+```cd evaluation```
+
+### Faithfulness to Writing History 
+
+Prompt GPT-4o for evaluation 
+```python author_sheet_score_evaluation.py --source <source_name> --choice <choice_number>```
+
+Compute win-rates
+```python pool_author_sheet_score_evaluation.py --source <source_name> --choice <choice_number>```
+
+### Similarity to Author Story 
+
+Prompt GPT-4o for evaluation 
+```python llm_evaluation_shuffle.py --source <source_name> --choice <choice_number>```
+
+Compute win-rates
+```python pool_llm_evaluation_score.py --source <source_name> --choice <choice_number>```
+
+```<source_name>``` is the name of data source. ```<choice_number>``` is the choice of the method which can be found above in ```Experiments``` section. Additionally argument ```--persona``` should be used for Writing Sheet and Summary. ```--llama```, and ```--llama70``` for evaluating generations for LLama 3.1 8B and LLama 3.1 70B respectively. 
+
+### Category-wise win-rates
+
+```python consolidate_results.py```
+
+```--faith``` for Faithfulness to Writing History. ```--llama```, and ```--llama70``` for LLama 3.1 8B and LLama 3.1 70B respectively. 
 
 ## Traditional Metrics 
 
-## Human Evaluation 
+```
+cd traditional_evaluation
+python get_scores.py --source <source_choice> 
+python consolidate_results.py
+```
+
+For ```get_scores.py``` use the same arguments as mentioned Experiments for a particular method. Additionally use ```--compute_gt``` to get scores for the ground-truth author story. 
