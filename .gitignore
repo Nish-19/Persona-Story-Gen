@@ -17,3 +17,5 @@ evaluation/slurm*
 evaluation/llama70*.sh
 human/
 evaluation_legacy/
+experiments/agents.py
+experiments/methods_legacy.py
