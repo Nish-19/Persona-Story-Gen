@@ -83,26 +83,6 @@ def prompt_llama(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0):
     return response.choices[0].message.content
 
 
-# def prompt_llama_router(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0):
-#     openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
-#     client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=openrouter_api_key)
-
-#     response = client.chat.completions.create(
-#             # model="meta-llama/Meta-Llama-3.1-8B-Instruct",
-#             model="meta-llama/llama-3.1-70b-instruct",
-#             messages=prompt_messages,
-#             temperature=temperature,
-#             top_p=top_p,
-#             max_tokens=max_tokens,
-#             provider={
-#                 "order": ["Lepton", "Fireworks"],
-#                 "allow_fallbacks": False
-#             },
-#         )
-
-#     return response.choices[0].message.content
-
-
 @retry(wait=wait_random_exponential(min=1, max=10), stop=stop_after_attempt(6))
 def prompt_llama_router(prompt_messages, max_tokens=2000, temperature=0.0, top_p=1.0):
     # Retrieve the OpenRouter API key
