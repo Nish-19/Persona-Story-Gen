@@ -18,7 +18,13 @@ The dataset is organized as follows:
 └── Storium
 ```
 
-Each source directory contains two subdirectories: `profile` and `test` corresponding to the `profling` and `generation` set respectively. Each directory contain a list of files each corresponding to an author. Each author file contains a list of ```writing_prompt``` and corresponding ```story```.
+Each source directory contains two subdirectories: `profile` and `test`, corresponding to the **profiling** and **generation** sets, respectively. 
+
+Each directory contains a list of files, with each file corresponding to an author. Each author file consists of:
+- A list of `writing_prompt`
+- The corresponding `url`, which can be used to download the story.
+
+For **Storium**, you need to request access to the dataset from the original authors and collect the `game_pid` story. You can find more details at [Storium Dataset](https://storium.cs.umass.edu/).
 
 ### Optional: Re-generate Writing Prompts
 
