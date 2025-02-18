@@ -26,3 +26,8 @@ evaluation/extract_batch_output.py
 evaluation/gpu*.log
 evaluation/history_legacy/
 evaluation/debug.py
+datasets/AO3/
+datasets/Reddit/
+datasets/Storium/
+datasets/narrativemagazine/
+datasets/newyorker

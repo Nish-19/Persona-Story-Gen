@@ -27,7 +27,7 @@ def get_profile_test_data(data, profile_size, source):
     elif source == "narrativemagazine":
         date_field = "date"
         date_format = "%d %b %Y"
-        metadata_fields = ["post_title"]
+        metadata_fields = ["post_title", "date"]
     elif source == "newyorker":
         date_field = "date"
         date_format = "%d %b %Y"
@@ -39,7 +39,7 @@ def get_profile_test_data(data, profile_size, source):
     elif source == "Storium":
         date_field = "created_at"
         date_format = "%Y-%m-%d %H:%M:%S %Z"
-        metadata_fields = ["story_name"]
+        metadata_fields = ["story_name", "game_pid", "post_title", "format", "role"]
 
     # sort the data based on date
     sorted_data = sorted(
@@ -67,7 +67,8 @@ def get_profile_test_data(data, profile_size, source):
                 "date": prof_data[date_field],
                 "metadata": metadata,
                 "writing_prompt": prof_data["writing_prompt"],
-                "story": prof_data["comment"],
+                # "story": prof_data["comment"],
+                "url": prof_data.get("url", "None"),
             }
         )
 
@@ -87,7 +88,8 @@ def get_profile_test_data(data, profile_size, source):
                 "date": t_data[date_field],
                 "metadata": metadata,
                 "writing_prompt": t_data["writing_prompt"],
-                "story": t_data["comment"],
+                # "story": t_data["comment"],
+                "url": t_data.get("url", "None"),
             }
         )
 
