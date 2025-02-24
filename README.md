@@ -206,3 +206,15 @@ cd traditional_evaluation
 - Add `--compute_gt` to compute scores for the **ground-truth** author story.
 
 ---
+
+## 📜 Citation
+```
+@article{kumar2025whose,
+  title={Whose story is it? Personalizing story generation by inferring author styles},
+  author={Kumar, Nischal Ashok and Pham, Chau Minh and Iyyer, Mohit and Lan, Andrew},
+  journal={arXiv preprint arXiv:2502.13028},
+  year={2025}
+}
+```
+
+---
