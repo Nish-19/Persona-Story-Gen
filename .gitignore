@@ -32,3 +32,5 @@ datasets/Storium/
 datasets/narrativemagazine/
 datasets/newyorker
 datasets/finetune_data/
+saved_models/*
+wandb/*
