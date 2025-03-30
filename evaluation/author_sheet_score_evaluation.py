@@ -59,6 +59,14 @@ def parse_args():
         action="store_true",
         help="To use persona prompt obtained from Author Sheet (for Schema and Delta Schema only)",
     )
+
+    # ft baseline 
+    parser.add_argument(
+        "--ft_baseline",
+        action="store_true",
+        help="Whether to use the fine-tuned baseline model as Average Author",
+    )
+
     # azure (store_true)
     parser.add_argument("--azure", action="store_true", help="To use azure openai")
     # llama (store_true)
@@ -199,6 +207,8 @@ def main():
     llama = args.llama
     # llama70
     llama70 = args.llama70
+    # ft_baseline
+    ft_baseline = args.ft_baseline
     # verbose
     verbose = args.verbose
 
@@ -231,6 +241,25 @@ def main():
         sources = ["Reddit", "AO3", "narrativemagazine", "newyorker", "Storium"]
     else:
         sources = [source]
+    
+    # ft_baseline data
+    if ft_baseline:
+        print("Using FT Baseline")
+        ft_baseline_data_dir = '../experiments/finetune/sft-8b-no-len/test_results.json'
+        # load the data
+        with open(ft_baseline_data_dir, "r") as f:
+            ft_baseline_raw_data = json.load(f)
+        
+        ft_baseline_data = {}
+        # process the data
+        for data in ft_baseline_raw_data:
+            # remove the first element
+            ft_baseline_data[data['wp']] = data['pred_story']
+        
+        # set ft_flag
+        ft_flag = "_ft_baseline"
+    else:
+        ft_flag = ""
 
     # root directories
     if choice == 1:
@@ -271,11 +300,11 @@ def main():
         # results output directory
         if eval_choice == 1:
             output_dir = (
-                f"author_sheet_score{llama_suffix}/{consider_dir}/{model_choice}"
+                f"author_sheet_score{llama_suffix}/{consider_dir}/{model_choice}{ft_flag}"
             )
         elif eval_choice == 2:
             output_dir = (
-                f"author_sheet_score_schema{llama_suffix}/{consider_dir}/{model_choice}"
+                f"author_sheet_score_schema{llama_suffix}/{consider_dir}/{model_choice}{ft_flag}"
             )
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -453,12 +482,15 @@ def main():
                 if expts["story"] is None:
                     print("Skipping None", file)
                     continue
+                    
+                average_author = vanilla_data[ectr]["story"] if not ft_baseline else ft_baseline_data[gt_wp]
+
                 pairs.append(
                     (
                         identifier,
                         gt_wp,
                         writing_sheet_categories,
-                        vanilla_data[ectr]["story"],
+                        average_author,
                         expts["story"],
                     )
                 )

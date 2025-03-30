@@ -240,7 +240,8 @@ def test(args, test_df):
 
         # delete the label from the results
         for result in results:
-            del result["label"]
+            if "label" in result:
+                del result["label"]
     
         with open(f"{save_dir}/test_results.json", "w") as f:
             json.dump(results, f, indent=4)

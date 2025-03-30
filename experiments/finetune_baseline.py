@@ -58,8 +58,8 @@ def parse_args():
     parser.add_argument("--pt_model_name")
     parser.add_argument("--quantize", action="store_true")
     # Training/Testing
-    parser.add_argument("--train_batch_size", type=int, default=4, help="Batch size at train-time")
-    parser.add_argument("--test_batch_size", type=int, default=16, help="Batch size at test-time")
+    parser.add_argument("--train_batch_size", type=int, default=2, help="Batch size at train-time")
+    parser.add_argument("--test_batch_size", type=int, default=8, help="Batch size at test-time")
     parser.add_argument("--epochs", type=int, default=3, help="Number of training epochs")
     parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate")
     parser.add_argument("--wd", type=float, default=1e-2, help="Weight decay")
@@ -95,28 +95,28 @@ def main():
     profile_df = load_data(split='profile')
     test_df = load_data(split='test')
 
-    # # load model
-    # base_model, tokenizer = get_base_model(args.base_model, args.quantize)
-    # model = get_model(base_model, False, pt_model_name=args.pt_model_name, r=args.r, lora_alpha=args.lora_alpha, quantize=args.quantize)
+    # load model
+    base_model, tokenizer = get_base_model(args.base_model, args.quantize)
+    model = get_model(base_model, False, pt_model_name=args.pt_model_name, r=args.r, lora_alpha=args.lora_alpha, quantize=args.quantize)
 
-    # # create dataset and collator
-    # train_dataset = SFTExpandedDataset(profile_df, tokenizer, args)
-    # val_dataset = SFTExpandedDataset(test_df, tokenizer, args)
-    # collator = SFTExpandedCollator(tokenizer)
+    # create dataset and collator
+    train_dataset = SFTExpandedDataset(profile_df, tokenizer, args)
+    val_dataset = SFTExpandedDataset(test_df, tokenizer, args)
+    collator = SFTExpandedCollator(tokenizer)
 
-    # # Train
-    # training_args = get_training_args(args)
-    # # training_args.world_size = 1
+    # Train
+    training_args = get_training_args(args)
+    # training_args.world_size = 1
 
-    # trainer = Trainer(
-    #     model=model,
-    #     args=training_args,
-    #     train_dataset=train_dataset,
-    #     eval_dataset=val_dataset,
-    #     data_collator=collator,
-    # )
-    # trainer.train()
-    # trainer.save_model()
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=val_dataset,
+        data_collator=collator,
+    )
+    trainer.train()
+    trainer.save_model()
 
     # Test
     test(args, test_df)

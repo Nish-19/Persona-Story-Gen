@@ -59,6 +59,14 @@ def parse_args():
         action="store_true",
         help="To use persona prompt obtained from Author Sheet (for Schema and Delta Schema only)",
     )
+
+    # ft baseline 
+    parser.add_argument(
+        "--ft_baseline",
+        action="store_true",
+        help="Whether to use the fine-tuned baseline model as Average Author",
+    )
+
     # verbose (store_true)
     parser.add_argument("--verbose", action="store_true", help="Verbose")
     # azure (store_true)
@@ -182,6 +190,9 @@ def main():
     llama = args.llama
     # llama70
     llama70 = args.llama70
+    # ft_baseline
+    ft_baseline = args.ft_baseline
+
     # verbose
     verbose = args.verbose
 
@@ -234,17 +245,38 @@ def main():
     else:
         sources = [source]
 
+    # ft_baseline data
+    if ft_baseline:
+        print("Using FT Baseline")
+        ft_baseline_data_dir = '../experiments/finetune/sft-8b-no-len/test_results.json'
+        # load the data
+        with open(ft_baseline_data_dir, "r") as f:
+            ft_baseline_raw_data = json.load(f)
+        
+        ft_baseline_data = {}
+        # process the data
+        for data in ft_baseline_raw_data:
+            # remove the first element
+            ft_baseline_data[data['wp']] = data['pred_story']
+        
+        # set ft_flag
+        ft_flag = "_ft_baseline"
+    else:
+        ft_flag = ""
+
+
     # iterate over sources
     for source in sources:
         print(f"### Processsing {source} ###")
         # root directories
         gt_root_dir = f"../datasets/data_splits/data/{source}/test/"
+        story_root_dir = f"../datasets/{source}/selected_human_with_prompts/"
         profile_root_dir = f"../datasets/data_splits/data/{source}/profile/"
 
         expts_root_dir = f"../experiments/results{llama_suffix}/{consider_dir}/{source}"
 
         # results output directory
-        output_dir = f"llm_evaluation_shuffle_score{his_suffix}{llama_suffix}/{consider_dir}/{model_choice}"
+        output_dir = f"llm_evaluation_shuffle_score{his_suffix}{llama_suffix}/{consider_dir}/{model_choice}{ft_flag}"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
@@ -318,6 +350,8 @@ def main():
         ):
             # gt file path
             gt_file_path = os.path.join(gt_root_dir, file)
+            # story file path
+            story_file_path = os.path.join(story_root_dir, file)
             # profile file path
             profile_file_path = os.path.join(profile_root_dir, file)
             # vanilla file path
@@ -330,6 +364,15 @@ def main():
             # read the ground truth file
             with open(gt_file_path, "r") as f:
                 gt_data = json.load(f)
+            
+            # read the story file
+            with open(story_file_path, "r") as f:
+                story_data_raw = json.load(f)
+            
+            # process the story data
+            story_data = {}
+            for data in story_data_raw:
+                story_data[data['writing_prompt']] = data['comment']
 
             # read the profile file
             with open(profile_file_path, "r") as f:
@@ -416,10 +459,14 @@ def main():
                     continue
 
                 gt_wp = gt_data[ectr]["writing_prompt"]
-                gt_story = gt_data[ectr]["story"]
+                # gt_story = gt_data[ectr]["story"]
+                gt_story = story_data.get(gt_wp, None)
                 if gt_story is None or expts["story"] is None:
                     print("Skipping None", file)
                     continue
+                
+                average_author = vanilla_data[ectr]["story"] if not ft_baseline else ft_baseline_data[gt_wp]
+
                 if history:
                     # history_data = [last_story_data]
                     # # get the history data (most similar BM25)
@@ -442,13 +489,12 @@ def main():
                     #             history_data.append(bm25_data)
                     #             break
                     #     # history_data = [last_story_data, bm25_data]
-
                     pairs.append(
                         (
                             identifier,
                             gt_wp,
                             summarize_history,
-                            vanilla_data[ectr]["story"],
+                            average_author,
                             expts["story"],
                         )
                     )
@@ -458,7 +504,7 @@ def main():
                             identifier,
                             gt_wp,
                             gt_story,
-                            vanilla_data[ectr]["story"],
+                            average_author,
                             expts["story"],
                         )
                     )
