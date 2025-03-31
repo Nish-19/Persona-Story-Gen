@@ -422,8 +422,8 @@ def main():
                                 prompt, model="gpt-4o", azure=azure
                             )
                         elif model_choice == 2:
-                            # response = prompt_llama_router(prompt)
-                            response = prompt_llama(prompt)
+                            response = prompt_llama_router(prompt)
+                            # response = prompt_llama(prompt)
                         elif model_choice == 3:
                             response = prompt_openai(
                                 prompt, model="gpt-4o-mini", azure=azure
@@ -542,8 +542,8 @@ def main():
                     if model_choice == 1:
                         response = prompt_openai(prompt, model="gpt-4o", azure=azure)
                     elif model_choice == 2:
-                        # response = prompt_llama_router(prompt)
-                        response = prompt_llama(prompt)
+                        response = prompt_llama_router(prompt)
+                        # response = prompt_llama(prompt)
                     elif model_choice == 3:
                         response = prompt_openai(
                             prompt, model="gpt-4o-mini", azure=azure
@@ -567,8 +567,8 @@ def main():
                     if model_choice == 1:
                         response = prompt_openai(prompt, azure=azure)
                     elif model_choice == 2:
-                        # response = prompt_llama_router(prompt)
-                        response = prompt_llama(prompt)
+                        response = prompt_llama_router(prompt)
+                        # response = prompt_llama(prompt)
                     elif model_choice == 3:
                         response = prompt_openai(
                             prompt, model="gpt-4o-mini", azure=azure

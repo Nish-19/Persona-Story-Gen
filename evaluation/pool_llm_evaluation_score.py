@@ -46,6 +46,14 @@ def parse_args():
         action="store_true",
         help="To use persona prompt obtained from Author Sheet (for Schema and Delta Schema only)",
     )
+
+    # ft baseline 
+    parser.add_argument(
+        "--ft_baseline",
+        action="store_true",
+        help="Whether to use the fine-tuned baseline model as Average Author",
+    )
+
     # verbose (store_true)
     parser.add_argument("--verbose", action="store_true", help="Verbose")
     # llama (store_true)
@@ -191,6 +199,14 @@ def main():
     llama70 = args.llama70
     # persona
     persona = args.persona
+    # ft baseline
+    ft_baseline = args.ft_baseline
+
+    if ft_baseline:
+        ft_flag = '_ft_baseline'
+    else:
+        ft_flag = ''
+
 
     # choice = 3
 
@@ -243,9 +259,9 @@ def main():
     for source in sources:
         eval_dir_name = f"llm_evaluation_shuffle_score{his_suffix}{llama_suffix}"
 
-        eval_path = f"{eval_dir_name}/{consider_dir}/{model_choice}/{source}.json"
+        eval_path = f"{eval_dir_name}/{consider_dir}/{model_choice}{ft_flag}/{source}.json"
 
-        output_dir = f"{eval_dir_name}_stats/{consider_dir}/{model_choice}/{source}"
+        output_dir = f"{eval_dir_name}_stats/{consider_dir}/{model_choice}{ft_flag}/{source}"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
