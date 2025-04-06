@@ -78,29 +78,35 @@ def parse_args():
     return parser.parse_args()
 
 
-def extract_winner(res):
+def extract_winner(res, model_choice=1):
     """
     extract text between the tag <winner></winner>
     """
 
     def get_winner(score_text):
-        # Extract scores for Story A and Story B using regex
-        story_a_score = re.search(r"Story A:\s*(\d+)", score_text)
-        story_b_score = re.search(r"Story B:\s*(\d+)", score_text)
-
-        if story_a_score and story_b_score:
-            score_a = int(story_a_score.group(1).strip())
-            score_b = int(story_b_score.group(1).strip())
-
-            if score_a > score_b:
+        if model_choice == 4:
+            if 'A' in score_text:
                 return "A"
-            elif score_a < score_b:
+            elif 'B' in score_text:
                 return "B"
-            else:
-                return "Tie"
-
         else:
-            return None
+            # Extract scores for Story A and Story B using regex
+            story_a_score = re.search(r"Story A:\s*(\d+)", score_text)
+            story_b_score = re.search(r"Story B:\s*(\d+)", score_text)
+
+            if story_a_score and story_b_score:
+                score_a = int(story_a_score.group(1).strip())
+                score_b = int(story_b_score.group(1).strip())
+
+                if score_a > score_b:
+                    return "A"
+                elif score_a < score_b:
+                    return "B"
+                else:
+                    return "Tie"
+
+            else:
+                return None
 
     winner = None
     score_match = re.search(r"<score>(.*?)</score>", res, re.DOTALL)
@@ -115,24 +121,30 @@ def extract_winner(res):
     return winner
 
 
-def extract_score(res):
+def extract_score(res, model_choice=1):
     """
     extract text between the tag <winner></winner>
     """
 
     def get_scores(score_text):
-        # Extract scores for Story A and Story B using regex
-        story_a_score = re.search(r"Story A:\s*(\d+)", score_text)
-        story_b_score = re.search(r"Story B:\s*(\d+)", score_text)
-
-        if story_a_score and story_b_score:
-            score_a = int(story_a_score.group(1).strip())
-            score_b = int(story_b_score.group(1).strip())
-
-            return score_a, score_b
-
+        if model_choice == 4:
+            if 'A' in score_text:
+                return 1, 0
+            elif 'B' in score_text:
+                return 0, 1
         else:
-            return None, None
+            # Extract scores for Story A and Story B using regex
+            story_a_score = re.search(r"Story A:\s*(\d+)", score_text)
+            story_b_score = re.search(r"Story B:\s*(\d+)", score_text)
+
+            if story_a_score and story_b_score:
+                score_a = int(story_a_score.group(1).strip())
+                score_b = int(story_b_score.group(1).strip())
+
+                return score_a, score_b
+
+            else:
+                return None, None
 
     score_match = re.search(r"<score>(.*?)</score>", res, re.DOTALL)
     if score_match:
@@ -286,7 +298,7 @@ def main():
                 else:
                     label_b = "vanilla"
 
-                winner_label = extract_winner(res["1"])
+                winner_label = extract_winner(res["1"], model_choice)
 
                 # check if winner_label is None
                 if winner_label is None:
@@ -304,7 +316,7 @@ def main():
                 category_winners[cat] = winner
 
                 # extract scores
-                score_a, score_b = extract_score(res["1"])
+                score_a, score_b = extract_score(res["1"], model_choice)
                 tot_score[label_a] += score_a
                 tot_score[label_b] += score_b
 

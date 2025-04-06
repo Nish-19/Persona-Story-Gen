@@ -17,6 +17,7 @@ from prompt_llm_utils import (
     prompt_openai,
     prompt_llama_router,
     prompt_llama,
+    load_prometheus_eval_model,
 )
 
 
@@ -42,7 +43,7 @@ def parse_args():
         "--model_choice",
         type=int,
         default=1,
-        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini",
+        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini, 4. Prometheus",
     )
     # evaluation choice
     parser.add_argument(
@@ -101,6 +102,16 @@ def construct_compare_prompt_message(
     prompt = construct_prompt_message(system_prompt, user_instruction, user_constraints)
 
     return prompt
+
+def construct_prometheus_prompt(wp, writing_sheet, cat):
+    '''
+    Create a prompt for the faithfulness evaluation.
+    '''
+
+    instruction = f"Write a story for the given Writing Prompt ({wp}) following the author's story-writing style preferences for the {cat} category: {str(writing_sheet[cat])}"
+
+    return instruction
+
 
 
 def decode_unicode_escapes(text):
@@ -283,9 +294,22 @@ def main():
         "Language Use",
     ]
 
+    if model_choice == 4:
+        # load the prometheus model
+        prometheus_judge = load_prometheus_eval_model()
+        # batch relative grade
+        instructions = []  # List of instructions
+        responses_from_a = []  # List of responses
+        responses_from_b = []
+        rubric = "Is the story aligned with the author's story-writing style preferences for the category?"
+        # extra
+        identifiers = []  # List of identifiers
+        markers = []  # List of markers
+        eval_categories = []  # List of categories
+
     # iterate over sources
     for source in sources:
-        print(f"### Processsing {source} ###")
+        print(f"### Processing {source} ###")
         gt_root_dir = f"../datasets/data_splits/data/{source}/test/"
         expts_root_dir = f"../experiments/results{llama_suffix}/{consider_dir}/{source}"
 
@@ -318,7 +342,7 @@ def main():
             all_responses = defaultdict(dict, all_responses)
         else:
             all_responses = defaultdict(dict)
-
+        
         # read prompts
         system_prompt_path = "instructions/system_prompt/author_sheet_score.txt"
         user_constraints_path = "instructions/user_prompt/author_sheet_score.txt"
@@ -466,7 +490,7 @@ def main():
                     print("Skipping None in writing_sheet_categories", file)
                 continue
 
-            # iterrate only over expts_data
+            # iterate only over expts_data
             for ectr, expts in enumerate(expts_data):
                 # add the pair
                 identifier = f"{file}_{ectr}"
@@ -528,7 +552,22 @@ def main():
                         response = prompt_openai(
                             prompt, model="gpt-4o-mini", azure=azure
                         )
-                    response_dict = {1: response, 2: "A: vanilla", "Category": cat}
+                    elif model_choice == 4:
+                        # construct prometheus prompt
+                        instruction = construct_prometheus_prompt(
+                            gt_wp, w_sheet, cat)
+                        
+                        # append data to lists
+                        instructions.append(instruction)
+                        responses_from_a.append(vanilla_story)
+                        responses_from_b.append(expts_story)
+                        identifiers.append(identifier)
+                        markers.append("A: vanilla")
+                        eval_categories.append(cat)
+
+                    # construct response dict
+                    if model_choice != 4:
+                        response_dict = {1: response, 2: "A: vanilla", "Category": cat}
                 else:
                     # reverse the order of the stories
                     prompt = construct_compare_prompt_message(
@@ -542,7 +581,7 @@ def main():
                     )
                     # prompt the OpenAI model
                     if model_choice == 1:
-                        response = prompt_openai(prompt, azure=azure)
+                        response = prompt_openai(prompt, model="gpt-4o", azure=azure)
                     elif model_choice == 2:
                         # response = prompt_llama_router(prompt)
                         response = prompt_llama(prompt)
@@ -550,8 +589,55 @@ def main():
                         response = prompt_openai(
                             prompt, model="gpt-4o-mini", azure=azure
                         )
+                    elif model_choice == 4:
+                        # construct prometheus prompt
+                        instruction = construct_prometheus_prompt(
+                            gt_wp, w_sheet, cat)
+                        
+                        # append data to lists
+                        instructions.append(instruction)
+                        responses_from_a.append(expts_story)
+                        responses_from_b.append(vanilla_story)
+                        identifiers.append(identifier)
+                        markers.append("A: expts")
+                        eval_categories.append(cat)
 
-                    response_dict = {1: response, 2: "A: expts", "Category": cat}
+                    # construct response dict
+                    if model_choice != 4:
+                        response_dict = {1: response, 2: "A: expts", "Category": cat}
+
+                # add the responses to the dictionary
+                if model_choice != 4:
+                    all_responses[identifier][cat] = response_dict
+
+                    # write the responses to a file
+                    with open(output_file, "w") as f:
+                        json.dump(all_responses, f, indent=4)
+
+                    # sleep for 10 seconds
+                    time.sleep(5)
+
+        if model_choice == 4:
+            # TODO: Implement batch processing for Prometheus
+            print("Data Prepared for Prometheus Evaluation")
+            feedbacks, scores = prometheus_judge.relative_grade(
+                instructions=instructions,
+                responses_A=responses_from_a,
+                responses_B=responses_from_b,
+                rubric=rubric,
+            )
+
+            # unpack and dump results
+            for idx, (feedback, score) in enumerate(zip(feedbacks, scores)):
+                identifier = identifiers[idx]
+                cat = eval_categories[idx]
+                marker = markers[idx]
+
+                # construct response
+                response = f"<thinking>{feedback}</thinking>\n<score>{score}</score>"
+
+                # construct response dict
+                response_dict = {1: response, 2: marker, "Category": cat}
 
                 # add the responses to the dictionary
                 all_responses[identifier][cat] = response_dict
@@ -560,8 +646,6 @@ def main():
                 with open(output_file, "w") as f:
                     json.dump(all_responses, f, indent=4)
 
-                # sleep for 10 seconds
-                time.sleep(5)
 
 
 if __name__ == "__main__":

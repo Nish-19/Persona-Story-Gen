@@ -8,6 +8,11 @@ from openai import OpenAI, AzureOpenAI
 import time
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 
+from prometheus_eval.vllm import VLLM
+from prometheus_eval import PrometheusEval
+from prometheus_eval.prompts import RELATIVE_PROMPT
+
+
 
 def construct_prompt_message(
     system_prompt, user_prompt, user_constraints=None, few_shot_prompt=None
@@ -124,3 +129,13 @@ def prompt_llama_router(prompt_messages, max_tokens=2000, temperature=0.0, top_p
 
     # Return the generated response
     return response.json()["choices"][0]["message"]["content"]
+
+def load_prometheus_eval_model():
+    """
+    Load the Prometheus eval model
+    """
+
+    model = VLLM(model="prometheus-eval/prometheus-7b-v2.0")
+    judge = PrometheusEval(model=model, relative_grade_template=RELATIVE_PROMPT)
+
+    return judge
