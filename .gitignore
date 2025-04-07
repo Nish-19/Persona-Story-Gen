@@ -35,3 +35,4 @@ datasets/finetune_data/
 experiments/saved_models/*
 experiments/wandb/*
 evaluation/prometheus_eval_sample*
+datasets/data_splits/
