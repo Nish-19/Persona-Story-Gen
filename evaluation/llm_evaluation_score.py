@@ -10,15 +10,17 @@ import argparse
 from tqdm import tqdm
 import time
 import random
-from rank_bm25 import BM25Okapi
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
+from collections import defaultdict
+# from rank_bm25 import BM25Okapi
+# from nltk.tokenize import word_tokenize
+# from nltk.corpus import stopwords
 from prompt_llm_utils import (
     construct_prompt_message,
     prompt_openai,
     prompt_llama,
     prompt_llama_router,
     prompt_llama,
+    load_prometheus_eval_model,
 )
 
 
@@ -45,7 +47,7 @@ def parse_args():
         "--model_choice",
         type=int,
         default=1,
-        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini",
+        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini, 4. Prometheus",
     )
     # history (store_true)
     parser.add_argument(
@@ -116,6 +118,21 @@ def construct_compare_prompt_message(
     user_constraints = user_constraints.replace("<Fill Here>", f"{cat}: {cat_value}")
     prompt = construct_prompt_message(system_prompt, user_instruction, user_constraints)
     return prompt
+
+def construct_prometheus_prompt(wp, gt_story, cat, cat_value):
+    '''
+    Create a prompt for the faithfulness evaluation.
+    '''
+
+    instruction = (
+        f"Write a story in response to the following prompt:\n\n"
+        f"{wp}\n\n"
+        f"Your story should be similar to the following Human-Written Story with respect to the story-writing aspect, '{cat}': {cat_value}.\n\n"
+        f"Human-Written Story:\n{gt_story}"
+    )
+
+    return instruction
+
 
 
 def construct_summarize_prompt_message(
@@ -264,6 +281,18 @@ def main():
     else:
         ft_flag = ""
 
+    if model_choice == 4:
+        # load the prometheus model
+        prometheus_judge = load_prometheus_eval_model()
+        # batch relative grade
+        instructions = []  # List of instructions
+        responses_from_a = []  # List of responses
+        responses_from_b = []
+        rubric = "Is the story similar to the Human-Written Story for the story-writing aspect?"
+        # extra
+        identifiers = []  # List of identifiers
+        markers = []  # List of markers
+        eval_categories = []  # List of categories
 
     # iterate over sources
     for source in sources:
@@ -285,8 +314,10 @@ def main():
         if os.path.exists(output_file):
             with open(output_file, "r") as f:
                 all_responses = json.load(f)
+            # convert to defaultdict
+            all_responses = defaultdict(dict, all_responses)
         else:
-            all_responses = {}
+            all_responses = defaultdict(dict)
 
         # check history
         if history:
@@ -468,27 +499,6 @@ def main():
                 average_author = vanilla_data[ectr]["story"] if not ft_baseline else ft_baseline_data[gt_wp]
 
                 if history:
-                    # history_data = [last_story_data]
-                    # # get the history data (most similar BM25)
-                    # profile_indices = get_few_shot_indices(profile_data, gt_data[ectr], top_k=3)
-                    # # profile_indices = [i for i in range(len(profile_data))]
-                    # if last_story_data is None:
-                    #     history_wp = profile_data[profile_indices[0]]['writing_prompt']
-                    #     history_story = profile_data[profile_indices[0]]['story']
-                    #     history_data = {'writing_prompt': history_wp, 'story': history_story}
-                    # else:
-                    #     # iterate over profile_indices
-                    #     for index in profile_indices:
-                    #         history_wp = profile_data[index]['writing_prompt']
-                    #         # check if history_wp is same as recent history data
-                    #         if history_wp == last_story_data['writing_prompt']:
-                    #             continue
-                    #         else:
-                    #             history_story = profile_data[index]['story']
-                    #             bm25_data = {'writing_prompt': history_wp, 'story': history_story}
-                    #             history_data.append(bm25_data)
-                    #             break
-                    #     # history_data = [last_story_data, bm25_data]
                     pairs.append(
                         (
                             identifier,
@@ -549,8 +559,22 @@ def main():
                             prompt, model="gpt-4o-mini", azure=azure
                         )
                         user_constraints += "Important: Please ensure to evaluate only on the specified story-telling aspect and no other."
+                    elif model_choice == 4:
+                        # construct prometheus prompt
+                        instruction = construct_prometheus_prompt(
+                            gt_wp, gt_story_input, cat, categories_data[cat])
+                        
+                        # append data to lists
+                        instructions.append(instruction)
+                        responses_from_a.append(vanilla_story)
+                        responses_from_b.append(expts_story)
+                        identifiers.append(identifier)
+                        markers.append("A: vanilla")
+                        eval_categories.append(cat)
 
-                    response_dict = {1: response, 2: "A: vanilla"}
+                    # construct response dict
+                    if model_choice != 4:
+                        response_dict = {1: response, 2: "A: vanilla"}
                 else:
                     # reverse the order of the stories
                     prompt = construct_compare_prompt_message(
@@ -574,19 +598,65 @@ def main():
                             prompt, model="gpt-4o-mini", azure=azure
                         )
                         user_constraints += "Important: Please ensure to evaluate only on the specified story-telling aspect and no other."
-                    response_dict = {1: response, 2: "A: expts"}
+                    elif model_choice == 4:
+                        # construct prometheus prompt
+                        instruction = construct_prometheus_prompt(
+                            gt_wp, gt_story_input, cat, categories_data[cat])
+                        
+                        # append data to lists
+                        instructions.append(instruction)
+                        responses_from_a.append(expts_story)
+                        responses_from_b.append(vanilla_story)
+                        identifiers.append(identifier)
+                        markers.append("A: expts")
+                        eval_categories.append(cat)
+                    
+                    # construct response dict
+                    if model_choice != 4:
+                        response_dict = {1: response, 2: "A: expts"}
+                # add the responses to the dictionary
+                if model_choice != 4:
+                    cat_dict[cat] = response_dict
 
-                cat_dict[cat] = response_dict
+                    # add the responses to the list
+                    all_responses[identifier] = cat_dict
 
-                # add the responses to the list
-                all_responses[identifier] = cat_dict
+                    # write the responses to a file
+                    with open(output_file, "w") as f:
+                        json.dump(all_responses, f, indent=4)
+
+                    # sleep for 5 seconds
+                    time.sleep(5)
+
+        if model_choice == 4:
+            # TODO: Implement batch processing for Prometheus
+            print("Data Prepared for Prometheus Evaluation")
+            feedbacks, scores = prometheus_judge.relative_grade(
+                instructions=instructions,
+                responses_A=responses_from_a,
+                responses_B=responses_from_b,
+                rubric=rubric,
+            )
+
+            # unpack and dump results
+            for idx, (feedback, score) in enumerate(zip(feedbacks, scores)):
+                identifier = identifiers[idx]
+                cat = eval_categories[idx]
+                marker = markers[idx]
+
+                # construct response
+                response = f"<evaluation>{feedback}</evaluation>\n<score>{score}</score>"
+
+                # construct response dict
+                response_dict = {1: response, 2: marker, "Category": cat}
+
+                # add the responses to the dictionary
+                all_responses[identifier][cat] = response_dict
 
                 # write the responses to a file
                 with open(output_file, "w") as f:
                     json.dump(all_responses, f, indent=4)
 
-                # sleep for 5 seconds
-                time.sleep(5)
 
 
 if __name__ == "__main__":

@@ -32,7 +32,7 @@ def parse_args():
         "--model_choice",
         type=int,
         default=1,
-        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B",
+        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini, 4. Prometheus",
     )
     # evaluation choice
     parser.add_argument(
