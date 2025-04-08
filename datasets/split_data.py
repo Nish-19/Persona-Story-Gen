@@ -67,7 +67,7 @@ def get_profile_test_data(data, profile_size, source):
                 "date": prof_data[date_field],
                 "metadata": metadata,
                 "writing_prompt": prof_data["writing_prompt"],
-                # "story": prof_data["comment"],
+                "story": prof_data["comment"],
                 "url": prof_data.get("url", "None"),
             }
         )
@@ -88,7 +88,7 @@ def get_profile_test_data(data, profile_size, source):
                 "date": t_data[date_field],
                 "metadata": metadata,
                 "writing_prompt": t_data["writing_prompt"],
-                # "story": t_data["comment"],
+                "story": t_data["comment"],
                 "url": t_data.get("url", "None"),
             }
         )
