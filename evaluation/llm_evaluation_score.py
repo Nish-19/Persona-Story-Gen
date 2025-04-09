@@ -125,9 +125,9 @@ def construct_prometheus_prompt(wp, gt_story, cat, cat_value):
     '''
 
     instruction = (
-        f"Write a story in response to the following prompt:\n\n"
+        f"Write a story in response to the following writing prompt:\n\n"
         f"{wp}\n\n"
-        f"Your story should be similar in style to the following Human-Written Story with respect to the story-writing aspect, '{cat}': {cat_value}.\n\n"
+        f"Your story should follow the style to the following Human-Written Story with respect to the story-writing aspect, '{cat}': {cat_value}.\n\n"
         f"Human-Written Story:\n{gt_story}"
     )
 
@@ -138,7 +138,11 @@ def construct_prometheus_prompt(wp, gt_story, cat, cat_value):
     #     "Do not consider any other story-writing aspect other than the one mentioned above for evaluation."
     # )
 
-    rubric = f"Is the story similar in style to the Human-Written Story for the given story-writing aspect, '{cat}': {cat_value}?"
+    rubric = (
+        f"Is the story response similar in style to the Human-Written story with respect to the specified story-writing aspect, '{cat}'? "
+        f"Do not evaluate the story on its overall quality or in isolation — focus solely on how well it aligns with the Human-Written story "
+        f"in terms of the given aspect."
+    )
 
     return instruction, rubric
 
@@ -506,8 +510,8 @@ def main():
                     continue
 
                 gt_wp = gt_data[ectr]["writing_prompt"]
-                # gt_story = gt_data[ectr]["story"]
-                gt_story = story_data.get(gt_wp, None)
+                gt_story = gt_data[ectr]["story"]
+                # gt_story = story_data.get(gt_wp, None)
                 if gt_story is None or expts["story"] is None:
                     print("Skipping None", file)
                     continue
