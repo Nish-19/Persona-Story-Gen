@@ -127,11 +127,20 @@ def construct_prometheus_prompt(wp, gt_story, cat, cat_value):
     instruction = (
         f"Write a story in response to the following prompt:\n\n"
         f"{wp}\n\n"
-        f"Your story should be similar to the following Human-Written Story with respect to the story-writing aspect, '{cat}': {cat_value}.\n\n"
+        f"Your story should be similar in style to the following Human-Written Story with respect to the story-writing aspect, '{cat}': {cat_value}.\n\n"
         f"Human-Written Story:\n{gt_story}"
     )
 
-    return instruction
+    # instruction = (
+    #     f"Write a story in response to the following prompt:\n\n"
+    #     f"{wp}\n\n"
+    #     f"Your story should be similar in style to the story written below as the Reference Answer with respect to the following story-writing aspect, '{cat}': {cat_value}.\n\n"
+    #     "Do not consider any other story-writing aspect other than the one mentioned above for evaluation."
+    # )
+
+    rubric = f"Is the story similar in style to the Human-Written Story for the given story-writing aspect, '{cat}': {cat_value}?"
+
+    return instruction, rubric
 
 
 
@@ -284,15 +293,6 @@ def main():
     if model_choice == 4:
         # load the prometheus model
         prometheus_judge = load_prometheus_eval_model()
-        # batch relative grade
-        instructions = []  # List of instructions
-        responses_from_a = []  # List of responses
-        responses_from_b = []
-        rubric = "Is the story similar to the Human-Written Story for the story-writing aspect?"
-        # extra
-        identifiers = []  # List of identifiers
-        markers = []  # List of markers
-        eval_categories = []  # List of categories
 
     # iterate over sources
     for source in sources:
@@ -373,6 +373,22 @@ def main():
         categories = categories_data.keys()
 
         pairs = []
+        
+        # prepare for batch relative grade
+        if model_choice == 4:
+            # batch relative grade
+            instructions = []  # List of instructions
+            responses_from_a = []  # List of responses
+            responses_from_b = []
+            # rubric = "Is the story similar to the Human-Written Story for the story-writing aspect?"
+            rubrics = []
+            reference_answers = []  # List of reference answers
+            # extra
+            identifiers = []  # List of identifiers
+            markers = []  # List of markers
+            eval_categories = []  # List of categories
+
+
         # iterate over files in the ground truth directory
         for file in tqdm(
             os.listdir(gt_root_dir),
@@ -561,13 +577,15 @@ def main():
                         user_constraints += "Important: Please ensure to evaluate only on the specified story-telling aspect and no other."
                     elif model_choice == 4:
                         # construct prometheus prompt
-                        instruction = construct_prometheus_prompt(
+                        instruction, rubric = construct_prometheus_prompt(
                             gt_wp, gt_story_input, cat, categories_data[cat])
                         
                         # append data to lists
                         instructions.append(instruction)
                         responses_from_a.append(vanilla_story)
                         responses_from_b.append(expts_story)
+                        reference_answers.append(gt_story_input)
+                        rubrics.append(rubric)
                         identifiers.append(identifier)
                         markers.append("A: vanilla")
                         eval_categories.append(cat)
@@ -600,13 +618,15 @@ def main():
                         user_constraints += "Important: Please ensure to evaluate only on the specified story-telling aspect and no other."
                     elif model_choice == 4:
                         # construct prometheus prompt
-                        instruction = construct_prometheus_prompt(
+                        instruction, rubric = construct_prometheus_prompt(
                             gt_wp, gt_story_input, cat, categories_data[cat])
                         
                         # append data to lists
                         instructions.append(instruction)
                         responses_from_a.append(expts_story)
                         responses_from_b.append(vanilla_story)
+                        reference_answers.append(gt_story_input)
+                        rubrics.append(rubric)
                         identifiers.append(identifier)
                         markers.append("A: expts")
                         eval_categories.append(cat)
@@ -635,7 +655,8 @@ def main():
                 instructions=instructions,
                 responses_A=responses_from_a,
                 responses_B=responses_from_b,
-                rubric=rubric,
+                reference_answers=reference_answers,
+                rubric=rubrics,
             )
 
             # unpack and dump results
@@ -656,6 +677,12 @@ def main():
                 # write the responses to a file
                 with open(output_file, "w") as f:
                     json.dump(all_responses, f, indent=4)
+            
+            # force reset batch information
+            instructions, responses_from_a, responses_from_b = [], [], []
+            # rubrics = []
+            reference_answers, rubrics = [], []
+            identifiers, markers, eval_categories = [], [], []
 
 
 

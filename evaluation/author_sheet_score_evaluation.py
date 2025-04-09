@@ -297,15 +297,6 @@ def main():
     if model_choice == 4:
         # load the prometheus model
         prometheus_judge = load_prometheus_eval_model()
-        # batch relative grade
-        instructions = []  # List of instructions
-        responses_from_a = []  # List of responses
-        responses_from_b = []
-        rubric = "Is the story aligned with the author's story-writing style preferences for the category?"
-        # extra
-        identifiers = []  # List of identifiers
-        markers = []  # List of markers
-        eval_categories = []  # List of categories
 
     # iterate over sources
     for source in sources:
@@ -356,6 +347,20 @@ def main():
             user_constraints = f.read()
 
         pairs = []
+
+        # prepare for batch relative grade
+        if model_choice == 4:
+            # batch relative grade
+            instructions = []  # List of instructions
+            responses_from_a = []  # List of responses
+            responses_from_b = []
+            rubric = "Is the story aligned with the author's story-writing style preferences for the category?"
+            # extra
+            identifiers = []  # List of identifiers
+            markers = []  # List of markers
+            eval_categories = []  # List of categories
+
+
         # iterate over files in the ground truth directory
         for file in os.listdir(gt_root_dir):
             # gt file path
@@ -645,6 +650,11 @@ def main():
                 # write the responses to a file
                 with open(output_file, "w") as f:
                     json.dump(all_responses, f, indent=4)
+
+            # force reset batch information
+            instructions, responses_from_a, responses_from_b = [], [], []
+            identifiers, markers, eval_categories = [], [], []
+
 
 
 
