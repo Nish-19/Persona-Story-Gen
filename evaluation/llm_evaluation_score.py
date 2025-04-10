@@ -124,10 +124,18 @@ def construct_prometheus_prompt(wp, gt_story, cat, cat_value):
     Create a prompt for the faithfulness evaluation.
     '''
 
+    # instruction = (
+    #     f"Write a story in response to the following writing prompt:\n\n"
+    #     f"{wp}\n\n"
+    #     f"Your story should follow the style to the following Human-Written Story with respect to the story-writing aspect, '{cat}': {cat_value}.\n\n"
+    #     f"Human-Written Story:\n{gt_story}"
+    # )
+
+    # narrative-style instruction
     instruction = (
-        f"Write a story in response to the following writing prompt:\n\n"
+        f"A story is written in response to the following writing prompt:\n\n"
         f"{wp}\n\n"
-        f"Your story should follow the style to the following Human-Written Story with respect to the story-writing aspect, '{cat}': {cat_value}.\n\n"
+        f"The goal is to write a story that matches the style of the Human-Written story with respect to the story-writing aspect '{cat}': {cat_value}\n"
         f"Human-Written Story:\n{gt_story}"
     )
 
@@ -138,12 +146,20 @@ def construct_prometheus_prompt(wp, gt_story, cat, cat_value):
     #     "Do not consider any other story-writing aspect other than the one mentioned above for evaluation."
     # )
 
-    rubric = (
-        f"Is the story response similar in style to the Human-Written story with respect to the specified story-writing aspect, '{cat}'? "
-        f"Do not evaluate the story on its overall quality or in isolation — focus solely on how well it aligns with the Human-Written story "
-        f"in terms of the given aspect."
-    )
+    # rubric = (
+    #     f"Is the story response similar in style to the Human-Written story with respect to the specified story-writing aspect, '{cat}'? "
+    #     f"Do not evaluate the story on its overall quality or in isolation — focus solely on how well it aligns with the Human-Written story "
+    #     f"in terms of the given aspect."
+    # )
 
+    # mention focus on human story and penalize divergence
+    rubric = (
+        f"Is the story similar in style to the Human-Written story with respect to the story-writing aspect '{cat}': {cat_value}?"
+        f"First, analyze the Human-Written story independently to understand how this story-writing aspect is expressed. "
+        # f"Then focus only on the specified aspect and penalize divergence from the Human-Written story."
+        f"Then focus soley on evaluating similarity of the story with the Human-Written story on the specified aspect."
+    )
+    
     return instruction, rubric
 
 
@@ -196,8 +212,8 @@ def main():
     # parse arguments
     args = parse_args()
 
-    # set random seed
-    random.seed(37)
+    # set random seed randomly
+    random.seed(time.time())
 
     # few shot
     few_shot = args.few_shot
@@ -386,7 +402,7 @@ def main():
             responses_from_b = []
             # rubric = "Is the story similar to the Human-Written Story for the story-writing aspect?"
             rubrics = []
-            reference_answers = []  # List of reference answers
+            # reference_answers = []  # List of reference answers
             # extra
             identifiers = []  # List of identifiers
             markers = []  # List of markers
@@ -588,7 +604,7 @@ def main():
                         instructions.append(instruction)
                         responses_from_a.append(vanilla_story)
                         responses_from_b.append(expts_story)
-                        reference_answers.append(gt_story_input)
+                        # reference_answers.append(gt_story_input)
                         rubrics.append(rubric)
                         identifiers.append(identifier)
                         markers.append("A: vanilla")
@@ -629,7 +645,7 @@ def main():
                         instructions.append(instruction)
                         responses_from_a.append(expts_story)
                         responses_from_b.append(vanilla_story)
-                        reference_answers.append(gt_story_input)
+                        # reference_answers.append(gt_story_input)
                         rubrics.append(rubric)
                         identifiers.append(identifier)
                         markers.append("A: expts")
@@ -659,7 +675,7 @@ def main():
                 instructions=instructions,
                 responses_A=responses_from_a,
                 responses_B=responses_from_b,
-                reference_answers=reference_answers,
+                # reference_answers=reference_answers,
                 rubric=rubrics,
             )
 
@@ -684,8 +700,8 @@ def main():
             
             # force reset batch information
             instructions, responses_from_a, responses_from_b = [], [], []
-            # rubrics = []
-            reference_answers, rubrics = [], []
+            rubrics = []
+            # reference_answers, rubrics = [], []
             identifiers, markers, eval_categories = [], [], []
 
 
