@@ -77,7 +77,7 @@ def main():
     save_dir = 'llm_evaluation_shuffle_score_combined'
 
     # iterate over the run names
-    all_gpt4o, all_prometheus = [], []
+    all_gpt4o, all_prometheus = defaultdict(list), defaultdict(list)
     for run in run_names:
         save_run_dir = f"{save_dir}/{run}"
         if not os.path.exists(save_run_dir):
@@ -99,9 +99,9 @@ def main():
                 winner_dict[run][source][judge_val] = winner_list
                 # add gpt4o and prometheus to the all lists
                 if judge == 1:
-                    all_gpt4o.extend(winner_list)
+                    all_gpt4o[run].extend(winner_list)
                 elif judge == 4:
-                    all_prometheus.extend(winner_list)
+                    all_prometheus[run].extend(winner_list)
                 # store stats (Count)
                 winner_dict_stats[run][source][judge_val] = Counter(winner_list)
                 # Reorder the dict to be in the order 'expts', 'vanilla', and 'Tie'
@@ -129,13 +129,19 @@ def main():
             stats_df.to_csv(stats_save_path, index=False)
             
     
-    # calculate cohen kappa score for gpt4o and prometheus
-    kappa_score = cohen_kappa_score(all_gpt4o, all_prometheus)
-    print(f'Cohen Kappa between gpt4o and prometheus:', round(kappa_score, 4))
+        # calculate cohen kappa score for gpt4o and prometheus
+        print(f'Run: {run}')
+        kappa_score = cohen_kappa_score(all_gpt4o[run], all_prometheus[run])
+        print(f'Cohen Kappa between gpt4o and prometheus:', round(kappa_score, 4))
+    
+    print(f'Run ALL')
+    # Combine all lists from all runs into one
+    combined_gpt4o = [item for sublist in all_gpt4o.values() for item in sublist]
+    combined_prometheus = [item for sublist in all_prometheus.values() for item in sublist]
 
-
-
-
+    # Calculate Cohen Kappa score for the combined lists
+    kappa_score = cohen_kappa_score(combined_gpt4o, combined_prometheus)
+    print(f'Cohen Kappa for combined gpt4o and prometheus:', round(kappa_score, 4))
 
 if __name__ == "__main__":
     main()
