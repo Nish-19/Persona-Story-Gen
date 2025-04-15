@@ -6,6 +6,8 @@ import os
 import json 
 import pandas as pd 
 from collections import defaultdict, Counter
+from sklearn.metrics import cohen_kappa_score
+
 
 
 def get_overall_winner(data):
@@ -64,6 +66,9 @@ def main():
     # winner dict
     winner_dict = defaultdict(dict)
 
+    # winner dict stats
+    winner_dict_stats = defaultdict(dict)
+
     # judge dict
     judge_dict = {1: 'gpt4o', 2: 'llama70B', 4: 'prometheus'}
 
@@ -71,13 +76,18 @@ def main():
     save_dir = 'llm_evaluation_shuffle_score_combined'
 
     # iterate over the run names
+    all_gpt4o, all_prometheus = [], []
     for run in run_names:
         save_run_dir = f"{save_dir}/{run}"
         if not os.path.exists(save_run_dir):
             os.makedirs(save_run_dir)
         # iterate over the source names
         for source in source_names: 
+            save_source_dir = f"{save_run_dir}/{source}"
+            if not os.path.exists(save_source_dir):
+                os.makedirs(save_source_dir)
             winner_dict[run][source] = defaultdict(dict)
+            winner_dict_stats[run][source] = defaultdict(dict)
             # iterate over the judges
             for judge, judge_val in judge_dict.items():
                 # winner list path
@@ -86,9 +96,20 @@ def main():
                     winner_list = json.load(f)
                 # add to the winner dict
                 winner_dict[run][source][judge_val] = winner_list
+                # add gpt4o and prometheus to the all lists
+                if judge == 1:
+                    all_gpt4o.extend(winner_list)
+                elif judge == 4:
+                    all_prometheus.extend(winner_list)
+                # store stats (Count)
+                winner_dict_stats[run][source][judge_val] = Counter(winner_list)
+                # Reorder the dict to be in the order 'expts', 'vanilla', and 'Tie'
+                winner_dict_stats[run][source][judge_val] = {key: winner_dict_stats[run][source][judge_val][key] for key in ['expts', 'vanilla', 'Tie'] if key in winner_dict_stats[run][source][judge_val]}
             # get overall winner
             try:
                 winner_dict[run][source]['combined'] = get_overall_winner(winner_dict[run][source])
+                # store stats
+                winner_dict_stats[run][source]['combined'] = Counter(winner_dict[run][source]['combined'])
             except AssertionError:
                 print(f"Judges have different number of labels for {run} {source}")
                 continue
@@ -96,8 +117,22 @@ def main():
             # create dataframe of winners for this run and source
             df = pd.DataFrame(winner_dict[run][source]) 
             # save the dataframe
-            save_path = f"{save_run_dir}/{source}.csv"
+            save_path = f"{save_source_dir}/winners.csv"
             df.to_csv(save_path, index=False)
+
+            # save the stats
+            stats_df = pd.DataFrame(winner_dict_stats[run][source])
+            stats_df.insert(0, 'Label', ['expts', 'vanilla', 'Tie'])
+            # save the stats
+            stats_save_path = f"{save_source_dir}/stats.csv"
+            stats_df.to_csv(stats_save_path, index=False)
+            
+    
+    # calculate cohen kappa score for gpt4o and prometheus
+    kappa_score = cohen_kappa_score(all_gpt4o, all_prometheus)
+    print(f'Cohen Kappa between gpt4o and prometheus:', round(kappa_score, 4))
+
+
 
 
 
