@@ -5,7 +5,7 @@ Tie,vanilla,expts,Tie
 Tie,vanilla,vanilla,vanilla
 expts,expts,expts,expts
 vanilla,vanilla,Tie,vanilla
-Tie,Tie,expts,expts
+Tie,Tie,expts,Tie
 expts,expts,expts,expts
 expts,Tie,expts,expts
 expts,vanilla,Tie,Tie
@@ -37,5 +37,5 @@ vanilla,expts,expts,expts
 expts,expts,expts,expts
 expts,expts,expts,expts
 expts,vanilla,expts,expts
-expts,Tie,Tie,expts
+expts,Tie,Tie,Tie
 Tie,expts,expts,expts

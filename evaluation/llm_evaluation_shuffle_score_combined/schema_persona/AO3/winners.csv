@@ -30,9 +30,9 @@ expts,expts,Tie,expts
 expts,expts,vanilla,expts
 expts,expts,Tie,expts
 vanilla,expts,Tie,Tie
-Tie,expts,Tie,expts
+Tie,expts,Tie,Tie
 expts,vanilla,expts,expts
-Tie,Tie,expts,expts
+Tie,Tie,expts,Tie
 expts,expts,expts,expts
 expts,vanilla,expts,expts
 expts,vanilla,expts,expts
@@ -48,11 +48,11 @@ expts,vanilla,expts,expts
 expts,vanilla,expts,expts
 vanilla,vanilla,expts,vanilla
 expts,expts,Tie,expts
-Tie,vanilla,Tie,vanilla
+Tie,vanilla,Tie,Tie
 vanilla,expts,expts,expts
 expts,vanilla,expts,expts
 expts,expts,expts,expts
-vanilla,Tie,Tie,vanilla
+vanilla,Tie,Tie,Tie
 vanilla,vanilla,expts,vanilla
 expts,vanilla,expts,expts
 vanilla,expts,expts,expts

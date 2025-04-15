@@ -1,6 +1,6 @@
 gpt4o,llama70B,prometheus,combined
 vanilla,vanilla,Tie,vanilla
-vanilla,Tie,Tie,vanilla
+vanilla,Tie,Tie,Tie
 expts,vanilla,expts,expts
 vanilla,Tie,expts,Tie
 expts,vanilla,expts,expts
@@ -11,5 +11,5 @@ expts,expts,expts,expts
 expts,vanilla,expts,expts
 vanilla,Tie,vanilla,vanilla
 Tie,vanilla,expts,Tie
-Tie,Tie,expts,expts
+Tie,Tie,expts,Tie
 vanilla,expts,expts,expts

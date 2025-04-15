@@ -1,13 +1,13 @@
 gpt4o,llama70B,prometheus,combined
 expts,expts,vanilla,expts
 vanilla,vanilla,vanilla,vanilla
-Tie,Tie,expts,expts
+Tie,Tie,expts,Tie
 expts,expts,vanilla,expts
 expts,expts,Tie,expts
-expts,Tie,Tie,expts
+expts,Tie,Tie,Tie
 expts,vanilla,expts,expts
 expts,Tie,vanilla,Tie
-Tie,Tie,vanilla,vanilla
+Tie,Tie,vanilla,Tie
 expts,expts,vanilla,expts
 expts,expts,Tie,expts
 expts,expts,expts,expts

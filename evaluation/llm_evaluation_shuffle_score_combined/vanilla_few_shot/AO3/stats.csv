@@ -1,4 +1,4 @@
 Label,gpt4o,llama70B,prometheus,combined
-expts,24,31,23,29
-vanilla,43,38,33,38
-Tie,13,11,24,13
+expts,24,31,23,22
+vanilla,43,38,33,37
+Tie,13,11,24,21

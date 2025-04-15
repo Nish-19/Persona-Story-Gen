@@ -25,16 +25,17 @@ def get_overall_winner(data):
         # check if all labels are different
         if len(win_count) == 3:
             most_common_label = 'Tie'
-        elif len(win_count) == 2:
-            if 'Tie' in win_count and win_count['Tie'] == 2:
-                # assign label that is not 'Tie'
-                most_common_label = [label for label in win_count if label != 'Tie'][0]
-            else:
-                # assign label that is not 'Tie'
-                most_common_label = win_count.most_common(1)[0][0]
+        # elif len(win_count) == 2:
+        #     if 'Tie' in win_count and win_count['Tie'] == 2:
+        #         # assign label that is not 'Tie'
+        #         most_common_label = [label for label in win_count if label != 'Tie'][0]
+        #     else:
+        #         # assign label that is not 'Tie'
+        #         most_common_label = win_count.most_common(1)[0][0]
         else:
             # select most common label
             most_common_label = win_count.most_common(1)[0][0]
+        
         
         combined_labels.append(most_common_label)
     

@@ -10,7 +10,7 @@ vanilla,vanilla,expts,vanilla
 vanilla,vanilla,Tie,vanilla
 expts,vanilla,expts,expts
 expts,expts,expts,expts
-Tie,expts,Tie,expts
+Tie,expts,Tie,Tie
 vanilla,vanilla,expts,vanilla
 expts,expts,expts,expts
 expts,expts,expts,expts
@@ -32,7 +32,7 @@ expts,expts,Tie,expts
 expts,expts,expts,expts
 vanilla,expts,Tie,Tie
 vanilla,vanilla,expts,vanilla
-Tie,vanilla,Tie,vanilla
+Tie,vanilla,Tie,Tie
 vanilla,expts,expts,expts
 vanilla,expts,Tie,Tie
 vanilla,vanilla,expts,vanilla
@@ -46,7 +46,7 @@ vanilla,vanilla,expts,vanilla
 expts,expts,expts,expts
 expts,expts,expts,expts
 vanilla,Tie,expts,Tie
-Tie,Tie,expts,expts
+Tie,Tie,expts,Tie
 expts,expts,expts,expts
 expts,expts,expts,expts
 expts,expts,expts,expts
