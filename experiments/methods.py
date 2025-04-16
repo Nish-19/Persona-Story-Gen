@@ -63,6 +63,9 @@ class StoryGenMethods:
         # story rules directory
         self.story_rules_dir = "story_rules"
 
+        # create ignore files 
+        self.ignore_files = os.listdir(f"{self.output_dir}/vanilla/Reddit_old")
+
     def construct_user_instruction(self, example_raw, source="Reddit"):
         """
         Construct the user instruction
@@ -223,9 +226,13 @@ class StoryGenMethods:
             desc="Story Generation",
         ):
 
-            # break after 3 iterations
+            # check if the file is in the ignore files
+            if file in self.ignore_files:
+                continue
+
+            # break after 6 iterations
             if debug:
-                if fctr > 2:
+                if fctr > 5:
                     break
 
             profile_file_path = os.path.join(profile_dir, file)
@@ -251,7 +258,8 @@ class StoryGenMethods:
                 results = []
 
             if is_profile:
-                consider_data = profile_data
+                # consider only last 10 examples from the profile data
+                consider_data = profile_data[-10:]
             else:
                 consider_data = test_data
 
@@ -273,17 +281,21 @@ class StoryGenMethods:
             else:
                 persona = None
 
-            # iterate over the test data
+            # iterate over each writing prompt consider data
             for ictr, example in tqdm(
                 enumerate(consider_data),
                 desc=f"Processing {file}",
                 total=len(consider_data),
             ):
 
-                # stop after 2 iterations
+                # stop after 10 iterations
                 if debug:
-                    if ictr > 2:
-                        break
+                    if is_profile:
+                        if ictr > 10:
+                            break
+                    else:
+                        if ictr > 4:
+                            break
 
                 # check if the example already exists in the results
                 if ictr < len(results):
@@ -679,9 +691,13 @@ class StoryGenMethods:
             desc="User Sheet (Schema)",
             total=len(os.listdir(profile_dir)),
         ):
+            # check if the file is in the ignore files
+            if file in self.ignore_files:
+                continue
+
             if debug:
-                # break after 3 iterations
-                if fctr > 2:
+                # break after 6 iterations
+                if fctr > 5:
                     break
 
             profile_file_path = os.path.join(profile_dir, file)
@@ -698,7 +714,7 @@ class StoryGenMethods:
                     "Writing Prompt": example["writing_prompt"],
                     "Author-Written Story": example["story"],
                 }
-                for example in profile_data
+                for example in profile_data # control the number of examples
             ]
 
             # check if the output file already exists
@@ -776,9 +792,13 @@ class StoryGenMethods:
             total=len(os.listdir(test_dir)),
         ):
 
+            # check if the file is in the ignore files
+            if file in self.ignore_files:
+                continue
+
             if debug:
-                # break after 3 iterations
-                if fctr > 2:
+                # break after 6 iterations
+                if fctr > 5:
                     break
 
             test_file_path = os.path.join(test_dir, file)
@@ -822,8 +842,8 @@ class StoryGenMethods:
                     continue
 
                 if debug:
-                    # break after 3 iterations
-                    if ectr > 2:
+                    # break after 6 iterations
+                    if ectr > 4:
                         break
 
                 # construct the prompt
@@ -871,10 +891,13 @@ class StoryGenMethods:
                 desc="Persona (Schema)",
                 total=len(os.listdir(test_dir)),
             ):
+                # check if the file is in the ignore files
+                if file in self.ignore_files:
+                    continue
 
                 if debug:
-                    # break after 3 iterations
-                    if fctr > 2:
+                    # break after 6 iterations
+                    if fctr > 5:
                         break
 
                 # output file path
@@ -1036,15 +1059,26 @@ class StoryGenMethods:
             desc="Rule Generation",
             total=len(os.listdir(consider_dir)),
         ):
+            # check if the file is in the ignore files
+            if file in self.ignore_files:
+                continue
+
             if debug:
-                # break after 3 iterations
-                if fctr > 2:
+                # break after 6 iterations
+                if fctr > 5:
                     break
 
             data_file_path = os.path.join(consider_dir, file)
             # profile data
             with open(data_file_path, "r") as f:
                 human_data = json.load(f)
+            
+            if is_profile:
+                # consider only last 10 examples from the profile data
+                human_data = human_data[-10:]
+            else:
+                # consider only first 5 examples from the test data
+                human_data = human_data[:5]
 
             # base story file path
             base_story_file_path = os.path.join(base_story_dir, file)
@@ -1171,9 +1205,13 @@ class StoryGenMethods:
             total=len(os.listdir(test_dir)),
         ):
 
+            # check if the file is in the ignore files
+            if file in self.ignore_files:
+                continue
+
             if debug:
-                # break after 3 iterations
-                if fctr > 2:
+                # break after 6 iterations
+                if fctr > 5:
                     break
 
             profile_file_path = os.path.join(profile_dir, file)
@@ -1217,8 +1255,8 @@ class StoryGenMethods:
                     continue
 
                 if debug:
-                    # break after 3 iterations
-                    if ectr > 2:
+                    # break after 6 iterations
+                    if ectr > 4:
                         break
 
                 # _, profile_indices = self.get_few_shot_examples(profile_data, example, source=source, top_k=3)
@@ -1521,9 +1559,13 @@ class StoryGenMethods:
             desc="Delta Schema User Sheets",
             total=len(os.listdir(profile_dir)),
         ):
+            # check if the file is in the ignore files
+            if file in self.ignore_files:
+                continue
+
             if debug:
-                # break after 3 iterations
-                if fctr > 2:
+                # break after 6 iterations
+                if fctr > 5:
                     break
 
             data_file_path = os.path.join(profile_dir, file)
@@ -1550,6 +1592,10 @@ class StoryGenMethods:
                     user_sheet_response = json.load(f)
             else:
                 user_sheet_response = []
+            
+            # clip human_data to most recent 10 examples
+            human_data = human_data[-10:]
+            base_story_data = base_story_data[-10:]
 
             # iterate through each example in the profile data
             for ectr, example in tqdm(
@@ -1615,16 +1661,22 @@ class StoryGenMethods:
             desc="User Profile (Delta)",
             total=len(os.listdir(profile_dir)),
         ):
+            # check if the file is in the ignore files
+            if file in self.ignore_files:
+                continue
 
             if debug:
-                # break after 3 iterations
-                if fctr > 2:
+                # break after 6 iterations
+                if fctr > 5:
                     break
 
             profile_file_path = os.path.join(profile_dir, file)
             # profile data
             with open(profile_file_path, "r") as f:
                 profile_data = json.load(f)
+            
+            # clip profile_data to most recent 10 examples
+            profile_data = profile_data[-10:]
 
             # output file path
             output_file_path = os.path.join(user_profile_output_dir, file)
@@ -1733,10 +1785,13 @@ class StoryGenMethods:
             desc="Story Rules (Delta Schema)",
             total=len(os.listdir(test_dir)),
         ):
+            # check if the file is in the ignore files
+            if file in self.ignore_files:
+                continue
 
             if debug:
-                # break after 3 iterations
-                if fctr > 3:
+                # break after 6 iterations
+                if fctr > 5:
                     break
 
             test_file_path = os.path.join(test_dir, file)
@@ -1779,8 +1834,8 @@ class StoryGenMethods:
                     continue
 
                 if debug:
-                    # break after 3 iterations
-                    if ectr > 2:
+                    # break after 6 iterations
+                    if ectr > 4:
                         break
 
                 # construct the prompt
@@ -1829,9 +1884,13 @@ class StoryGenMethods:
                 total=len(os.listdir(test_dir)),
             ):
 
+                # check if the file is in the ignore files
+                if file in self.ignore_files:
+                    continue
+
                 if debug:
-                    # break after 3 iterations
-                    if fctr > 2:
+                    # break after 6 iterations
+                    if fctr > 5:
                         break
 
                 # output file path
