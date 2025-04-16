@@ -25,11 +25,11 @@ def main():
     args = parse_args()
 
     # load the system prompt
-    with open("resources/system_prompt.txt", "r") as f:
+    with open("resources/construct/system_prompt.txt", "r") as f:
         system_prompt = f.read()
 
     # few shot prompts
-    with open("resources/few_shot.json", "r") as f:
+    with open("resources/construct/few_shot.json", "r") as f:
         few_shot_prompts = json.load(f)
 
     if args.data == 1:
