@@ -37,3 +37,4 @@ experiments/wandb/*
 evaluation/prometheus_eval_sample*
 datasets/data_splits/
 evaluation/bash*
+evaluation/rename_reddit.py
