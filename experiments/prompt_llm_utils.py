@@ -62,8 +62,8 @@ def prompt_openai(prompt_messages, max_tokens=2000, temperature=1.0, top_p=1.0):
         max_tokens=max_tokens,
     )
 
-    # sleep for 1 second
-    time.sleep(1)
+    # sleep for 0.5 second
+    time.sleep(0.5)
     return completion.choices[0].message.content
 
 

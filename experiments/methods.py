@@ -1220,6 +1220,9 @@ class StoryGenMethods:
             # profile data
             with open(profile_file_path, "r") as f:
                 profile_data = json.load(f)
+            
+            # consider only last 10 examples from the profile data
+            profile_data = profile_data[-10:]
 
             # test data
             with open(test_file_path, "r") as f:
@@ -1256,7 +1259,7 @@ class StoryGenMethods:
 
                 if debug:
                     # break after 6 iterations
-                    if ectr > 4:
+                    if ectr > 5:
                         break
 
                 # _, profile_indices = self.get_few_shot_examples(profile_data, example, source=source, top_k=3)
