@@ -1924,6 +1924,7 @@ class StoryGenMethods:
                             user_profile_response[-1], key="combined_author_sheet"
                         )
                 except Exception as e:
+                    print('In persona Exception:', e, file)
                     continue
 
                 # check if persona_response is non empty
