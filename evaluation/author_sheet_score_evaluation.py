@@ -349,10 +349,6 @@ def main():
         if model_choice == 5:
             system_prompt += "Do not forget to include the score for each story in the <score> tags. "
             user_constraints += "Important: Your output should contain the <score> tags enclosing the score for both Story A and Story B." 
-
-            print('System Prompt:', system_prompt)
-            print('User Constraints:', user_constraints)
-
         pairs = []
 
         # prepare for batch relative grade
