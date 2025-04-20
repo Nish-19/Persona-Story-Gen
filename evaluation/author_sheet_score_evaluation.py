@@ -43,7 +43,7 @@ def parse_args():
         "--model_choice",
         type=int,
         default=1,
-        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini, 4. Prometheus",
+        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini, 4. Prometheus, 5. o4-mini",
     )
     # evaluation choice
     parser.add_argument(
@@ -345,6 +345,13 @@ def main():
         # read the user constraints
         with open(user_constraints_path, "r") as f:
             user_constraints = f.read()
+        
+        if model_choice == 5:
+            system_prompt += "Do not forget to include the score for each story in the <score> tags. "
+            user_constraints += "Important: Your output should contain the <score> tags enclosing the score for both Story A and Story B." 
+
+            print('System Prompt:', system_prompt)
+            print('User Constraints:', user_constraints)
 
         pairs = []
 
@@ -527,6 +534,10 @@ def main():
         print(f"Using {consider_dir} method")
         print(f"Consider {len(pairs)} pairs for comparison")
 
+        # NOTE: Clip pairs to only 50 for testing
+        print('Clipping pairs to 50 for testing')
+        pairs = pairs[:50]
+
         # iterate over the pairs
         for pair in tqdm(pairs, desc="Pair-wise Evaluation", total=len(pairs)):
             identifier, gt_wp, w_sheet, vanilla_story, expts_story = pair
@@ -569,6 +580,11 @@ def main():
                         identifiers.append(identifier)
                         markers.append("A: vanilla")
                         eval_categories.append(cat)
+                    elif model_choice == 5:
+                        response = prompt_openai(
+                            prompt, model="o4-mini", azure=azure
+                        )
+
 
                     # construct response dict
                     if model_choice != 4:
@@ -606,6 +622,10 @@ def main():
                         identifiers.append(identifier)
                         markers.append("A: expts")
                         eval_categories.append(cat)
+                    elif model_choice == 5:
+                        response = prompt_openai(
+                            prompt, model="o4-mini", azure=azure
+                        )
 
                     # construct response dict
                     if model_choice != 4:

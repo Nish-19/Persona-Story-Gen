@@ -60,15 +60,26 @@ def prompt_openai(
     if model == "gpt-4o":
         if azure:
             model = "4o"
+    
+    if model != 'gpt-4o':
+        completion = client.chat.completions.create(
+            model=model,
+            # model=model, # model='4o',
+            messages=prompt_messages,
+            top_p=top_p,
+            max_completion_tokens=max_tokens,
+        )
 
-    completion = client.chat.completions.create(
-        model=model,
-        # model=model, # model='4o',
-        messages=prompt_messages,
-        temperature=temperature,
-        top_p=top_p,
-        max_tokens=max_tokens,
-    )
+    else:
+        completion = client.chat.completions.create(
+            model=model,
+            # model=model, # model='4o',
+            messages=prompt_messages,
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,
+        )
+
     return completion.choices[0].message.content
 
 
