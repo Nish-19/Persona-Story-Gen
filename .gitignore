@@ -28,6 +28,7 @@ evaluation/history_legacy/
 evaluation/debug.py
 datasets/AO3/
 datasets/Reddit/
+datasets/Reddit_old/
 datasets/Storium/
 datasets/narrativemagazine/
 datasets/newyorker
@@ -38,3 +39,4 @@ evaluation/prometheus_eval_sample*
 datasets/data_splits/
 evaluation/bash*
 evaluation/rename_reddit.py
+evaluation/human_sample_ids.json

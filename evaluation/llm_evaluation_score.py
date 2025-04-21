@@ -55,6 +55,14 @@ def parse_args():
         action="store_true",
         help="Evaluate on Past History as compared to the ground truth",
     )
+
+    # human_sample (store_true)
+    parser.add_argument(
+        "--human_sample",
+        action="store_true",
+        help="Compute only on human sample annotated data",
+    )
+
     # persona mode
     parser.add_argument(
         "--persona",
@@ -238,6 +246,8 @@ def main():
     llama70 = args.llama70
     # ft_baseline
     ft_baseline = args.ft_baseline
+    # human sample
+    human_sample = args.human_sample
 
     # verbose
     verbose = args.verbose
@@ -291,6 +301,7 @@ def main():
     else:
         sources = [source]
 
+
     # ft_baseline data
     if ft_baseline:
         print("Using FT Baseline")
@@ -309,6 +320,14 @@ def main():
         ft_flag = "_ft_baseline"
     else:
         ft_flag = ""
+    
+    # human_sample 
+    if human_sample:
+        # read the human sample data
+        with open("human_sample_ids.json", "r") as f:
+            human_sample_data = json.load(f)
+        human_files = human_sample_data["files"]
+        file_ids = human_sample_data["ids"]
 
     if model_choice == 4:
         # load the prometheus model
@@ -420,6 +439,14 @@ def main():
             desc="Processing Authors",
             total=len(os.listdir(gt_root_dir)),
         ):
+            # check if the file is in the human sample
+            if human_sample: 
+                if file not in human_files:
+                    continue
+                else:
+                    # find index of the file in the human sample
+                    file_index = human_files.index(file)
+
             # gt file path
             gt_file_path = os.path.join(gt_root_dir, file)
             # story file path
@@ -521,6 +548,11 @@ def main():
 
             # iterrate only over expts_data
             for ectr, expts in enumerate(expts_data):
+                
+                if human_sample: 
+                    if ectr != file_ids[file_index]:
+                        continue
+
                 # add the pair
                 identifier = f"{file}_{ectr}"
 
