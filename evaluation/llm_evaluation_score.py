@@ -47,7 +47,7 @@ def parse_args():
         "--model_choice",
         type=int,
         default=1,
-        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini, 4. Prometheus",
+        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini, 4. Prometheus, 5. o4-mini",
     )
     # history (store_true)
     parser.add_argument(
@@ -392,6 +392,11 @@ def main():
         # define the categories
         categories = categories_data.keys()
 
+        if model_choice == 5:
+            system_prompt += "Do not forget to include the score for each story in the <score> tags. "
+            user_constraints += "Important: Your output should contain the <score> tags enclosing the score for both Assistant A and Assistant B." 
+
+
         pairs = []
         
         # prepare for batch relative grade
@@ -558,6 +563,11 @@ def main():
         print(f"Using {consider_dir} method")
         print(f"Consider {len(pairs)} pairs for comparison")
 
+        # NOTE: Clip pairs to only 50 for testing
+        print('Clipping pairs to 50 for testing')
+        pairs = pairs[:50]
+
+
         # iterate over the pairs
         for pair in tqdm(pairs, desc="Pair-wise Evaluation", total=len(pairs)):
             identifier, gt_wp, gt_story, vanilla_story, expts_story = pair
@@ -609,6 +619,11 @@ def main():
                         identifiers.append(identifier)
                         markers.append("A: vanilla")
                         eval_categories.append(cat)
+                    elif model_choice == 5:
+                        response = prompt_openai(
+                            prompt, model="o4-mini", azure=azure
+                        )
+
 
                     # construct response dict
                     if model_choice != 4:
@@ -650,6 +665,12 @@ def main():
                         identifiers.append(identifier)
                         markers.append("A: expts")
                         eval_categories.append(cat)
+                    
+                    elif model_choice == 5:
+                        response = prompt_openai(
+                            prompt, model="o4-mini", azure=azure
+                        )
+
                     
                     # construct response dict
                     if model_choice != 4:
