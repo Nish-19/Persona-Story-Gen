@@ -40,3 +40,8 @@ datasets/data_splits/
 evaluation/bash*
 evaluation/rename_reddit.py
 evaluation/human_sample_ids.json
+evaluation/error_sample_ids.json
+evaluation/analyze_errors.py
+evaluation/expts.json
+evaluation/error_sample_full_ids.json
+evaluation/llm_evaluation_shuffle_score/delta_schema_persona/5/Reddit_rerun.json

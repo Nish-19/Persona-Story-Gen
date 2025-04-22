@@ -230,9 +230,9 @@ class StoryGenMethods:
             if file in self.ignore_files:
                 continue
 
-            # break after 26 iterations
+            # break after 38 iterations
             if debug:
-                if fctr > 25:
+                if fctr > 37:
                     break
 
             profile_file_path = os.path.join(profile_dir, file)
@@ -696,8 +696,8 @@ class StoryGenMethods:
                 continue
 
             if debug:
-                # break after 26 iterations
-                if fctr > 25:
+                # break after 38 iterations
+                if fctr > 37:
                     break
 
             profile_file_path = os.path.join(profile_dir, file)
@@ -797,8 +797,8 @@ class StoryGenMethods:
                 continue
 
             if debug:
-                # break after 26 iterations
-                if fctr > 25:
+                # break after 38 iterations
+                if fctr > 37:
                     break
 
             test_file_path = os.path.join(test_dir, file)
@@ -842,7 +842,7 @@ class StoryGenMethods:
                     continue
 
                 if debug:
-                    # break after 26 iterations
+                    # break after 38 iterations
                     if ectr > 4:
                         break
 
@@ -896,8 +896,8 @@ class StoryGenMethods:
                     continue
 
                 if debug:
-                    # break after 26 iterations
-                    if fctr > 25:
+                    # break after 38 iterations
+                    if fctr > 37:
                         break
 
                 # output file path
@@ -1064,8 +1064,8 @@ class StoryGenMethods:
                 continue
             
             if debug:
-                # break after 26 iterations
-                if fctr > 25:
+                # break after 38 iterations
+                if fctr > 37:
                     break
 
             data_file_path = os.path.join(consider_dir, file)
@@ -1210,8 +1210,8 @@ class StoryGenMethods:
                 continue
 
             if debug:
-                # break after 26 iterations
-                if fctr > 25:
+                # break after 38 iterations
+                if fctr > 37:
                     break
 
             profile_file_path = os.path.join(profile_dir, file)
@@ -1258,7 +1258,7 @@ class StoryGenMethods:
                     continue
 
                 if debug:
-                    # break after 26 iterations
+                    # break after 38 iterations
                     if ectr > 5:
                         break
 
@@ -1567,8 +1567,8 @@ class StoryGenMethods:
                 continue
 
             if debug:
-                # break after 26 iterations
-                if fctr > 25:
+                # break after 38 iterations
+                if fctr > 37:
                     break
 
             data_file_path = os.path.join(profile_dir, file)
@@ -1669,8 +1669,8 @@ class StoryGenMethods:
                 continue
 
             if debug:
-                # break after 26 iterations
-                if fctr > 25:
+                # break after 38 iterations
+                if fctr > 37:
                     break
 
             profile_file_path = os.path.join(profile_dir, file)
@@ -1793,8 +1793,8 @@ class StoryGenMethods:
                 continue
 
             if debug:
-                # break after 26 iterations
-                if fctr > 25:
+                # break after 38 iterations
+                if fctr > 37:
                     break
 
             test_file_path = os.path.join(test_dir, file)
@@ -1837,7 +1837,7 @@ class StoryGenMethods:
                     continue
 
                 if debug:
-                    # break after 26 iterations
+                    # break after 38 iterations
                     if ectr > 4:
                         break
 
@@ -1892,8 +1892,8 @@ class StoryGenMethods:
                     continue
 
                 if debug:
-                    # break after 26 iterations
-                    if fctr > 25:
+                    # break after 38 iterations
+                    if fctr > 37:
                         break
 
                 # output file path
