@@ -324,11 +324,11 @@ def main():
     # human_sample 
     if human_sample:
         # read the human sample data
-        with open("human_sample_ids.json", "r") as f:
+        with open("error_sample_ids.json", "r") as f:
             human_sample_data = json.load(f)
         human_files = human_sample_data["files"]
         file_ids = human_sample_data["ids"]
-
+    
     if model_choice == 4:
         # load the prometheus model
         prometheus_judge = load_prometheus_eval_model()
@@ -444,8 +444,8 @@ def main():
                 if file not in human_files:
                     continue
                 else:
-                    # find index of the file in the human sample
-                    file_index = human_files.index(file)
+                    # find all indices of the occurrences of the file in the human sample
+                    valid_file_ids = [file_ids[i] for i, f in enumerate(human_files) if f == file]
 
             # gt file path
             gt_file_path = os.path.join(gt_root_dir, file)
@@ -550,7 +550,7 @@ def main():
             for ectr, expts in enumerate(expts_data):
                 
                 if human_sample: 
-                    if ectr != file_ids[file_index]:
+                    if ectr not in valid_file_ids:
                         continue
 
                 # add the pair
