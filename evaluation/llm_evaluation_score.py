@@ -595,9 +595,9 @@ def main():
         print(f"Using {consider_dir} method")
         print(f"Consider {len(pairs)} pairs for comparison")
 
-        # NOTE: Clip pairs to only 50 for testing
-        print('Clipping pairs to 50 for testing')
-        pairs = pairs[:50]
+        # # NOTE: Clip pairs to only 50 for testing
+        # print('Clipping pairs to 50 for testing')
+        # pairs = pairs[:50]
 
 
         # iterate over the pairs
