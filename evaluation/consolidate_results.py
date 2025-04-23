@@ -238,6 +238,13 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Consolidate results from different sources for each method"
     )
+    # model choice
+    parser.add_argument(
+        "--model_choice",
+        type=int,
+        default=1,
+        help="Choice of the Model: 1. GPT-4o, 2. LLama-3.1-70B, 3. GPT-4o-mini, 4. Prometheus, 5. o4-mini",
+    )
     # llama (store_true)
     parser.add_argument(
         "--llama", action="store_true", help="Consolidate results for llama 8B"
@@ -259,6 +266,7 @@ def main():
 
     llama = args.llama
     faith = args.faith
+    model_choice = args.model_choice
 
     if llama:
         llama_suffix = "_llama"
@@ -280,9 +288,12 @@ def main():
         if "_old" in method:
             continue
         # considering only GPT evaluated data
-        method_path = f"{root_dir}/{method}/1"
+        method_path = f"{root_dir}/{method}/{model_choice}"
         # iterate over sources in method_path
         for source in os.listdir(method_path):
+            if 'old' in source or '_rerun' in source:
+                continue
+
             source_path = f"{method_path}/{source}"
             # read source file
             with open(source_path, "r") as f:
@@ -320,7 +331,7 @@ def main():
         # sort catwise_winners based on values
         for cat, win_dict in catwise_winners.items():
             catwise_winners[cat] = {
-                k: v
+                k: round(v, 2)
                 for k, v in sorted(
                     win_dict.items(), key=lambda item: item[1], reverse=True
                 )
@@ -328,7 +339,7 @@ def main():
             if method in consider_methods:
                 categorywise_method_results[cat][
                     method
-                ] = f"{round(win_dict['expts']*100, 2)} + ({round(win_dict['Tie']*100, 2)})"
+                ] = f"{round(win_dict.get('expts', 0)*100, 2)} - ({round(win_dict.get('vanilla', 0)*100, 2)})"
 
         method_source_wise_results[method]["overall.json"] = catwise_winners
 
@@ -341,7 +352,7 @@ def main():
         rows.append(row)
 
     # output dir
-    output_dir = f"consolidate_results/{root_dir}"
+    output_dir = f"consolidate_results/{model_choice}/{root_dir}"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
