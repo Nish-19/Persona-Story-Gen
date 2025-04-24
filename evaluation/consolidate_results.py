@@ -104,9 +104,9 @@ def get_catwise_winners(source_data, faith=False):
 
 def create_graph(method_source_wise_results, output_dir):
     # Specify methods to compare
-    methods_to_compare = ["delta", "schema_persona", "delta_schema_persona"]
+    methods_to_compare = ["oracle", "delta", "schema_persona", "delta_schema_persona"]
     # define method alias
-    method_alias = {"delta_schema_persona": "WS", "schema_persona": "S", "delta": "D"}
+    method_alias = {"oracle": "O", "delta_schema_persona": "WS", "schema_persona": "S", "delta": "D"}
     # source alias
     source_alias = {
         "Reddit.json": "Reddit",
@@ -139,7 +139,7 @@ def create_graph(method_source_wise_results, output_dir):
         ]
 
         # Initialize bar data
-        bar_width = 0.1  # Reduce bar width to make bars narrower
+        bar_width = 0.05  # Reduce bar width to make bars narrower
         gap_width = 0.05  # Gap between methods
         x = np.arange(len(categories)) * 0.65  # Position of categories
 
