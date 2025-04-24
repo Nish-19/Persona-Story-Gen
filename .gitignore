@@ -46,3 +46,4 @@ evaluation/expts.json
 evaluation/error_sample_full_ids.json
 evaluation/llm_evaluation_shuffle_score/delta_schema_persona/5/Reddit_rerun*
 evaluation/replace_reddit.py
+evaluation/llm_evaluation_shuffle_score_stats/delta_schema_persona/5/Reddit_*
