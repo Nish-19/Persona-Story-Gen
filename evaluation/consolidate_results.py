@@ -302,7 +302,7 @@ def main():
             # store the results
             method_source_wise_results[method][source] = catwise_winners
 
-    # methodwise results (normalize across sources)
+    # NOTE: methodwise results (Normalize across sources)
     consider_methods = [
         "oracle",
         "vanilla_few_shot",
@@ -372,7 +372,7 @@ def main():
 
     # write the table to a csv file
     df = pd.DataFrame(rows)
-    df.to_csv(f"{output_dir}/catwise_winners{llama_suffix}.csv", index=False)
+    df.to_csv(f"{output_dir}/all_source_catwise_winners{llama_suffix}.csv", index=False)
 
     print(f"Saved results to {output_dir}")
 
