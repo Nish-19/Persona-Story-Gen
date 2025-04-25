@@ -321,13 +321,6 @@ def main():
     else:
         ft_flag = ""
     
-    # human_sample 
-    if human_sample:
-        # read the human sample data
-        with open("error_sample_ids.json", "r") as f:
-            human_sample_data = json.load(f)
-        human_files = human_sample_data["files"]
-        file_ids = human_sample_data["ids"]
     
     if model_choice == 4:
         # load the prometheus model
@@ -336,6 +329,15 @@ def main():
     # iterate over sources
     for source in sources:
         print(f"### Processsing {source} ###")
+        
+        # load human sample data 
+        if human_sample:
+            # read the human sample data
+            with open(f"{source}_error_sample_ids.json", "r") as f:
+                human_sample_data = json.load(f)
+            human_files = human_sample_data["files"]
+            file_ids = human_sample_data["ids"]
+
         # root directories
         gt_root_dir = f"../datasets/data_splits/data/{source}/test/"
         story_root_dir = f"../datasets/{source}/selected_human_with_prompts/"

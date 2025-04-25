@@ -40,10 +40,10 @@ datasets/data_splits/
 evaluation/bash*
 evaluation/rename_reddit.py
 evaluation/human_sample_ids.json
-evaluation/error_sample_ids.json
 evaluation/analyze_errors.py
-evaluation/expts.json
-evaluation/error_sample_full_ids.json
-evaluation/llm_evaluation_shuffle_score/delta_schema_persona/5/Reddit_rerun*
-evaluation/replace_reddit.py
-evaluation/llm_evaluation_shuffle_score_stats/delta_schema_persona/5/Reddit_*
+evaluation/*error_sample_ids.json
+evaluation/*expts.json
+evaluation/*error_sample_full_ids.json
+evaluation/llm_evaluation_shuffle_score/delta_schema_persona/5/*_rerun*
+evaluation/replace_runs.py
+evaluation/llm_evaluation_shuffle_score_stats/delta_schema_persona/5/*_rerun*
