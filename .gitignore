@@ -33,7 +33,8 @@ datasets/Storium/
 datasets/narrativemagazine/
 datasets/newyorker
 datasets/finetune_data/
-experiments/saved_models/*
+experiments/saved_models*
+experiments/finetune_old
 experiments/wandb/*
 evaluation/prometheus_eval_sample*
 datasets/data_splits/

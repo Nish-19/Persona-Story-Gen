@@ -30,22 +30,33 @@ def load_data(split='profile'):
     if os.path.exists(f'../datasets/finetune_data/{split}.csv'):
         # load the data
         finetune_df = pd.read_csv(f'../datasets/finetune_data/{split}.csv')
-        return finetune_df
+        if split == 'profile':
+            val_finetune_df = pd.read_csv(f'../datasets/finetune_data/val.csv')
+        else:
+            val_finetune_df = None
+        return finetune_df, val_finetune_df
+    
+    ignore_files = os.listdir("results/vanilla/Reddit_old")
 
     # define sources
     sources = ["Reddit", "AO3", "Storium", "narrativemagazine", "newyorker"]
+    sources = [sources[0]] # only use reddit for now
     
     # store list
     finetune_data = []
+    if split == 'profile':
+        val_finetune_data = []
 
     # iterate over sources
     for source in sources:
         split_dir = f'../datasets/data_splits/data/{source}/{split}'
         story_dir = f'../datasets/{source}/selected_human_with_prompts/'
 
-
         # iterate over files in split_dir 
         for file in os.listdir(split_dir):
+            # check if file is in ignore_files
+            if file in ignore_files:
+                continue
             if file.endswith('.json'):
                 # load the split file
                 with open(os.path.join(split_dir, file), 'r') as f:
@@ -57,18 +68,30 @@ def load_data(split='profile'):
                 story_dict = {}
                 for item in story_data:
                     story_dict[item['writing_prompt']] = item['comment']
+                
+                # set val size to 10% of the data
+                val_size = int(len(data) * 0.2)
                 # iterate over the items
-                for item in data:
+                for ictr, item in enumerate(data):
+                    # consider only first 5 items for the test set
+                    if split == 'test' and ictr > 4:
+                        break
                     wp = item['writing_prompt']
                     story = story_dict[wp]
                     # create dict of data
                     finetune_sample = {
                         'source': source,
+                        'identifier': f"{file}_{ictr}",
                         'writing_prompt': wp,
                         'story': story
                     }
-                    # append to list
-                    finetune_data.append(finetune_sample)
+                    # check if split is profile and if ictr is greater than len(data) - val_size
+                    if split == 'profile' and ictr > len(data) - val_size - 1:
+                        # append to val_finetune_data
+                        val_finetune_data.append(finetune_sample)
+                    else:
+                        # append to list
+                        finetune_data.append(finetune_sample)
     
     # create dataframe
     finetune_df = pd.DataFrame(finetune_data)
@@ -80,8 +103,15 @@ def load_data(split='profile'):
     
     finetune_df.to_csv(f'{finetune_data_dir}/{split}.csv', index=False)
 
+    if split == 'profile':
+        # create dataframe for val data
+        val_finetune_df = pd.DataFrame(val_finetune_data)
+        val_finetune_df.to_csv(f'{finetune_data_dir}/val.csv', index=False)
+    else:
+        val_finetune_df = None
+
     # return dataframe
-    return finetune_df
+    return finetune_df, val_finetune_df
 
 
 def get_base_model(base_model_name: str, quantize: bool) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
@@ -139,10 +169,19 @@ def get_model(model: PreTrainedModel, test: bool,
 def get_prompt(sample, tokenizer: PreTrainedTokenizer = None, args = None):
     source = sample["source"]
     writing_prompt = sample["writing_prompt"]
-    context = f"Source: {source}\tWriting Prompt: {writing_prompt}\tLength: {sample['story'].count(' ') + 1} words"
+    length = sample["story"].count(" ") + 1
+
+    if args.test:
+        # context = f"Source: {source}\tWriting Prompt: {writing_prompt}\tLength: {length} words"
+        context = f"Writing Prompt: {writing_prompt}\tLength: {length} words"
+        system_prompt = f"You are a story writer on Reddit's r/WritingPrompts platform tasked to write a story with the following Writing Prompt and Length (number of words)."
+    else:
+        context = f"Writing Prompt: {writing_prompt}"
+        system_prompt = f"You are a story writer on Reddit's r/WritingPrompts platform tasked to write a story with the following Writing Prompt."
+    
     if tokenizer is not None:
         return tokenizer.apply_chat_template([
-            {"role": "system", "content": 'You are a story writer tasked to write a story with the following Source, Writing Prompt and Length (number of words).'},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": context},
         ], tokenize=False, add_generation_prompt=True)
     else:

@@ -19,7 +19,6 @@ MAX_LEN = 20_000
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
 def get_training_args(args):
     return TrainingArguments(
         output_dir=get_checkpoint_path(args.model_name),
@@ -44,8 +43,6 @@ def get_training_args(args):
         report_to="wandb" if args.wandb else "none",
         label_names=["labels"],
     )
-
-
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Finetune a baseline model on a dataset.')
@@ -73,6 +70,8 @@ def parse_args():
 def main():
     # load arguments
     args = parse_args()
+    # set test to False
+    args.test = False
 
     if args.wandb:
         wandb.init(
@@ -92,8 +91,8 @@ def main():
         raise ValueError("Invalid model choice. Choose 8 or 3.")
 
     # load the dataset
-    profile_df = load_data(split='profile')
-    test_df = load_data(split='test')
+    profile_df, val_df = load_data(split='profile')
+    test_df, _ = load_data(split='test')
 
     # load model
     base_model, tokenizer = get_base_model(args.base_model, args.quantize)
@@ -101,13 +100,17 @@ def main():
 
     # create dataset and collator
     train_dataset = SFTExpandedDataset(profile_df, tokenizer, args)
-    val_dataset = SFTExpandedDataset(test_df, tokenizer, args)
+    val_dataset = SFTExpandedDataset(val_df, tokenizer, args)
     collator = SFTExpandedCollator(tokenizer)
+
+    print(f"Train dataset size: {len(train_dataset)}")
+    print(f"Validation dataset size: {len(val_dataset)}")
 
     # Train
     training_args = get_training_args(args)
     # training_args.world_size = 1
 
+    print("### Training ###")
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -119,8 +122,10 @@ def main():
     trainer.save_model()
 
     # Test
+    # set test to True
+    print("### Testing ###")
+    args.test = True
     test(args, test_df)
-
 
 if __name__ == "__main__":
     main()
