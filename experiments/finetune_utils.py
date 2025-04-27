@@ -196,7 +196,7 @@ class SFTExpandedDataset(Dataset):
             # rewrite prompt
             prompt = get_prompt(sample, tokenizer, args)
             if len(prompt + sample["story"]) < MAX_LEN:
-                self.data.append({"source": sample["source"], "wp": sample["writing_prompt"], "prompt": prompt, "label": sample["story"] + tokenizer.eos_token})
+                self.data.append({"source": sample["source"], "identifier": sample["identifier"], "wp": sample["writing_prompt"], "prompt": prompt, "label": sample["story"] + tokenizer.eos_token})
             else:
                 excluded += 1
         print(f"Num turns: {len(self.data)} ({excluded} excluded)")

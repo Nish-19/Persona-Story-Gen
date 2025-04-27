@@ -54,9 +54,11 @@ def parse_args():
     parser.add_argument("--model_name")
     parser.add_argument("--pt_model_name")
     parser.add_argument("--quantize", action="store_true")
+    # testing phase
+    parser.add_argument("--test_only", action="store_true", help="Only perform testing")
     # Training/Testing
     parser.add_argument("--train_batch_size", type=int, default=2, help="Batch size at train-time")
-    parser.add_argument("--test_batch_size", type=int, default=8, help="Batch size at test-time")
+    parser.add_argument("--test_batch_size", type=int, default=16, help="Batch size at test-time")
     parser.add_argument("--epochs", type=int, default=3, help="Number of training epochs")
     parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate")
     parser.add_argument("--wd", type=float, default=1e-2, help="Weight decay")
@@ -72,14 +74,15 @@ def main():
     args = parse_args()
     # set test to False
     args.test = False
-
-    if args.wandb:
-        wandb.init(
-            project="Persona Story Gen",
-            name=f"{args.model_name}-run",
-            config=args,
-            tags=["llama", "peft", "finetune"]
-        )
+    
+    if not args.test_only:
+        if args.wandb:
+            wandb.init(
+                project="Persona Story Gen",
+                name=f"{args.model_name}-run",
+                config=args,
+                tags=["llama", "peft", "finetune"]
+            )
 
     if args.model_choice == 8:
         args.base_model = "meta-llama/Meta-Llama-3.1-8B-Instruct"
@@ -103,23 +106,24 @@ def main():
     val_dataset = SFTExpandedDataset(val_df, tokenizer, args)
     collator = SFTExpandedCollator(tokenizer)
 
-    print(f"Train dataset size: {len(train_dataset)}")
-    print(f"Validation dataset size: {len(val_dataset)}")
+    if not args.test_only:
+        print(f"Train dataset size: {len(train_dataset)}")
+        print(f"Validation dataset size: {len(val_dataset)}")
 
-    # Train
-    training_args = get_training_args(args)
-    # training_args.world_size = 1
+        # Train
+        training_args = get_training_args(args)
+        # training_args.world_size = 1
 
-    print("### Training ###")
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=val_dataset,
-        data_collator=collator,
-    )
-    trainer.train()
-    trainer.save_model()
+        print("### Training ###")
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=val_dataset,
+            data_collator=collator,
+        )
+        trainer.train()
+        trainer.save_model()
 
     # Test
     # set test to True
