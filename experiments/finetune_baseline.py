@@ -15,7 +15,7 @@ from torch.utils.data import Dataset
 
 from finetune_utils import load_data, get_prompt, SFTExpandedDataset, SFTExpandedCollator, get_checkpoint_path, get_base_model, get_model, test
 
-MAX_LEN = 20_000
+MAX_LEN = 100_000
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -56,6 +56,8 @@ def parse_args():
     parser.add_argument("--quantize", action="store_true")
     # testing phase
     parser.add_argument("--test_only", action="store_true", help="Only perform testing")
+    # writing sheet option
+    parser.add_argument("--writing_sheet", action="store_true", help="Finetune with writing sheet as prefix")
     # Training/Testing
     parser.add_argument("--train_batch_size", type=int, default=2, help="Batch size at train-time")
     parser.add_argument("--test_batch_size", type=int, default=16, help="Batch size at test-time")
@@ -94,8 +96,8 @@ def main():
         raise ValueError("Invalid model choice. Choose 8 or 3.")
 
     # load the dataset
-    profile_df, val_df = load_data(split='profile')
-    test_df, _ = load_data(split='test')
+    profile_df, val_df = load_data(split='profile', writing_sheet = args.writing_sheet)
+    test_df, _ = load_data(split='test', writing_sheet = args.writing_sheet)
 
     # load model
     base_model, tokenizer = get_base_model(args.base_model, args.quantize)

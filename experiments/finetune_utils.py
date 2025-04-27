@@ -4,6 +4,7 @@ Adapted from: https://github.com/umass-ml4ed/tutorbot-dpo/blob/main/model.py#L7
 '''
 
 import os
+import re
 import sys
 import json
 import pandas as pd
@@ -14,7 +15,7 @@ from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, PreTrainedModel, PreTrainedTokenizer
 from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
 
-MAX_LEN = 20_000
+MAX_LEN = 100_000
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -22,16 +23,120 @@ def get_checkpoint_path(model_name: str):
     os.makedirs("saved_models", exist_ok=True)
     return f"saved_models/{model_name}"
 
-def load_data(split='profile'):
+
+
+def clear_evidence(writing_sheet):
+    """
+    Remove all 'Evidence' fields from the writing_sheet and clean up the text.
+    Split the cleaned claims into a list of individual claims.
+    """
+
+    def sanitize_text(text):
+        """
+        Clean up hidden characters, excessive whitespaces, and normalize line endings.
+        """
+        # Normalize newlines to \n
+        text = text.replace("\r\n", "\n").replace("\r", "\n")
+
+        # Remove non-breaking spaces and other invisible characters
+        text = re.sub(r"[^\S\n]", " ", text)  # Replace non-space whitespace with space
+
+        # Strip leading/trailing whitespaces and normalize multiple spaces
+        text = re.sub(r"\s+", " ", text).strip()
+
+        return text
+    
+    def remove_evidence(user_sheet):
+        """
+        Remove evidence lines from the text.
+        """
+
+        # Match lines containing '- Evidence:' and remove them
+        cleaned_sheet = re.sub(
+            r" - Evidence:.*?(?=(\d+\.|$))", "", user_sheet, flags=re.DOTALL
+        )
+
+        # Replace multiple consecutive spaces or newlines with a single newline
+        cleaned_sheet = re.sub(r"\s*\n\s*", "\n", cleaned_sheet.strip())
+
+        # replace ** with ''
+        cleaned_sheet = cleaned_sheet.replace("**", "")
+
+        return cleaned_sheet
+    
+    # pre-defined categories
+    categories = [
+        "Plot",
+        "Creativity",
+        "Development (Character and Setting)",
+        "Language Use",
+    ]
+
+    writing_sheet_categories = {}
+    
+    # extract elements
+    for cctr, cat in enumerate(categories):
+        # extract text between cat and categories[cctr+1]
+        # find index of ### {cat}
+        cat_idx = writing_sheet.find(f"### **{cat}**")
+        # find index of ### {next category}
+        if cctr == len(categories) - 1:
+            next_cat_idx = len(writing_sheet)
+        else:
+            next_cat_idx = writing_sheet.find(
+                f"### **{categories[cctr+1]}**"
+            )
+        # extract the text
+        writing_sheet_temp = writing_sheet[
+            cat_idx + len(f"### **{cat}**") : next_cat_idx
+        ]
+
+        # Sanitize extracted text
+        writing_sheet_temp = sanitize_text(writing_sheet_temp)
+
+        # Clear evidence from the writing sheet
+        writing_sheet_categories[cat] = remove_evidence(
+            writing_sheet_temp
+        )
+
+    final_sheet = ""
+    # combine the categories into a single string
+    for cat, text in writing_sheet_categories.items():
+        final_sheet += f"### {cat}\n{text}\n"
+    # remove the last newline
+    final_sheet = final_sheet.rstrip("\n")
+
+    return final_sheet
+    
+
+def extract_writing_sheet(sheet_output, key="combined_author_sheet"):
+    """
+    extract text between the tags <user_writing_sheet></user_writing_sheet>
+    """
+    sheet = re.search(rf"<{key}>(.*?)</{key}>", sheet_output, re.DOTALL).group(
+        1
+    )
+    if not sheet:
+        sheet = sheet_output
+    return sheet
+
+
+def load_data(split='profile', writing_sheet=False):
     '''
     returns a pandas dataframe with the data (source, writing prompt, story)
     '''
+
+    if writing_sheet:
+        writing_sheet_suffix = "_writing_sheet"
+    else:
+        writing_sheet_suffix = ""
+
     # check if data already exists
-    if os.path.exists(f'../datasets/finetune_data/{split}.csv'):
+    if os.path.exists(f'../datasets/finetune_data{writing_sheet_suffix}/{split}.csv'):
         # load the data
-        finetune_df = pd.read_csv(f'../datasets/finetune_data/{split}.csv')
+        finetune_df = pd.read_csv(f'../datasets/finetune_data{writing_sheet_suffix}/{split}.csv')
         if split == 'profile':
-            val_finetune_df = pd.read_csv(f'../datasets/finetune_data/val.csv')
+            val_finetune_df = pd.read_csv(f'../datasets/finetune_data{writing_sheet_suffix}/val.csv')
         else:
             val_finetune_df = None
         return finetune_df, val_finetune_df
@@ -51,6 +156,7 @@ def load_data(split='profile'):
     for source in sources:
         split_dir = f'../datasets/data_splits/data/{source}/{split}'
         story_dir = f'../datasets/{source}/selected_human_with_prompts/'
+        writing_sheet_dir = f'user_profile/delta_schema/{source}/'
 
         # iterate over files in split_dir 
         for file in os.listdir(split_dir):
@@ -64,6 +170,28 @@ def load_data(split='profile'):
                 # load the story file
                 with open(os.path.join(story_dir, file), 'r') as f:
                     story_data = json.load(f)
+                
+
+                # load writing sheet file
+                if writing_sheet:
+                    with open(os.path.join(writing_sheet_dir, file), 'r') as f:
+                        writing_sheet_data = json.load(f)
+                    
+                    if len(writing_sheet_data) == 1:
+                        user_profile = extract_writing_sheet(
+                            writing_sheet_data[-1], key="writing_style"
+                        )
+                    else:
+                        user_profile = extract_writing_sheet(
+                            writing_sheet_data[-1], key="combined_author_sheet"
+                        )
+                    
+                    # clean up the user_profile
+                    user_profile = clear_evidence(user_profile)
+                    
+                else:
+                    user_profile = None
+
                 # create dict of story data
                 story_dict = {}
                 for item in story_data:
@@ -85,6 +213,8 @@ def load_data(split='profile'):
                         'writing_prompt': wp,
                         'story': story
                     }
+                    if writing_sheet:
+                        finetune_sample['writing_sheet'] = user_profile
                     # check if split is profile and if ictr is greater than len(data) - val_size
                     if split == 'profile' and ictr > len(data) - val_size - 1:
                         # append to val_finetune_data
@@ -96,8 +226,9 @@ def load_data(split='profile'):
     # create dataframe
     finetune_df = pd.DataFrame(finetune_data)
 
+
     # save dataframe
-    finetune_data_dir = f'../datasets/finetune_data'
+    finetune_data_dir = f'../datasets/finetune_data{writing_sheet_suffix}'
     if not os.path.exists(finetune_data_dir):
         os.makedirs(finetune_data_dir)
     
@@ -171,13 +302,23 @@ def get_prompt(sample, tokenizer: PreTrainedTokenizer = None, args = None):
     writing_prompt = sample["writing_prompt"]
     length = sample["story"].count(" ") + 1
 
-    if args.test:
-        # context = f"Source: {source}\tWriting Prompt: {writing_prompt}\tLength: {length} words"
-        context = f"Writing Prompt: {writing_prompt}\tLength: {length} words"
-        system_prompt = f"You are a story writer on Reddit's r/WritingPrompts platform tasked to write a story with the following Writing Prompt and Length (number of words)."
+    if not args.writing_sheet:
+        if args.test:
+            # context = f"Source: {source}\tWriting Prompt: {writing_prompt}\tLength: {length} words"
+            context = f"Writing Prompt: {writing_prompt}\tLength: {length} words"
+            system_prompt = f"You are a story writer on Reddit's r/WritingPrompts platform tasked to write a story with the following Writing Prompt and Length (number of words)."
+        else:
+            context = f"Writing Prompt: {writing_prompt}"
+            system_prompt = f"You are a story writer on Reddit's r/WritingPrompts platform tasked to write a story with the following Writing Prompt."
     else:
-        context = f"Writing Prompt: {writing_prompt}"
-        system_prompt = f"You are a story writer on Reddit's r/WritingPrompts platform tasked to write a story with the following Writing Prompt."
+        # note include writing sheet in the prompt
+        writing_sheet = sample["writing_sheet"]
+        if args.test:
+            context = f"Writing Sheet: {writing_sheet}\tWriting Prompt: {writing_prompt}\tLength: {length} words"
+            system_prompt = f"You are a story writer on Reddit's r/WritingPrompts platform tasked to write a story with the following Writing Prompt, Length (number of words) and a Writing Sheet describing the writer's story-writing characterestics across four narrative categories - Plot, Creativity, Development, and Language Use."
+        else:
+            context = f"Writing Sheet: {writing_sheet}\tWriting Prompt: {writing_prompt}"
+            system_prompt = f"You are a story writer on Reddit's r/WritingPrompts platform tasked to write a story with the following Writing Prompt and a Writing Sheet describing the writer's story-writing characterestics across four narrative categories - Plot, Creativity, Development, and Language Use."
     
     if tokenizer is not None:
         return tokenizer.apply_chat_template([

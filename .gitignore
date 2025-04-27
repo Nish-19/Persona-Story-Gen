@@ -32,7 +32,7 @@ datasets/Reddit_old/
 datasets/Storium/
 datasets/narrativemagazine/
 datasets/newyorker
-datasets/finetune_data/
+datasets/finetune_data*
 experiments/saved_models*
 experiments/finetune_old
 experiments/wandb/*
