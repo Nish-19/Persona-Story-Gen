@@ -305,16 +305,25 @@ def main():
     # ft_baseline data
     if ft_baseline:
         print("Using FT Baseline")
-        ft_baseline_data_dir = '../experiments/finetune/sft-8b-no-len/test_results.json'
+        ft_baseline_data_path = '../experiments/finetune/sft-8B/test_results.json'
         # load the data
-        with open(ft_baseline_data_dir, "r") as f:
+        with open(ft_baseline_data_path, "r") as f:
             ft_baseline_raw_data = json.load(f)
+        
+        # load the ws data
+        ft_ws_data_dir = '../experiments/finetune/sft-8B-ws/test_results.json'
+        with open(ft_ws_data_dir, "r") as f:
+            ft_ws_raw_data = json.load(f)
         
         ft_baseline_data = {}
         # process the data
         for data in ft_baseline_raw_data:
-            # remove the first element
             ft_baseline_data[data['wp']] = data['pred_story']
+        
+        # process the ws data
+        ft_ws_data = {}
+        for data in ft_ws_raw_data:
+            ft_ws_data[data['wp']] = data['pred_story']
         
         # set ft_flag
         ft_flag = "_ft_baseline"
@@ -573,6 +582,8 @@ def main():
                 
                 average_author = vanilla_data[ectr]["story"] if not ft_baseline else ft_baseline_data[gt_wp]
 
+                expts_story = expts["story"] if not ft_baseline else ft_ws_data[gt_wp]
+
                 if history:
                     pairs.append(
                         (
@@ -580,7 +591,7 @@ def main():
                             gt_wp,
                             summarize_history,
                             average_author,
-                            expts["story"],
+                            expts_story,
                         )
                     )
                 else:
@@ -590,7 +601,7 @@ def main():
                             gt_wp,
                             gt_story,
                             average_author,
-                            expts["story"],
+                            expts_story,
                         )
                     )
 
