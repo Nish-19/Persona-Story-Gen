@@ -88,7 +88,8 @@ def main():
 
     if args.model_choice == 8:
         args.base_model = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-        args.grad_accum_steps = 64
+        if args.grad_accum_steps == 1 and args.train_batch_size == 2:
+            args.grad_accum_steps = 64
     elif args.model_choice == 3:
         args.base_model = "meta-llama/Llama-3.2-3B-Instruct"
         args.grad_accum_steps = 32
