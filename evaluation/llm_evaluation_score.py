@@ -581,8 +581,11 @@ def main():
                     continue
                 
                 average_author = vanilla_data[ectr]["story"] if not ft_baseline else ft_baseline_data[gt_wp]
-
-                expts_story = expts["story"] if not ft_baseline else ft_ws_data[gt_wp]
+                
+                if ft_baseline and not llama:
+                    expts_story = ft_baseline_data[gt_wp]
+                else:
+                    expts_story = expts["story"]
 
                 if history:
                     pairs.append(
