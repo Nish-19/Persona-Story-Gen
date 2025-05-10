@@ -104,7 +104,7 @@ def get_catwise_winners(source_data, faith=False):
 
 def create_graph(method_source_wise_results, output_dir):
     # Specify methods to compare
-    methods_to_compare = ["oracle", "delta", "schema_persona", "delta_schema_persona"]
+    methods_to_compare = ["oracle", "delta", "delta_schema_persona", "schema_persona"]
     # define method alias
     method_alias = {"oracle": "O", "delta_schema_persona": "WS", "schema_persona": "S", "delta": "D"}
     # source alias
@@ -140,8 +140,8 @@ def create_graph(method_source_wise_results, output_dir):
 
         # Initialize bar data
         bar_width = 0.05  # Reduce bar width to make bars narrower
-        gap_width = 0.05  # Gap between methods
-        x = np.arange(len(categories)) * 0.65  # Position of categories
+        gap_width = 0.025  # Gap between methods
+        x = np.arange(len(categories)) * 0.40  # Position of categories
 
         # Plot setup
         fig, ax = plt.subplots(figsize=(7, 4))
