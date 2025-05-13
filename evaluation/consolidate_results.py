@@ -106,14 +106,14 @@ def create_graph(method_source_wise_results, output_dir):
     # Specify methods to compare
     methods_to_compare = ["oracle", "delta", "delta_schema_persona", "schema_persona"]
     # define method alias
-    method_alias = {"oracle": "O", "delta_schema_persona": "WS", "schema_persona": "S", "delta": "D"}
+    method_alias = {"oracle": "O", "delta_schema_persona": "Sh", "schema_persona": "Su", "delta": "D"}
     # source alias
     source_alias = {
         "Reddit.json": "Reddit",
         "AO3.json": "AO3",
         "Storium.json": "Storium",
-        "narrativemagazine.json": "N.Magazine",
         "newyorker.json": "New Yorker",
+        "narrativemagazine.json": "Narrative Magazine",
     }
 
     save_dir = f"{output_dir}/graphs"
@@ -132,6 +132,10 @@ def create_graph(method_source_wise_results, output_dir):
         categories = list(
             next(iter(method_source_wise_results.values()))[source].keys()
         )
+        
+        # hardcode categories
+        categories = ['Plot', 'Creativity', 'Development (Character and Setting)', 'Language Use']
+
         # replace "Development (Character and Setting)" with "Development"
         categories_labels = [
             cat.replace("Development (Character and Setting)", "Development")
