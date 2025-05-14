@@ -121,13 +121,15 @@ def extract_writing_sheet(sheet_output, key="combined_author_sheet"):
     return sheet
 
 
-def load_data(split='profile', writing_sheet=False):
+def load_data(split='profile', writing_sheet=False, writing_summary=False):
     '''
     returns a pandas dataframe with the data (source, writing prompt, story)
     '''
 
     if writing_sheet:
         writing_sheet_suffix = "_writing_sheet"
+    elif writing_summary:
+        writing_sheet_suffix = "_writing_summary"
     else:
         writing_sheet_suffix = ""
 
@@ -156,7 +158,10 @@ def load_data(split='profile', writing_sheet=False):
     for source in sources:
         split_dir = f'../datasets/data_splits/data/{source}/{split}'
         story_dir = f'../datasets/{source}/selected_human_with_prompts/'
-        writing_sheet_dir = f'user_profile/delta_schema/{source}/'
+        if writing_sheet:
+            writing_sheet_dir = f'user_profile/delta_schema/{source}/'
+        if writing_summary:
+            writing_sheet_dir = f'user_profile/schema/{source}/'
 
         # iterate over files in split_dir 
         for file in os.listdir(split_dir):
@@ -173,7 +178,7 @@ def load_data(split='profile', writing_sheet=False):
                 
 
                 # load writing sheet file
-                if writing_sheet:
+                if writing_sheet or writing_summary:
                     with open(os.path.join(writing_sheet_dir, file), 'r') as f:
                         writing_sheet_data = json.load(f)
                     
@@ -213,7 +218,7 @@ def load_data(split='profile', writing_sheet=False):
                         'writing_prompt': wp,
                         'story': story
                     }
-                    if writing_sheet:
+                    if writing_sheet or writing_summary:
                         finetune_sample['writing_sheet'] = user_profile
                     # check if split is profile and if ictr is greater than len(data) - val_size
                     if split == 'profile' and ictr > len(data) - val_size - 1:
@@ -302,7 +307,7 @@ def get_prompt(sample, tokenizer: PreTrainedTokenizer = None, args = None):
     writing_prompt = sample["writing_prompt"]
     length = sample["story"].count(" ") + 1
 
-    if not args.writing_sheet:
+    if not args.writing_sheet and not args.writing_summary:
         if args.test:
             # context = f"Source: {source}\tWriting Prompt: {writing_prompt}\tLength: {length} words"
             context = f"Writing Prompt: {writing_prompt}\tLength: {length} words"

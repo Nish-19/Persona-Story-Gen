@@ -58,6 +58,9 @@ def parse_args():
     parser.add_argument("--test_only", action="store_true", help="Only perform testing")
     # writing sheet option
     parser.add_argument("--writing_sheet", action="store_true", help="Finetune with writing sheet as prefix")
+    # writing summary
+    parser.add_argument("--writing_summary", action="store_true", help="Finetune with writing sheet as prefix")
+
     # Training/Testing
     parser.add_argument("--train_batch_size", type=int, default=2, help="Batch size at train-time")
     parser.add_argument("--test_batch_size", type=int, default=16, help="Batch size at test-time")
@@ -97,8 +100,8 @@ def main():
         raise ValueError("Invalid model choice. Choose 8 or 3.")
 
     # load the dataset
-    profile_df, val_df = load_data(split='profile', writing_sheet = args.writing_sheet)
-    test_df, _ = load_data(split='test', writing_sheet = args.writing_sheet)
+    profile_df, val_df = load_data(split='profile', writing_sheet = args.writing_sheet, writing_summary = args.writing_summary)
+    test_df, _ = load_data(split='test', writing_sheet = args.writing_sheet, writing_summary = args.writing_summary)
 
     # load model
     base_model, tokenizer = get_base_model(args.base_model, args.quantize)
