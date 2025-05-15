@@ -77,6 +77,14 @@ def parse_args():
         help="Whether to use the fine-tuned baseline model as Average Author",
     )
 
+    # ft choice 
+    parser.add_argument(
+        "--ft_choice",
+        type=int,
+        default=1,        
+        help="1: Writing Sheet, 2: Writing Summary",
+    )
+
     # verbose (store_true)
     parser.add_argument("--verbose", action="store_true", help="Verbose")
     # azure (store_true)
@@ -246,6 +254,8 @@ def main():
     llama70 = args.llama70
     # ft_baseline
     ft_baseline = args.ft_baseline
+    # ft_choice
+    ft_choice = args.ft_choice
     # human sample
     human_sample = args.human_sample
 
@@ -311,7 +321,12 @@ def main():
             ft_baseline_raw_data = json.load(f)
         
         # load the ws data
-        ft_ws_data_dir = '../experiments/finetune/sft-8B-ws/test_results.json'
+        if ft_choice == 1:
+            ft_ws_data_dir = '../experiments/finetune/sft-8B-ws/test_results.json'
+        elif ft_choice == 2:
+            ft_ws_data_dir = '../experiments/finetune/sft-8B-summ/test_results.json'
+        else:
+            raise ValueError("Invalid ft_choice. Choose 1 or 2.")
         with open(ft_ws_data_dir, "r") as f:
             ft_ws_raw_data = json.load(f)
         
@@ -498,7 +513,7 @@ def main():
                     expts_data = json.load(f)
             except:
                 if verbose:
-                    print("Skipping", file)
+                    print("Skipping, Unable to open file", file)
                 continue
 
             if history:
@@ -583,7 +598,7 @@ def main():
                 average_author = vanilla_data[ectr]["story"] if not ft_baseline else ft_baseline_data[gt_wp]
                 
                 if ft_baseline and not llama:
-                    expts_story = ft_baseline_data[gt_wp]
+                    expts_story = ft_ws_data[gt_wp]
                 else:
                     expts_story = expts["story"]
 
@@ -607,9 +622,12 @@ def main():
                             expts_story,
                         )
                     )
+                
+            
 
         print(f"Using {consider_dir} method")
         print(f"Consider {len(pairs)} pairs for comparison")
+
 
         # # NOTE: Clip pairs to only 50 for testing
         # print('Clipping pairs to 50 for testing')
