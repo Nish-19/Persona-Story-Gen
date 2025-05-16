@@ -61,7 +61,7 @@ def parse_args():
         help="To use persona prompt obtained from Author Sheet (for Schema and Delta Schema only)",
     )
 
-    # ft baseline 
+    # ft baseline
     parser.add_argument(
         "--ft_baseline",
         action="store_true",
@@ -103,15 +103,15 @@ def construct_compare_prompt_message(
 
     return prompt
 
+
 def construct_prometheus_prompt(wp, writing_sheet, cat):
-    '''
+    """
     Create a prompt for the faithfulness evaluation.
-    '''
+    """
 
     instruction = f"Write a story for the given Writing Prompt ({wp}) following the author's story-writing style preferences for the {cat} category: {str(writing_sheet[cat])}"
 
     return instruction
-
 
 
 def decode_unicode_escapes(text):
@@ -252,21 +252,21 @@ def main():
         sources = ["Reddit", "AO3", "narrativemagazine", "newyorker", "Storium"]
     else:
         sources = [source]
-    
+
     # ft_baseline data
     if ft_baseline:
         print("Using FT Baseline")
-        ft_baseline_data_dir = '../experiments/finetune/sft-8b-no-len/test_results.json'
+        ft_baseline_data_dir = "../experiments/finetune/sft-8b-no-len/test_results.json"
         # load the data
         with open(ft_baseline_data_dir, "r") as f:
             ft_baseline_raw_data = json.load(f)
-        
+
         ft_baseline_data = {}
         # process the data
         for data in ft_baseline_raw_data:
             # remove the first element
-            ft_baseline_data[data['wp']] = data['pred_story']
-        
+            ft_baseline_data[data["wp"]] = data["pred_story"]
+
         # set ft_flag
         ft_flag = "_ft_baseline"
     else:
@@ -314,13 +314,9 @@ def main():
 
         # results output directory
         if eval_choice == 1:
-            output_dir = (
-                f"author_sheet_score{llama_suffix}/{consider_dir}/{model_choice}{ft_flag}"
-            )
+            output_dir = f"author_sheet_score{llama_suffix}/{consider_dir}/{model_choice}{ft_flag}"
         elif eval_choice == 2:
-            output_dir = (
-                f"author_sheet_score_schema{llama_suffix}/{consider_dir}/{model_choice}{ft_flag}"
-            )
+            output_dir = f"author_sheet_score_schema{llama_suffix}/{consider_dir}/{model_choice}{ft_flag}"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
@@ -333,7 +329,7 @@ def main():
             all_responses = defaultdict(dict, all_responses)
         else:
             all_responses = defaultdict(dict)
-        
+
         # read prompts
         system_prompt_path = "instructions/system_prompt/author_sheet_score.txt"
         user_constraints_path = "instructions/user_prompt/author_sheet_score.txt"
@@ -345,10 +341,10 @@ def main():
         # read the user constraints
         with open(user_constraints_path, "r") as f:
             user_constraints = f.read()
-        
+
         if model_choice == 5:
             system_prompt += "Do not forget to include the score for each story in the <score> tags. "
-            user_constraints += "Important: Your output should contain the <score> tags enclosing the score for both Story A and Story B." 
+            user_constraints += "Important: Your output should contain the <score> tags enclosing the score for both Story A and Story B."
         pairs = []
 
         # prepare for batch relative grade
@@ -362,7 +358,6 @@ def main():
             identifiers = []  # List of identifiers
             markers = []  # List of markers
             eval_categories = []  # List of categories
-
 
         # iterate over files in the ground truth directory
         for file in os.listdir(gt_root_dir):
@@ -514,8 +509,12 @@ def main():
                 if expts["story"] is None:
                     print("Skipping None", file)
                     continue
-                    
-                average_author = vanilla_data[ectr]["story"] if not ft_baseline else ft_baseline_data[gt_wp]
+
+                average_author = (
+                    vanilla_data[ectr]["story"]
+                    if not ft_baseline
+                    else ft_baseline_data[gt_wp]
+                )
 
                 pairs.append(
                     (
@@ -531,7 +530,7 @@ def main():
         print(f"Consider {len(pairs)} pairs for comparison")
 
         # NOTE: Clip pairs to only 50 for testing
-        print('Clipping pairs to 50 for testing')
+        print("Clipping pairs to 50 for testing")
         pairs = pairs[:50]
 
         # iterate over the pairs
@@ -566,9 +565,8 @@ def main():
                         )
                     elif model_choice == 4:
                         # construct prometheus prompt
-                        instruction = construct_prometheus_prompt(
-                            gt_wp, w_sheet, cat)
-                        
+                        instruction = construct_prometheus_prompt(gt_wp, w_sheet, cat)
+
                         # append data to lists
                         instructions.append(instruction)
                         responses_from_a.append(vanilla_story)
@@ -577,10 +575,7 @@ def main():
                         markers.append("A: vanilla")
                         eval_categories.append(cat)
                     elif model_choice == 5:
-                        response = prompt_openai(
-                            prompt, model="o4-mini", azure=azure
-                        )
-
+                        response = prompt_openai(prompt, model="o4-mini", azure=azure)
 
                     # construct response dict
                     if model_choice != 4:
@@ -608,9 +603,8 @@ def main():
                         )
                     elif model_choice == 4:
                         # construct prometheus prompt
-                        instruction = construct_prometheus_prompt(
-                            gt_wp, w_sheet, cat)
-                        
+                        instruction = construct_prometheus_prompt(gt_wp, w_sheet, cat)
+
                         # append data to lists
                         instructions.append(instruction)
                         responses_from_a.append(expts_story)
@@ -619,9 +613,7 @@ def main():
                         markers.append("A: expts")
                         eval_categories.append(cat)
                     elif model_choice == 5:
-                        response = prompt_openai(
-                            prompt, model="o4-mini", azure=azure
-                        )
+                        response = prompt_openai(prompt, model="o4-mini", azure=azure)
 
                     # construct response dict
                     if model_choice != 4:
@@ -670,8 +662,6 @@ def main():
             # force reset batch information
             instructions, responses_from_a, responses_from_b = [], [], []
             identifiers, markers, eval_categories = [], [], []
-
-
 
 
 if __name__ == "__main__":

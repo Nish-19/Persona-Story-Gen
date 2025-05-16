@@ -1,6 +1,6 @@
-'''
+"""
 Code for finetuning a baseline model on a dataset.
-'''
+"""
 
 import os
 import json
@@ -13,11 +13,21 @@ from transformers import PreTrainedTokenizer, TrainingArguments, Trainer
 import torch
 from torch.utils.data import Dataset
 
-from finetune_utils import load_data, get_prompt, SFTExpandedDataset, SFTExpandedCollator, get_checkpoint_path, get_base_model, get_model, test
+from finetune_utils import (
+    load_data,
+    get_prompt,
+    SFTExpandedDataset,
+    SFTExpandedCollator,
+    get_checkpoint_path,
+    get_base_model,
+    get_model,
+    test,
+)
 
 MAX_LEN = 100_000
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 def get_training_args(args):
     return TrainingArguments(
@@ -44,49 +54,81 @@ def get_training_args(args):
         label_names=["labels"],
     )
 
+
 def parse_args():
-    parser = argparse.ArgumentParser(description='Finetune a baseline model on a dataset.')
+    parser = argparse.ArgumentParser(
+        description="Finetune a baseline model on a dataset."
+    )
     # wandb
     parser.add_argument("--wandb", action="store_true", help="Log to wandb")
     # Modeling
-    parser.add_argument("--model_choice", type=int, default=8, help="model size in B") # "meta-llama/Meta-Llama-3.1-8B-Instruct" "meta-llama/Llama-3.2-3B-Instruct"
-    parser.add_argument("--base_model", default="meta-llama/Meta-Llama-3.1-8B-Instruct") # "meta-llama/Meta-Llama-3.1-8B-Instruct" "meta-llama/Llama-3.2-3B-Instruct"
+    parser.add_argument(
+        "--model_choice", type=int, default=8, help="model size in B"
+    )  # "meta-llama/Meta-Llama-3.1-8B-Instruct" "meta-llama/Llama-3.2-3B-Instruct"
+    parser.add_argument(
+        "--base_model", default="meta-llama/Meta-Llama-3.1-8B-Instruct"
+    )  # "meta-llama/Meta-Llama-3.1-8B-Instruct" "meta-llama/Llama-3.2-3B-Instruct"
     parser.add_argument("--model_name")
     parser.add_argument("--pt_model_name")
     parser.add_argument("--quantize", action="store_true")
     # testing phase
     parser.add_argument("--test_only", action="store_true", help="Only perform testing")
     # writing sheet option
-    parser.add_argument("--writing_sheet", action="store_true", help="Finetune with writing sheet as prefix")
+    parser.add_argument(
+        "--writing_sheet",
+        action="store_true",
+        help="Finetune with writing sheet as prefix",
+    )
     # writing summary
-    parser.add_argument("--writing_summary", action="store_true", help="Finetune with writing sheet as prefix")
+    parser.add_argument(
+        "--writing_summary",
+        action="store_true",
+        help="Finetune with writing sheet as prefix",
+    )
 
     # Training/Testing
-    parser.add_argument("--train_batch_size", type=int, default=2, help="Batch size at train-time")
-    parser.add_argument("--test_batch_size", type=int, default=16, help="Batch size at test-time")
-    parser.add_argument("--epochs", type=int, default=3, help="Number of training epochs")
+    parser.add_argument(
+        "--train_batch_size", type=int, default=2, help="Batch size at train-time"
+    )
+    parser.add_argument(
+        "--test_batch_size", type=int, default=16, help="Batch size at test-time"
+    )
+    parser.add_argument(
+        "--epochs", type=int, default=3, help="Number of training epochs"
+    )
     parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate")
     parser.add_argument("--wd", type=float, default=1e-2, help="Weight decay")
     parser.add_argument("--gc", type=float, default=1.0, help="Gradient clipping norm")
-    parser.add_argument("--grad_accum_steps", type=int, default=1, help="Steps to accumulate gradients for")
+    parser.add_argument(
+        "--grad_accum_steps",
+        type=int,
+        default=1,
+        help="Steps to accumulate gradients for",
+    )
     parser.add_argument("--r", type=int, default=64, help="LoRA rank")
     parser.add_argument("--lora_alpha", type=int, default=32, help="LoRA alpha")
-    parser.add_argument("--max_gen_tokens", type=int, default=1500, help="Maximum number of tokens to generate")
+    parser.add_argument(
+        "--max_gen_tokens",
+        type=int,
+        default=1500,
+        help="Maximum number of tokens to generate",
+    )
     return parser.parse_args()
+
 
 def main():
     # load arguments
     args = parse_args()
     # set test to False
     args.test = False
-    
+
     if not args.test_only:
         if args.wandb:
             wandb.init(
                 project="Persona Story Gen",
                 name=f"{args.model_name}-run",
                 config=args,
-                tags=["llama", "peft", "finetune"]
+                tags=["llama", "peft", "finetune"],
             )
 
     if args.model_choice == 8:
@@ -100,12 +142,27 @@ def main():
         raise ValueError("Invalid model choice. Choose 8 or 3.")
 
     # load the dataset
-    profile_df, val_df = load_data(split='profile', writing_sheet = args.writing_sheet, writing_summary = args.writing_summary)
-    test_df, _ = load_data(split='test', writing_sheet = args.writing_sheet, writing_summary = args.writing_summary)
+    profile_df, val_df = load_data(
+        split="profile",
+        writing_sheet=args.writing_sheet,
+        writing_summary=args.writing_summary,
+    )
+    test_df, _ = load_data(
+        split="test",
+        writing_sheet=args.writing_sheet,
+        writing_summary=args.writing_summary,
+    )
 
     # load model
     base_model, tokenizer = get_base_model(args.base_model, args.quantize)
-    model = get_model(base_model, False, pt_model_name=args.pt_model_name, r=args.r, lora_alpha=args.lora_alpha, quantize=args.quantize)
+    model = get_model(
+        base_model,
+        False,
+        pt_model_name=args.pt_model_name,
+        r=args.r,
+        lora_alpha=args.lora_alpha,
+        quantize=args.quantize,
+    )
 
     # create dataset and collator
     train_dataset = SFTExpandedDataset(profile_df, tokenizer, args)
@@ -136,6 +193,7 @@ def main():
     print("### Testing ###")
     args.test = True
     test(args, test_df)
+
 
 if __name__ == "__main__":
     main()

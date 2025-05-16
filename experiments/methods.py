@@ -63,7 +63,7 @@ class StoryGenMethods:
         # story rules directory
         self.story_rules_dir = "story_rules"
 
-        # create ignore files 
+        # create ignore files
         self.ignore_files = os.listdir(f"{self.output_dir}/vanilla/Reddit_old")
 
     def construct_user_instruction(self, example_raw, source="Reddit"):
@@ -714,7 +714,7 @@ class StoryGenMethods:
                     "Writing Prompt": example["writing_prompt"],
                     "Author-Written Story": example["story"],
                 }
-                for example in profile_data # control the number of examples
+                for example in profile_data  # control the number of examples
             ]
 
             # check if the output file already exists
@@ -1062,7 +1062,7 @@ class StoryGenMethods:
             # check if the file is in the ignore files
             if file in self.ignore_files:
                 continue
-            
+
             if debug:
                 # break after 62 iterations
                 if fctr > 61:
@@ -1072,7 +1072,7 @@ class StoryGenMethods:
             # profile data
             with open(data_file_path, "r") as f:
                 human_data = json.load(f)
-            
+
             if is_profile:
                 # consider only last 10 examples from the profile data
                 human_data = human_data[-10:]
@@ -1220,7 +1220,7 @@ class StoryGenMethods:
             # profile data
             with open(profile_file_path, "r") as f:
                 profile_data = json.load(f)
-            
+
             # consider only last 10 examples from the profile data
             profile_data = profile_data[-10:]
 
@@ -1595,7 +1595,7 @@ class StoryGenMethods:
                     user_sheet_response = json.load(f)
             else:
                 user_sheet_response = []
-            
+
             # clip human_data to most recent 10 examples
             human_data = human_data[-10:]
             base_story_data = base_story_data[-10:]
@@ -1677,7 +1677,7 @@ class StoryGenMethods:
             # profile data
             with open(profile_file_path, "r") as f:
                 profile_data = json.load(f)
-            
+
             # clip profile_data to most recent 10 examples
             profile_data = profile_data[-10:]
 
@@ -1924,7 +1924,7 @@ class StoryGenMethods:
                             user_profile_response[-1], key="combined_author_sheet"
                         )
                 except Exception as e:
-                    print('In persona Exception:', e, file)
+                    print("In persona Exception:", e, file)
                     continue
 
                 # check if persona_response is non empty

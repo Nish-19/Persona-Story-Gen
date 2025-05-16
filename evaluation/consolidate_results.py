@@ -106,7 +106,12 @@ def create_graph(method_source_wise_results, output_dir):
     # Specify methods to compare
     methods_to_compare = ["oracle", "delta", "delta_schema_persona", "schema_persona"]
     # define method alias
-    method_alias = {"oracle": "O", "delta_schema_persona": "Sh", "schema_persona": "Su", "delta": "D"}
+    method_alias = {
+        "oracle": "O",
+        "delta_schema_persona": "Sh",
+        "schema_persona": "Su",
+        "delta": "D",
+    }
     # source alias
     source_alias = {
         "Reddit.json": "Reddit",
@@ -132,9 +137,14 @@ def create_graph(method_source_wise_results, output_dir):
         categories = list(
             next(iter(method_source_wise_results.values()))[source].keys()
         )
-        
+
         # hardcode categories
-        categories = ['Plot', 'Creativity', 'Development (Character and Setting)', 'Language Use']
+        categories = [
+            "Plot",
+            "Creativity",
+            "Development (Character and Setting)",
+            "Language Use",
+        ]
 
         # replace "Development (Character and Setting)" with "Development"
         categories_labels = [
@@ -295,7 +305,7 @@ def main():
         method_path = f"{root_dir}/{method}/{model_choice}"
         # iterate over sources in method_path
         for source in os.listdir(method_path):
-            if 'old' in source or '_rerun' in source:
+            if "old" in source or "_rerun" in source:
                 continue
 
             source_path = f"{method_path}/{source}"

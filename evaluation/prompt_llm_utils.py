@@ -13,7 +13,6 @@ from prometheus_eval import PrometheusEval
 from prometheus_eval.prompts import RELATIVE_PROMPT
 
 
-
 def construct_prompt_message(
     system_prompt, user_prompt, user_constraints=None, few_shot_prompt=None
 ):
@@ -60,8 +59,8 @@ def prompt_openai(
     if model == "gpt-4o":
         if azure:
             model = "4o"
-    
-    if model != 'gpt-4o':
+
+    if model != "gpt-4o":
         completion = client.chat.completions.create(
             model=model,
             # model=model, # model='4o',
@@ -140,6 +139,7 @@ def prompt_llama_router(prompt_messages, max_tokens=2000, temperature=0.0, top_p
 
     # Return the generated response
     return response.json()["choices"][0]["message"]["content"]
+
 
 def load_prometheus_eval_model():
     """

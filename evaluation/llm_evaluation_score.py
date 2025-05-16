@@ -11,6 +11,7 @@ from tqdm import tqdm
 import time
 import random
 from collections import defaultdict
+
 # from rank_bm25 import BM25Okapi
 # from nltk.tokenize import word_tokenize
 # from nltk.corpus import stopwords
@@ -70,18 +71,18 @@ def parse_args():
         help="To use persona prompt obtained from Author Sheet (for Schema and Delta Schema only)",
     )
 
-    # ft baseline 
+    # ft baseline
     parser.add_argument(
         "--ft_baseline",
         action="store_true",
         help="Whether to use the fine-tuned baseline model as Average Author",
     )
 
-    # ft choice 
+    # ft choice
     parser.add_argument(
         "--ft_choice",
         type=int,
-        default=1,        
+        default=1,
         help="1: Writing Sheet, 2: Writing Summary",
     )
 
@@ -135,10 +136,11 @@ def construct_compare_prompt_message(
     prompt = construct_prompt_message(system_prompt, user_instruction, user_constraints)
     return prompt
 
+
 def construct_prometheus_prompt(wp, gt_story, cat, cat_value):
-    '''
+    """
     Create a prompt for the faithfulness evaluation.
-    '''
+    """
 
     # instruction = (
     #     f"Write a story in response to the following writing prompt:\n\n"
@@ -175,9 +177,8 @@ def construct_prometheus_prompt(wp, gt_story, cat, cat_value):
         # f"Then focus only on the specified aspect and penalize divergence from the Human-Written story."
         f"Then focus soley on evaluating similarity of the story with the Human-Written story on the specified aspect."
     )
-    
-    return instruction, rubric
 
+    return instruction, rubric
 
 
 def construct_summarize_prompt_message(
@@ -311,41 +312,39 @@ def main():
     else:
         sources = [source]
 
-
     # ft_baseline data
     if ft_baseline:
         print("Using FT Baseline")
-        ft_baseline_data_path = '../experiments/finetune/sft-8B/test_results.json'
+        ft_baseline_data_path = "../experiments/finetune/sft-8B/test_results.json"
         # load the data
         with open(ft_baseline_data_path, "r") as f:
             ft_baseline_raw_data = json.load(f)
-        
+
         # load the ws data
         if ft_choice == 1:
-            ft_ws_data_dir = '../experiments/finetune/sft-8B-ws/test_results.json'
+            ft_ws_data_dir = "../experiments/finetune/sft-8B-ws/test_results.json"
         elif ft_choice == 2:
-            ft_ws_data_dir = '../experiments/finetune/sft-8B-summ/test_results.json'
+            ft_ws_data_dir = "../experiments/finetune/sft-8B-summ/test_results.json"
         else:
             raise ValueError("Invalid ft_choice. Choose 1 or 2.")
         with open(ft_ws_data_dir, "r") as f:
             ft_ws_raw_data = json.load(f)
-        
+
         ft_baseline_data = {}
         # process the data
         for data in ft_baseline_raw_data:
-            ft_baseline_data[data['wp']] = data['pred_story']
-        
+            ft_baseline_data[data["wp"]] = data["pred_story"]
+
         # process the ws data
         ft_ws_data = {}
         for data in ft_ws_raw_data:
-            ft_ws_data[data['wp']] = data['pred_story']
-        
+            ft_ws_data[data["wp"]] = data["pred_story"]
+
         # set ft_flag
         ft_flag = "_ft_baseline"
     else:
         ft_flag = ""
-    
-    
+
     if model_choice == 4:
         # load the prometheus model
         prometheus_judge = load_prometheus_eval_model()
@@ -353,8 +352,8 @@ def main():
     # iterate over sources
     for source in sources:
         print(f"### Processsing {source} ###")
-        
-        # load human sample data 
+
+        # load human sample data
         if human_sample:
             # read the human sample data
             with open(f"{source}_error_sample_ids.json", "r") as f:
@@ -439,11 +438,10 @@ def main():
 
         if model_choice == 5:
             system_prompt += "Do not forget to include the score for each story in the <score> tags. "
-            user_constraints += "Important: Your output should contain the <score> tags enclosing the score for both Assistant A and Assistant B." 
-
+            user_constraints += "Important: Your output should contain the <score> tags enclosing the score for both Assistant A and Assistant B."
 
         pairs = []
-        
+
         # prepare for batch relative grade
         if model_choice == 4:
             # batch relative grade
@@ -458,7 +456,6 @@ def main():
             markers = []  # List of markers
             eval_categories = []  # List of categories
 
-
         # iterate over files in the ground truth directory
         for file in tqdm(
             os.listdir(gt_root_dir),
@@ -466,12 +463,14 @@ def main():
             total=len(os.listdir(gt_root_dir)),
         ):
             # check if the file is in the human sample
-            if human_sample: 
+            if human_sample:
                 if file not in human_files:
                     continue
                 else:
                     # find all indices of the occurrences of the file in the human sample
-                    valid_file_ids = [file_ids[i] for i, f in enumerate(human_files) if f == file]
+                    valid_file_ids = [
+                        file_ids[i] for i, f in enumerate(human_files) if f == file
+                    ]
 
             # gt file path
             gt_file_path = os.path.join(gt_root_dir, file)
@@ -489,15 +488,15 @@ def main():
             # read the ground truth file
             with open(gt_file_path, "r") as f:
                 gt_data = json.load(f)
-            
+
             # read the story file
             with open(story_file_path, "r") as f:
                 story_data_raw = json.load(f)
-            
+
             # process the story data
             story_data = {}
             for data in story_data_raw:
-                story_data[data['writing_prompt']] = data['comment']
+                story_data[data["writing_prompt"]] = data["comment"]
 
             # read the profile file
             with open(profile_file_path, "r") as f:
@@ -574,8 +573,8 @@ def main():
 
             # iterrate only over expts_data
             for ectr, expts in enumerate(expts_data):
-                
-                if human_sample: 
+
+                if human_sample:
                     if ectr not in valid_file_ids:
                         continue
 
@@ -594,9 +593,13 @@ def main():
                 if gt_story is None or expts["story"] is None:
                     print("Skipping None", file)
                     continue
-                
-                average_author = vanilla_data[ectr]["story"] if not ft_baseline else ft_baseline_data[gt_wp]
-                
+
+                average_author = (
+                    vanilla_data[ectr]["story"]
+                    if not ft_baseline
+                    else ft_baseline_data[gt_wp]
+                )
+
                 if ft_baseline and not llama:
                     expts_story = ft_ws_data[gt_wp]
                 else:
@@ -622,17 +625,13 @@ def main():
                             expts_story,
                         )
                     )
-                
-            
 
         print(f"Using {consider_dir} method")
         print(f"Consider {len(pairs)} pairs for comparison")
 
-
         # # NOTE: Clip pairs to only 50 for testing
         # print('Clipping pairs to 50 for testing')
         # pairs = pairs[:50]
-
 
         # iterate over the pairs
         for pair in tqdm(pairs, desc="Pair-wise Evaluation", total=len(pairs)):
@@ -674,8 +673,9 @@ def main():
                     elif model_choice == 4:
                         # construct prometheus prompt
                         instruction, rubric = construct_prometheus_prompt(
-                            gt_wp, gt_story_input, cat, categories_data[cat])
-                        
+                            gt_wp, gt_story_input, cat, categories_data[cat]
+                        )
+
                         # append data to lists
                         instructions.append(instruction)
                         responses_from_a.append(vanilla_story)
@@ -686,10 +686,7 @@ def main():
                         markers.append("A: vanilla")
                         eval_categories.append(cat)
                     elif model_choice == 5:
-                        response = prompt_openai(
-                            prompt, model="o4-mini", azure=azure
-                        )
-
+                        response = prompt_openai(prompt, model="o4-mini", azure=azure)
 
                     # construct response dict
                     if model_choice != 4:
@@ -720,8 +717,9 @@ def main():
                     elif model_choice == 4:
                         # construct prometheus prompt
                         instruction, rubric = construct_prometheus_prompt(
-                            gt_wp, gt_story_input, cat, categories_data[cat])
-                        
+                            gt_wp, gt_story_input, cat, categories_data[cat]
+                        )
+
                         # append data to lists
                         instructions.append(instruction)
                         responses_from_a.append(expts_story)
@@ -731,13 +729,10 @@ def main():
                         identifiers.append(identifier)
                         markers.append("A: expts")
                         eval_categories.append(cat)
-                    
-                    elif model_choice == 5:
-                        response = prompt_openai(
-                            prompt, model="o4-mini", azure=azure
-                        )
 
-                    
+                    elif model_choice == 5:
+                        response = prompt_openai(prompt, model="o4-mini", azure=azure)
+
                     # construct response dict
                     if model_choice != 4:
                         response_dict = {1: response, 2: "A: expts"}
@@ -773,7 +768,9 @@ def main():
                 marker = markers[idx]
 
                 # construct response
-                response = f"<evaluation>{feedback}</evaluation>\n<score>{score}</score>"
+                response = (
+                    f"<evaluation>{feedback}</evaluation>\n<score>{score}</score>"
+                )
 
                 # construct response dict
                 response_dict = {1: response, 2: marker, "Category": cat}
@@ -784,13 +781,12 @@ def main():
                 # write the responses to a file
                 with open(output_file, "w") as f:
                     json.dump(all_responses, f, indent=4)
-            
+
             # force reset batch information
             instructions, responses_from_a, responses_from_b = [], [], []
             rubrics = []
             # reference_answers, rubrics = [], []
             identifiers, markers, eval_categories = [], [], []
-
 
 
 if __name__ == "__main__":

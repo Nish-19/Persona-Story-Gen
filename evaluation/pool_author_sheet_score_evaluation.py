@@ -48,7 +48,7 @@ def parse_args():
         help="To use persona prompt obtained from Author Sheet (for Schema and Delta Schema only)",
     )
 
-    # ft baseline 
+    # ft baseline
     parser.add_argument(
         "--ft_baseline",
         action="store_true",
@@ -85,9 +85,9 @@ def extract_winner(res, model_choice=1):
 
     def get_winner(score_text):
         if model_choice == 4:
-            if 'A' in score_text:
+            if "A" in score_text:
                 return "A"
-            elif 'B' in score_text:
+            elif "B" in score_text:
                 return "B"
         else:
             # Extract scores for Story A and Story B using regex
@@ -128,9 +128,9 @@ def extract_score(res, model_choice=1):
 
     def get_scores(score_text):
         if model_choice == 4:
-            if 'A' in score_text:
+            if "A" in score_text:
                 return 1, 0
-            elif 'B' in score_text:
+            elif "B" in score_text:
                 return 0, 1
         else:
             # Extract scores for Story A and Story B using regex
@@ -216,9 +216,9 @@ def main():
     ft_baseline = args.ft_baseline
 
     if ft_baseline:
-        ft_flag = '_ft_baseline'
+        ft_flag = "_ft_baseline"
     else:
-        ft_flag = ''
+        ft_flag = ""
 
     # choice = 3
 
@@ -268,9 +268,13 @@ def main():
         elif eval_choice == 2:
             eval_dir_name = f"author_sheet_score_schema{llama_suffix}"
 
-        eval_path = f"{eval_dir_name}/{consider_dir}/{model_choice}{ft_flag}/{source}.json"
+        eval_path = (
+            f"{eval_dir_name}/{consider_dir}/{model_choice}{ft_flag}/{source}.json"
+        )
 
-        output_dir = f"{eval_dir_name}_stats/{consider_dir}/{model_choice}{ft_flag}/{source}"
+        output_dir = (
+            f"{eval_dir_name}_stats/{consider_dir}/{model_choice}{ft_flag}/{source}"
+        )
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
