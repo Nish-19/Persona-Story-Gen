@@ -1,6 +1,5 @@
 '''
 Utility functions for finetuning and evaluating models.
-Adapted from: https://github.com/umass-ml4ed/tutorbot-dpo/blob/main/model.py#L7
 '''
 
 import os
