@@ -62,7 +62,7 @@ Output directories:
   - `results` (GPT-4o)
   - `results_llama` (LLaMA 3.1 8B)
   - `results_llama70` (LLaMA 3.1 70B)
-- **Author Writing Sheet/Summary**: `user_profile`
+- **Author Sheet/Summary**: `user_profile`
 - **Story Rules**: `story_rules`
 - **Persona Descriptions**: `persona`
 
@@ -104,7 +104,7 @@ Output directory: `vanilla_few_shot`
 
 Output directory: `delta`
 
-### Writing Summary
+### Summary
 
 ```
 python methods.py --choice 3 --persona
@@ -112,7 +112,7 @@ python methods.py --choice 3 --persona
 
 Output directory: `schema_persona`
 
-### Writing Sheet
+### Sheet
 
 ```
 python methods.py --choice 5 --persona
@@ -121,14 +121,14 @@ python methods.py --choice 5 --persona
 Output directory: `delta_schema_persona`
 
 #### nP Variants (Ablation without Persona Descriptions)
-For the nP variants of Writing Summary and Sheet (i.e., ablation without using persona descriptions), **omit** the `--persona` flag.
+For the nP variants of Summary and Sheet (i.e., ablation without using persona descriptions), **omit** the `--persona` flag.
 
-- Writing Summary nP output: `schema`
-- Writing Sheet nP output: `delta_schema`
+- Summary nP output: `schema`
+- Sheet nP output: `delta_schema`
 
 ---
 
-## GPT-4o-as-Judge Evaluation
+## LLM-as-Judge Evaluation
 
 Navigate to the evaluation directory:
 
@@ -138,36 +138,38 @@ cd evaluation
 
 ### Faithfulness to Writing History
 
-1. Prompt GPT-4o for evaluation:
+1. Prompt LLM for evaluation:
 
    ```
-   python author_sheet_score_evaluation.py --source <source_name> --choice <choice_number>
+   python author_sheet_score_evaluation.py --model_choice 5 --source <source_name> --choice <choice_number>
    ```
 
 2. Compute win-rates:
 
    ```
-   python pool_author_sheet_score_evaluation.py --source <source_name> --choice <choice_number>
+   python pool_author_sheet_score_evaluation.py --model_choice 5 --source <source_name> --choice <choice_number>
    ```
+
+```--model_choice 5``` for using OpenAI o4-mini for evaluation.
 
 ### Similarity to Author Story
 
-1. Prompt GPT-4o for evaluation:
+1. Prompt LLM for evaluation:
 
    ```
-   python llm_evaluation_shuffle.py --source <source_name> --choice <choice_number>
+   python llm_evaluation_shuffle.py --model_choice 5 --source <source_name> --choice <choice_number>
    ```
 
 2. Compute win-rates:
 
    ```
-   python pool_llm_evaluation_score.py --source <source_name> --choice <choice_number>
+   python pool_llm_evaluation_score.py --model_choice 5 --source <source_name> --choice <choice_number>
    ```
 
 #### Notes:
 - `<source_name>` refers to the dataset source (e.g., `Reddit`).
 - `<choice_number>` corresponds to the method choice (see **Experiments** section).
-- Use the `--persona` argument for Writing Sheet and Summary evaluations.
+- Use the `--persona` argument for Sheet and Summary evaluations.
 - Use `--llama` and `--llama70` for evaluating generations from LLaMA 3.1 8B and LLaMA 3.1 70B, respectively.
 
 ### Category-wise Win-Rates
