@@ -1,0 +1,38 @@
+[
+    {
+        "date": "2022-08-13 17:58:15 UTC",
+        "metadata": {
+            "story_name": "It is a time of great suffering. The Galactic Empire continues its rise to power as the Death Star enters its final year before its completion.\n\nOn Tion, the brutal governor, Moff Lessa Drexell, is rising in the ranks through ruthlessness that rivals Grand Moff Tarkin. \n\nNow,a group of outcasts, rebels and defectors band together against the Moff's plans for the sector.",
+            "game_pid": "wrwayp",
+            "format": "establishment",
+            "role": "narrator",
+            "story_length": 1086
+        },
+        "writing_prompt": "On the chaotic Smugglers' Moon of Nar Shadaa, a desperate thief, a hunted bounty hunter, a Force-sensitive wanderer, and a cunning smuggler find their fates intertwined as they navigate Hutt schemes, Imperial shadows, and the rising power of the criminal underworld. What brings them together, and what secrets will they uncover in the depths of the Outer Rim?",
+        "url": "None"
+    },
+    {
+        "date": "2023-01-22 19:36:07 UTC",
+        "metadata": {
+            "story_name": "It's the first year as new students are summoned to Hogwarts School of Witchcraft and Wizardry. Drawn together, these unlikely friend will make bonds, learn new skills and spells...which they'll need, as a dangerous force begins to loom that will threaten their world. \n\n(This is a placeholder while we wait for the real story to be discussed and planned.)",
+            "game_pid": "m7nb62",
+            "format": "establishment",
+            "role": "narrator",
+            "story_length": 1633
+        },
+        "writing_prompt": "Five children from vastly different backgrounds receive their Hogwarts letters under unusual circumstances, each uncovering secrets about their pasts and abilities. What happens when their paths converge at the start of term, and they realize their destinies are more intertwined than they could have imagined?",
+        "url": "None"
+    },
+    {
+        "date": "2023-12-12 02:04:12 UTC",
+        "metadata": {
+            "story_name": "As a threat from beyond begins to grow, a team of established superheroes comes together for the first time. \n\nBut can they deal with their own issues long enough to deal with the menace that now threatens their world?",
+            "game_pid": "wvbq2a",
+            "format": "establishment",
+            "role": "narrator",
+            "story_length": 826
+        },
+        "writing_prompt": "When an ancient vault is shattered, unleashing a force long contained, the world's guardian must assemble a team of unlikely heroes\u2014each with their own pasts, powers, and secrets\u2014to face a threat older than time itself.",
+        "url": "None"
+    }
+]

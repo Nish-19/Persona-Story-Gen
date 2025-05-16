@@ -1,0 +1,42 @@
+{
+    "weike_wang": {
+        "profile": 2,
+        "test": 1
+    },
+    "anne_enright": {
+        "profile": 3,
+        "test": 2
+    },
+    "haruki_murakami": {
+        "profile": 2,
+        "test": 2
+    },
+    "joyce_carol_oates": {
+        "profile": 1,
+        "test": 1
+    },
+    "lore_segal": {
+        "profile": 4,
+        "test": 3
+    },
+    "john_edgar_wideman": {
+        "profile": 1,
+        "test": 1
+    },
+    "robert_coover": {
+        "profile": 4,
+        "test": 2
+    },
+    "etgar_keret": {
+        "profile": 3,
+        "test": 2
+    },
+    "sheila_heti": {
+        "profile": 1,
+        "test": 1
+    },
+    "george_saunders": {
+        "profile": 1,
+        "test": 1
+    }
+}
